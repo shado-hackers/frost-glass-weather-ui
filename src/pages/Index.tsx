@@ -2,10 +2,9 @@ import { useState, useEffect } from 'react';
 import { WeatherData } from '@/types/weather';
 import { WeatherBackground } from '@/components/WeatherBackground';
 import { SearchBar } from '@/components/SearchBar';
-import { CurrentWeather, WeatherDetails } from '@/components/CurrentWeather';
+import { CurrentWeather } from '@/components/CurrentWeather';
 import { HourlyForecast } from '@/components/HourlyForecast';
 import { DailyForecast } from '@/components/DailyForecast';
-import { AdditionalInfo } from '@/components/AdditionalInfo';
 import { AirQualityCard } from '@/components/AirQualityCard';
 import { WindPressureCard } from '@/components/WindPressureCard';
 import { DetailsCard } from '@/components/DetailsCard';
@@ -132,18 +131,8 @@ const Index = () => {
           <DetailsCard data={weatherData} />
         </div>
 
-        {/* Weather Details (kept for compatibility) */}
-        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.7s' }}>
-          <WeatherDetails data={weatherData} />
-        </div>
-
-        {/* Additional Info (kept for compatibility) */}
-        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.8s' }}>
-          <AdditionalInfo data={weatherData} />
-        </div>
-
         {/* Daily Forecast */}
-        <div className="mb-6 sm:mb-8 animate-slide-up" style={{ animationDelay: '0.9s' }}>
+        <div className="mb-6 sm:mb-8 animate-slide-up" style={{ animationDelay: '0.7s' }}>
           <DailyForecast data={weatherData} />
         </div>
       </div>

@@ -72,7 +72,9 @@ export const AirQualityCard = ({ data }: AirQualityCardProps) => {
     return null;
   }
 
-  const aqiData = getAQILabel(airQuality.us_epa_index);
+  // Use US EPA index, fallback to calculating from PM2.5
+  const aqiIndex = airQuality.us_epa_index || Math.min(6, Math.ceil(airQuality.pm2_5 / 50) + 1);
+  const aqiData = getAQILabel(aqiIndex);
   const pm25Data = getPollutantLevel(airQuality.pm2_5, 'pm2_5');
   const pm10Data = getPollutantLevel(airQuality.pm10, 'pm10');
   const coData = getPollutantLevel(airQuality.co || 0, 'co');
@@ -96,9 +98,9 @@ export const AirQualityCard = ({ data }: AirQualityCardProps) => {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 sm:gap-3 mb-2">
             <span className="text-4xl sm:text-6xl font-bold text-foreground">
-              {airQuality.us_epa_index}
+              {aqiIndex}
             </span>
-            <div className="bg-green-500/90 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium text-white whitespace-nowrap">
+            <div className={`${aqiData.color} bg-opacity-90 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium text-white whitespace-nowrap`}>
               {aqiData.label}
             </div>
             <button className="ml-auto flex-shrink-0">
@@ -107,7 +109,7 @@ export const AirQualityCard = ({ data }: AirQualityCardProps) => {
           </div>
           
           <p className="text-xs sm:text-sm text-foreground/70 leading-relaxed">
-            {getAQIDescription(airQuality.us_epa_index)}
+            {getAQIDescription(aqiIndex)}
           </p>
         </div>
       </div>
