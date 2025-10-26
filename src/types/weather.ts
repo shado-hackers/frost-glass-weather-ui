@@ -58,6 +58,8 @@ export interface WeatherData {
         sunset: string;
         moonrise: string;
         moonset: string;
+        moon_phase?: string;
+        moon_illumination?: string;
       };
       hour: Array<{
         time: string;

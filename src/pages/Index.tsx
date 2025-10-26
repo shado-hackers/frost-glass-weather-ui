@@ -8,6 +8,7 @@ import { DailyForecast } from '@/components/DailyForecast';
 import { AirQualityCard } from '@/components/AirQualityCard';
 import { WindPressureCard } from '@/components/WindPressureCard';
 import { DetailsCard } from '@/components/DetailsCard';
+import { SunriseSunsetCard } from '@/components/SunriseSunsetCard';
 import { formatToIST } from '@/utils/timeUtils';
 import { useLenis } from '@/hooks/useLenis';
 import { toast } from 'sonner';
@@ -131,8 +132,13 @@ const Index = () => {
           <DetailsCard data={weatherData} />
         </div>
 
+        {/* Sunrise & Sunset Card */}
+        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.7s' }}>
+          <SunriseSunsetCard data={weatherData} />
+        </div>
+
         {/* Daily Forecast */}
-        <div className="mb-6 sm:mb-8 animate-slide-up" style={{ animationDelay: '0.7s' }}>
+        <div className="mb-6 sm:mb-8 animate-slide-up" style={{ animationDelay: '0.8s' }}>
           <DailyForecast data={weatherData} />
         </div>
       </div>
