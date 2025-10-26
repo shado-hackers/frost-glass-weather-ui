@@ -12,7 +12,7 @@ export const TemperatureForecastChart = ({ data }: TemperatureForecastChartProps
   const temps = hourlyData.map(h => h.temp_c);
   const minTemp = Math.min(...temps);
   const maxTemp = Math.max(...temps);
-  const tempRange = maxTemp - minTemp;
+  const tempRange = maxTemp - minTemp || 1; // Avoid division by zero
   
   // Calculate Y position (inverted for SVG coordinates)
   const getYPosition = (temp: number) => {
