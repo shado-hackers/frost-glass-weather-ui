@@ -7,6 +7,9 @@ import { CurrentWeather, WeatherDetails } from '@/components/CurrentWeather';
 import { HourlyForecast } from '@/components/HourlyForecast';
 import { DailyForecast } from '@/components/DailyForecast';
 import { AdditionalInfo } from '@/components/AdditionalInfo';
+import { AirQualityCard } from '@/components/AirQualityCard';
+import { WindPressureCard } from '@/components/WindPressureCard';
+import { DetailsCard } from '@/components/DetailsCard';
 import { formatToIST } from '@/utils/timeUtils';
 import { useLenis } from '@/hooks/useLenis';
 import { toast } from 'sonner';
@@ -128,12 +131,29 @@ const Index = () => {
           <HourlyForecast data={weatherData} />
         </div>
 
-        {/* Weather Details */}
+        {/* Air Quality Card */}
+        {weatherData.current.air_quality && (
+          <div className="mb-3 sm:mb-4">
+            <AirQualityCard data={weatherData} />
+          </div>
+        )}
+
+        {/* Wind & Pressure Card */}
+        <div className="mb-3 sm:mb-4">
+          <WindPressureCard data={weatherData} />
+        </div>
+
+        {/* Details Card */}
+        <div className="mb-3 sm:mb-4">
+          <DetailsCard data={weatherData} />
+        </div>
+
+        {/* Weather Details (kept for compatibility) */}
         <div className="mb-3 sm:mb-4">
           <WeatherDetails data={weatherData} />
         </div>
 
-        {/* Additional Info */}
+        {/* Additional Info (kept for compatibility) */}
         <div className="mb-3 sm:mb-4">
           <AdditionalInfo data={weatherData} />
         </div>
