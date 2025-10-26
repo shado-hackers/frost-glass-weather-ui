@@ -9,7 +9,21 @@ interface HourlyForecastProps {
 
 export const HourlyForecast = ({ data }: HourlyForecastProps) => {
   const currentHour = new Date().getHours();
-  const hours = data.forecast.forecastday[0].hour.slice(currentHour, currentHour + 6);
+  
+  // Get 24 hours of forecast data, spanning multiple days if needed
+  const hours = [];
+  const totalHours = 24;
+  
+  for (let i = 0; i < totalHours; i++) {
+    const targetHour = currentHour + i;
+    const dayIndex = Math.floor(targetHour / 24);
+    const hourIndex = targetHour % 24;
+    
+    if (dayIndex < data.forecast.forecastday.length) {
+      const hour = data.forecast.forecastday[dayIndex].hour[hourIndex];
+      if (hour) hours.push(hour);
+    }
+  }
 
   return (
     <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4 sm:p-6 animate-fade-in">
