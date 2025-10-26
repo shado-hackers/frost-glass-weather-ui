@@ -114,9 +114,23 @@ export const getUVLabel = (uv: number): { label: string; color: string } => {
   return { label: 'Extreme', color: 'text-purple-400' };
 };
 
-export const formatTime = (timeString: string): string => {
-  const time = new Date(timeString);
-  return time.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+export const formatToISTTime = (timeString: string): string => {
+  const date = new Date(timeString);
+  
+  // Convert to IST (UTC+5:30)
+  const istOffset = 5.5 * 60 * 60 * 1000;
+  const utcTime = date.getTime() + date.getTimezoneOffset() * 60000;
+  const istTime = new Date(utcTime + istOffset);
+  
+  // Format as 12-hour with AM/PM
+  let hours = istTime.getHours();
+  const minutes = istTime.getMinutes();
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  hours = hours ? hours : 12;
+  const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+  
+  return `${hours}:${minutesStr} ${ampm}`;
 };
 
 export const formatDate = (dateString: string): string => {

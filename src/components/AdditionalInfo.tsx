@@ -44,20 +44,20 @@ export const AdditionalInfo = ({ data }: AdditionalInfoProps) => {
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-3 animate-fade-in">
+    <div className="grid grid-cols-2 gap-2 sm:gap-3 animate-fade-in">
       {infoCards.map((card, index) => (
         <div
           key={card.label}
-          className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4 animate-scale-in"
+          className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-3 sm:p-4 animate-scale-in"
           style={{ animationDelay: `${index * 0.1}s` }}
         >
-          <div className="flex items-start gap-3">
-            <card.icon className={`w-6 h-6 ${card.color} flex-shrink-0 mt-1`} />
+          <div className="flex items-start gap-2 sm:gap-3">
+            <card.icon className={`w-5 h-5 sm:w-6 sm:h-6 ${card.color} flex-shrink-0 mt-0.5 sm:mt-1`} />
             <div className="flex-1 min-w-0">
-              <div className="text-sm text-foreground/60 mb-1">{card.label}</div>
-              <div className="text-xl font-semibold text-foreground mb-0.5">{card.value}</div>
+              <div className="text-xs sm:text-sm text-foreground/60 mb-0.5 sm:mb-1">{card.label}</div>
+              <div className="text-base sm:text-xl font-semibold text-foreground mb-0.5 truncate">{card.value}</div>
               {card.detail && (
-                <div className="text-sm text-foreground/60">{card.detail}</div>
+                <div className="text-xs sm:text-sm text-foreground/60 truncate">{card.detail}</div>
               )}
             </div>
           </div>
