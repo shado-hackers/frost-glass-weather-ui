@@ -1,5 +1,6 @@
 import { WeatherData } from '@/types/weather';
-import { formatToISTTime, getWeatherIcon } from '@/utils/weatherUtils';
+import { formatToISTTime } from '@/utils/weatherUtils';
+import { getWeatherIconImage } from '@/utils/weatherIcons';
 import { Droplet } from 'lucide-react';
 
 interface HourlyForecastProps {
@@ -36,7 +37,11 @@ export const HourlyForecast = ({ data }: HourlyForecastProps) => {
               style={{ animationDelay: `${index * 0.05}s` }}
             >
               <div className="text-xs sm:text-sm text-foreground/80 whitespace-nowrap font-medium">{time}</div>
-              <div className="text-3xl sm:text-4xl weather-icon-animated">{getWeatherIcon(hour.condition.code, isDay)}</div>
+              <img 
+                src={getWeatherIconImage(hour.condition.code, isDay)} 
+                alt={hour.condition.text}
+                className="w-10 h-10 sm:w-12 sm:h-12 weather-icon-animated object-contain"
+              />
               <div className="text-base sm:text-lg font-semibold text-foreground">
                 {Math.round(hour.temp_c)}°
               </div>

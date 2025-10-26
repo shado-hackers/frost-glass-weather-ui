@@ -1,5 +1,5 @@
 import { WeatherData } from '@/types/weather';
-import { getWeatherIcon } from '@/utils/weatherUtils';
+import { getWeatherIconImage } from '@/utils/weatherIcons';
 import { Droplet, Wind, Eye, Gauge } from 'lucide-react';
 
 interface CurrentWeatherProps {
@@ -17,8 +17,12 @@ export const CurrentWeather = ({ data }: CurrentWeatherProps) => {
         <h1 className="text-xl sm:text-2xl font-light text-foreground/90">{current.condition.text}</h1>
       </div>
 
-      <div className="text-6xl sm:text-8xl font-extralight text-foreground mb-2 sm:mb-4 flex items-center justify-center gap-2">
-        <span className="weather-icon-animated text-5xl sm:text-7xl">{getWeatherIcon(current.condition.code, isDay)}</span>
+      <div className="text-6xl sm:text-8xl font-extralight text-foreground mb-2 sm:mb-4 flex items-center justify-center gap-4">
+        <img 
+          src={getWeatherIconImage(current.condition.code, isDay)} 
+          alt={current.condition.text}
+          className="w-20 h-20 sm:w-28 sm:h-28 weather-icon-animated object-contain"
+        />
         <span>{Math.round(current.temp_c)}°<span className="text-4xl sm:text-5xl">c</span></span>
       </div>
 

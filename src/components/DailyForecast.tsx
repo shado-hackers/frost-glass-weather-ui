@@ -1,5 +1,6 @@
 import { WeatherData } from '@/types/weather';
-import { getWeatherIcon } from '@/utils/weatherUtils';
+import { getWeatherIconImage } from '@/utils/weatherIcons';
+import { Droplet } from 'lucide-react';
 
 interface DailyForecastProps {
   data: WeatherData;
@@ -54,9 +55,11 @@ export const DailyForecast = ({ data }: DailyForecastProps) => {
 
               {/* Weather Icon - Animated */}
               <div className="flex items-center justify-center min-w-[60px] sm:min-w-[70px]">
-                <div className="text-3xl sm:text-4xl weather-icon-animated">
-                  {getWeatherIcon(day.day.condition.code, isDay)}
-                </div>
+                <img 
+                  src={getWeatherIconImage(day.day.condition.code, isDay)} 
+                  alt={day.day.condition.text}
+                  className="w-10 h-10 sm:w-12 sm:h-12 weather-icon-animated object-contain"
+                />
               </div>
 
               {/* Condition and Rain */}
@@ -67,7 +70,7 @@ export const DailyForecast = ({ data }: DailyForecastProps) => {
                   </div>
                   {hasRain && (
                     <div className="text-xs text-blue-400 flex items-center gap-1">
-                      <span>💧</span>
+                      <Droplet className="w-3 h-3" />
                       <span>{Math.round(day.day.avghumidity)}%</span>
                     </div>
                   )}

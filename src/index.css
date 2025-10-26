@@ -84,10 +84,10 @@ All colors MUST be HSL.
 /* Animated Weather Icons */
 @keyframes float-weather {
   0%, 100% {
-    transform: translateY(0) scale(1);
+    transform: translateY(0) scale(1) rotate(0deg);
   }
   50% {
-    transform: translateY(-8px) scale(1.03);
+    transform: translateY(-6px) scale(1.05) rotate(2deg);
   }
 }
 
@@ -143,9 +143,16 @@ All colors MUST be HSL.
 }
 
 .weather-icon-animated {
-  animation: float-weather 2.5s ease-in-out infinite;
+  animation: float-weather 3s ease-in-out infinite;
   display: inline-block;
   will-change: transform;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+  transition: all 0.3s ease;
+}
+
+.weather-icon-animated:hover {
+  transform: scale(1.1);
+  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.2));
 }
 
 .weather-icon-sun {
