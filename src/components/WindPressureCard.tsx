@@ -1,5 +1,5 @@
 import { WeatherData } from '@/types/weather';
-import { Wind, Gauge, Navigation, ChevronRight } from 'lucide-react';
+import { Wind, Gauge, Navigation } from 'lucide-react';
 
 interface WindPressureCardProps {
   data: WeatherData;
@@ -30,11 +30,8 @@ export const WindPressureCard = ({ data }: WindPressureCardProps) => {
 
   return (
     <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4 sm:p-6 animate-fade-in">
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-6">
         <h3 className="text-foreground/90 font-medium text-base sm:text-lg">Wind & Pressure</h3>
-        <button className="text-secondary hover:text-secondary/80 transition-colors flex items-center gap-1 text-sm">
-          More <ChevronRight className="w-4 h-4" />
-        </button>
       </div>
 
       {/* Wind Speed Display */}

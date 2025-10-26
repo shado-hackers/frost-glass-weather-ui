@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Menu, Grid } from 'lucide-react';
 import { WeatherData } from '@/types/weather';
 import { WeatherBackground } from '@/components/WeatherBackground';
 import { SearchBar } from '@/components/SearchBar';
@@ -90,18 +89,10 @@ const Index = () => {
 
       <div className="relative z-10 w-full px-3 sm:px-4 py-4 sm:py-6 max-w-2xl mx-auto">
         {/* Header */}
-        <div className="flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6 animate-fade-in">
-          <button className="p-2 sm:p-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl hover:bg-white/20 transition-all flex-shrink-0">
-            <Menu className="w-5 h-5 sm:w-6 sm:h-6 text-foreground" />
-          </button>
-          
-          <div className="flex-1 min-w-0">
+        <div className="flex items-center justify-center mb-4 sm:mb-6 animate-fade-in">
+          <div className="w-full max-w-xl">
             <SearchBar onCitySelect={handleCitySelect} />
           </div>
-
-          <button className="p-2 sm:p-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl hover:bg-white/20 transition-all flex-shrink-0">
-            <Grid className="w-5 h-5 sm:w-6 sm:h-6 text-foreground" />
-          </button>
         </div>
 
         {/* Location & Time */}
@@ -117,13 +108,6 @@ const Index = () => {
         {/* Current Weather */}
         <div className="mb-4 sm:mb-6">
           <CurrentWeather data={weatherData} />
-        </div>
-
-        {/* Next 2 hours forecast link */}
-        <div className="text-center mb-4 sm:mb-6 animate-fade-in">
-          <button className="text-secondary hover:text-secondary/80 transition-colors text-xs sm:text-sm">
-            Next 2 hours forecast →
-          </button>
         </div>
 
         {/* Hourly Forecast */}
