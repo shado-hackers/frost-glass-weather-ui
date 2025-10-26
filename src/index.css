@@ -73,11 +73,29 @@ All colors MUST be HSL.
 
   html {
     scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
     @apply bg-background text-foreground;
     overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Performance optimizations */
+@layer utilities {
+  .gpu-accelerated {
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+  
+  .smooth-scroll {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
   }
 }
 
@@ -146,12 +164,14 @@ All colors MUST be HSL.
   animation: float-weather 3s ease-in-out infinite;
   display: inline-block;
   will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
   transition: all 0.3s ease;
 }
 
 .weather-icon-animated:hover {
-  transform: scale(1.1);
+  transform: scale(1.1) translateZ(0);
   filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.2));
 }
 
@@ -181,4 +201,17 @@ All colors MUST be HSL.
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  .animate-slide-up,
+  .animate-scale-in {
+    animation-duration: 0.3s;
+  }
+  
+  .weather-icon-animated {
+    animation-duration: 4s;
+  }
 }

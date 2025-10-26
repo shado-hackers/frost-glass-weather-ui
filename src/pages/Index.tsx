@@ -88,7 +88,7 @@ const Index = () => {
     <div className="min-h-screen relative overflow-x-hidden">
       <WeatherBackground condition={weatherData.current.condition.text} isDay={isDay} />
 
-      <div className="relative z-10 w-full px-3 sm:px-4 py-4 sm:py-6 max-w-2xl mx-auto">
+      <div className="relative z-10 w-full px-3 sm:px-4 py-4 sm:py-6 max-w-2xl mx-auto gpu-accelerated">
         {/* Header */}
         <div className="flex items-center justify-center mb-4 sm:mb-6 animate-fade-in">
           <div className="w-full max-w-xl">
@@ -97,7 +97,7 @@ const Index = () => {
         </div>
 
         {/* Location & Time */}
-        <div className="text-center mb-6 sm:mb-8 animate-slide-up px-2" style={{ animationDelay: '0.1s' }}>
+        <div className="text-center mb-6 sm:mb-8 animate-slide-up px-2" style={{ animationDelay: '0.05s' }}>
           <h2 className="text-xl sm:text-2xl font-medium text-foreground/90 mb-1">
             {weatherData.location.name}
           </h2>
@@ -107,44 +107,44 @@ const Index = () => {
         </div>
 
         {/* Current Weather */}
-        <div className="mb-4 sm:mb-6 animate-slide-up" style={{ animationDelay: '0.2s' }}>
+        <div className="mb-4 sm:mb-6 animate-slide-up" style={{ animationDelay: '0.1s' }}>
           <CurrentWeather data={weatherData} />
         </div>
 
         {/* Hourly Forecast */}
-        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.3s' }}>
+        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.15s' }}>
           <HourlyForecast data={weatherData} />
         </div>
 
         {/* Temperature Forecast Chart */}
-        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.35s' }}>
+        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.2s' }}>
           <TemperatureForecastChart data={weatherData} />
         </div>
 
         {/* Air Quality Card */}
         {weatherData.current.air_quality && (
-          <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.4s' }}>
+          <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.25s' }}>
             <AirQualityCard data={weatherData} />
           </div>
         )}
 
         {/* Wind & Pressure Card */}
-        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.5s' }}>
+        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.3s' }}>
           <WindPressureCard data={weatherData} />
         </div>
 
         {/* Details Card */}
-        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.6s' }}>
+        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.35s' }}>
           <DetailsCard data={weatherData} />
         </div>
 
         {/* Sunrise & Sunset Card */}
-        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.7s' }}>
+        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.4s' }}>
           <SunriseSunsetCard data={weatherData} />
         </div>
 
         {/* Daily Forecast */}
-        <div className="mb-6 sm:mb-8 animate-slide-up" style={{ animationDelay: '0.8s' }}>
+        <div className="mb-6 sm:mb-8 animate-slide-up" style={{ animationDelay: '0.45s' }}>
           <DailyForecast data={weatherData} />
         </div>
       </div>
