@@ -9,7 +9,7 @@ export const DailyForecast = ({ data }: DailyForecastProps) => {
   const days = data.forecast.forecastday.slice(0, 7);
 
   return (
-    <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4 sm:p-6 animate-fade-in">
+    <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4 sm:p-6">
       <div className="mb-4">
         <h3 className="text-foreground/90 font-medium text-sm sm:text-base">7-Day Forecast</h3>
       </div>

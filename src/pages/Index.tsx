@@ -96,7 +96,7 @@ const Index = () => {
         </div>
 
         {/* Location & Time */}
-        <div className="text-center mb-6 sm:mb-8 animate-fade-in px-2">
+        <div className="text-center mb-6 sm:mb-8 animate-slide-up px-2" style={{ animationDelay: '0.1s' }}>
           <h2 className="text-xl sm:text-2xl font-medium text-foreground/90 mb-1">
             {weatherData.location.name}
           </h2>
@@ -106,44 +106,44 @@ const Index = () => {
         </div>
 
         {/* Current Weather */}
-        <div className="mb-4 sm:mb-6">
+        <div className="mb-4 sm:mb-6 animate-slide-up" style={{ animationDelay: '0.2s' }}>
           <CurrentWeather data={weatherData} />
         </div>
 
         {/* Hourly Forecast */}
-        <div className="mb-3 sm:mb-4">
+        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.3s' }}>
           <HourlyForecast data={weatherData} />
         </div>
 
         {/* Air Quality Card */}
         {weatherData.current.air_quality && (
-          <div className="mb-3 sm:mb-4">
+          <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.4s' }}>
             <AirQualityCard data={weatherData} />
           </div>
         )}
 
         {/* Wind & Pressure Card */}
-        <div className="mb-3 sm:mb-4">
+        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.5s' }}>
           <WindPressureCard data={weatherData} />
         </div>
 
         {/* Details Card */}
-        <div className="mb-3 sm:mb-4">
+        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.6s' }}>
           <DetailsCard data={weatherData} />
         </div>
 
         {/* Weather Details (kept for compatibility) */}
-        <div className="mb-3 sm:mb-4">
+        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.7s' }}>
           <WeatherDetails data={weatherData} />
         </div>
 
         {/* Additional Info (kept for compatibility) */}
-        <div className="mb-3 sm:mb-4">
+        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.8s' }}>
           <AdditionalInfo data={weatherData} />
         </div>
 
         {/* Daily Forecast */}
-        <div className="mb-6 sm:mb-8">
+        <div className="mb-6 sm:mb-8 animate-slide-up" style={{ animationDelay: '0.9s' }}>
           <DailyForecast data={weatherData} />
         </div>
       </div>

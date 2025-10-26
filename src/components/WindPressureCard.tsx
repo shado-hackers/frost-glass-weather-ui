@@ -29,7 +29,7 @@ export const WindPressureCard = ({ data }: WindPressureCardProps) => {
   const windMph = (current.wind_kph * 0.621371).toFixed(1);
 
   return (
-    <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4 sm:p-6 animate-fade-in">
+    <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4 sm:p-6">
       <div className="mb-6">
         <h3 className="text-foreground/90 font-medium text-base sm:text-lg">Wind & Pressure</h3>
       </div>
