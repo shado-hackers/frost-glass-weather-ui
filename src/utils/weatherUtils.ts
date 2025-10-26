@@ -1,31 +1,64 @@
 export const getWeatherGradient = (condition: string, isDay: boolean): string => {
   const conditionLower = condition.toLowerCase();
   
+  // Night backgrounds
   if (!isDay) {
     if (conditionLower.includes('clear')) {
       return 'from-[hsl(234,50%,20%)] via-[hsl(250,45%,25%)] to-[hsl(263,50%,25%)]';
     }
+    if (conditionLower.includes('storm') || conditionLower.includes('thunder')) {
+      return 'from-[hsl(0,0%,4%)] via-[hsl(0,0%,11%)] to-[hsl(0,0%,17%)]';
+    }
+    if (conditionLower.includes('snow') || conditionLower.includes('blizzard')) {
+      return 'from-[hsl(210,18%,15%)] via-[hsl(210,16%,24%)] to-[hsl(210,15%,29%)]';
+    }
+    if (conditionLower.includes('rain') || conditionLower.includes('drizzle')) {
+      return 'from-[hsl(213,30%,20%)] via-[hsl(213,25%,28%)] to-[hsl(213,20%,35%)]';
+    }
+    if (conditionLower.includes('fog') || conditionLower.includes('mist') || conditionLower.includes('haze')) {
+      return 'from-[hsl(210,18%,15%)] via-[hsl(210,16%,24%)] to-[hsl(210,15%,29%)]';
+    }
+    if (conditionLower.includes('smoke') || conditionLower.includes('dust') || conditionLower.includes('sand')) {
+      return 'from-[hsl(0,0%,13%)] via-[hsl(0,0%,26%)] to-[hsl(0,0%,38%)]';
+    }
     return 'from-[hsl(220,30%,25%)] via-[hsl(230,25%,30%)] to-[hsl(240,20%,35%)]';
   }
   
+  // Day backgrounds
   if (conditionLower.includes('storm') || conditionLower.includes('thunder')) {
-    return 'from-[hsl(243,75%,59%)] via-[hsl(250,70%,55%)] to-[hsl(262,83%,58%)]';
+    return 'from-[hsl(210,14%,27%)] via-[hsl(210,13%,33%)] to-[hsl(210,15%,40%)]';
   }
   
   if (conditionLower.includes('rain') || conditionLower.includes('drizzle')) {
-    return 'from-[hsl(220,60%,50%)] via-[hsl(230,55%,45%)] to-[hsl(240,60%,50%)]';
+    return 'from-[hsl(213,38%,45%)] via-[hsl(213,35%,53%)] to-[hsl(213,38%,60%)]';
   }
   
   if (conditionLower.includes('snow') || conditionLower.includes('blizzard')) {
-    return 'from-[hsl(199,89%,94%)] via-[hsl(199,80%,85%)] to-[hsl(199,89%,81%)]';
+    return 'from-[hsl(231,26%,95%)] via-[hsl(0,0%,100%)] to-[hsl(0,0%,96%)]';
   }
   
   if (conditionLower.includes('fog') || conditionLower.includes('mist')) {
-    return 'from-[hsl(210,20%,60%)] via-[hsl(210,18%,55%)] to-[hsl(210,20%,50%)]';
+    return 'from-[hsl(200,5%,93%)] via-[hsl(200,6%,85%)] to-[hsl(200,7%,74%)]';
   }
   
-  if (conditionLower.includes('hazy') || conditionLower.includes('dust') || conditionLower.includes('sand')) {
-    return 'from-[hsl(30,10%,60%)] via-[hsl(30,12%,52%)] to-[hsl(30,15%,45%)]';
+  if (conditionLower.includes('smoke')) {
+    return 'from-[hsl(204,13%,48%)] via-[hsl(204,12%,56%)] to-[hsl(200,10%,71%)]';
+  }
+  
+  if (conditionLower.includes('haze')) {
+    return 'from-[hsl(200,10%,71%)] via-[hsl(200,6%,85%)] to-[hsl(200,5%,93%)]';
+  }
+  
+  if (conditionLower.includes('dust') || conditionLower.includes('sand')) {
+    return 'from-[hsl(24,13%,89%)] via-[hsl(23,8%,80%)] to-[hsl(23,9%,71%)]';
+  }
+  
+  if (conditionLower.includes('ash')) {
+    return 'from-[hsl(0,0%,62%)] via-[hsl(0,0%,46%)] to-[hsl(0,0%,38%)]';
+  }
+  
+  if (conditionLower.includes('squall') || conditionLower.includes('tornado')) {
+    return 'from-[hsl(200,12%,43%)] via-[hsl(200,11%,51%)] to-[hsl(204,13%,48%)]';
   }
   
   if (conditionLower.includes('cloudy') && conditionLower.includes('partly')) {
@@ -37,7 +70,7 @@ export const getWeatherGradient = (condition: string, isDay: boolean): string =>
   }
   
   // Clear/Sunny day
-  return 'from-[hsl(214,100%,70%)] via-[hsl(214,95%,60%)] to-[hsl(214,100%,50%)]';
+  return 'from-[hsl(199,100%,64%)] via-[hsl(199,89%,71%)] to-[hsl(60,100%,74%)]';
 };
 
 export const getWeatherIcon = (code: number, isDay: boolean): string => {

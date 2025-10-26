@@ -75,151 +75,124 @@ export const AirQualityCard = ({ data }: AirQualityCardProps) => {
   // Use US EPA index, fallback to calculating from PM2.5
   const aqiIndex = airQuality.us_epa_index || Math.min(6, Math.ceil(airQuality.pm2_5 / 50) + 1);
   const aqiData = getAQILabel(aqiIndex);
-  const pm25Data = getPollutantLevel(airQuality.pm2_5, 'pm2_5');
-  const pm10Data = getPollutantLevel(airQuality.pm10, 'pm10');
-  const coData = getPollutantLevel(airQuality.co || 0, 'co');
-  const no2Data = getPollutantLevel(airQuality.no2 || 0, 'no2');
-  const so2Data = getPollutantLevel(airQuality.so2 || 0, 'so2');
-  const o3Data = getPollutantLevel(airQuality.o3 || 0, 'o3');
+
+  // Calculate position on scale (0-100%)
+  const scalePosition = ((aqiIndex - 1) / 5) * 100;
 
   return (
-    <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4 sm:p-6">
+    <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-6 sm:p-8">
+      {/* Title */}
+      <h3 className="text-foreground/60 font-medium text-sm sm:text-base mb-6 tracking-wide">
+        AIR QUALITY INDEX
+      </h3>
+
+      {/* Main AQI Status */}
       <div className="mb-6">
-        <h3 className="text-foreground/90 font-medium text-base sm:text-lg">Air Quality</h3>
+        <div className={`text-4xl sm:text-6xl font-bold mb-3 ${aqiData.label === 'Good' ? 'text-cyan-400' : aqiData.label === 'Moderate' ? 'text-yellow-400' : aqiData.label.includes('Unhealthy') ? 'text-orange-400' : 'text-red-400'}`}>
+          {aqiData.label}
+        </div>
+        <p className="text-foreground/70 text-sm sm:text-base leading-relaxed">
+          {getAQIDescription(aqiIndex)}
+        </p>
       </div>
 
-      <div className="flex items-start gap-3 sm:gap-4 mb-6">
-        {/* AQI Icon */}
-        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center text-4xl sm:text-5xl flex-shrink-0">
-          {getAQIEmoji(airQuality.us_epa_index)}
+      {/* AQI Scale with Indicator */}
+      <div className="mb-8 relative">
+        <div className="h-1.5 rounded-full overflow-hidden flex mb-3">
+          <div className="flex-1 bg-gradient-to-r from-cyan-400 to-green-400"></div>
+          <div className="flex-1 bg-gradient-to-r from-green-400 to-yellow-400"></div>
+          <div className="flex-1 bg-gradient-to-r from-yellow-400 to-orange-400"></div>
+          <div className="flex-1 bg-gradient-to-r from-orange-400 to-red-400"></div>
+          <div className="flex-1 bg-gradient-to-r from-red-400 to-purple-400"></div>
+          <div className="flex-1 bg-gradient-to-r from-purple-400 to-pink-600"></div>
+        </div>
+        
+        {/* Triangle Indicator */}
+        <div 
+          className="absolute -top-2 transform -translate-x-1/2 transition-all duration-500"
+          style={{ left: `${scalePosition}%` }}
+        >
+          <div className="w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[12px] border-t-yellow-400"></div>
         </div>
 
-        {/* AQI Number and Status */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 sm:gap-3 mb-2">
-            <span className="text-4xl sm:text-6xl font-bold text-foreground">
-              {aqiIndex}
-            </span>
-            <div className={`${aqiData.color} bg-opacity-90 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium text-white whitespace-nowrap`}>
-              {aqiData.label}
-            </div>
-            <button className="ml-auto flex-shrink-0">
-              <Info className="w-4 h-4 sm:w-5 sm:h-5 text-foreground/60" />
-            </button>
-          </div>
-          
-          <p className="text-xs sm:text-sm text-foreground/70 leading-relaxed">
-            {getAQIDescription(aqiIndex)}
-          </p>
-        </div>
-      </div>
-
-      {/* AQI Scale */}
-      <div className="mb-6">
-        <div className="h-2 rounded-full overflow-hidden flex">
-          <div className="flex-1 bg-green-500"></div>
-          <div className="flex-1 bg-yellow-500"></div>
-          <div className="flex-1 bg-orange-500"></div>
-          <div className="flex-1 bg-red-500"></div>
-          <div className="flex-1 bg-purple-500"></div>
-          <div className="flex-1 bg-red-900"></div>
-        </div>
-        <div className="flex justify-between mt-2 text-xs text-foreground/60">
+        <div className="flex justify-between text-xs text-cyan-400 font-medium">
           <span>Good</span>
-          <span>Hazardous</span>
+          <span className="text-pink-600">Dangerous</span>
         </div>
       </div>
 
       {/* Pollutants Grid */}
-      <div className="grid grid-cols-2 gap-3">
-        {/* PM2.5 */}
-        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-3 sm:p-4 flex items-center gap-3">
-          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center flex-shrink-0">
-            <div className="text-xs sm:text-sm text-foreground/80 font-medium">PM<sub className="text-[10px]">2.5</sub></div>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {/* PM 2.5 */}
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+          <div className="text-foreground/60 text-xs sm:text-sm mb-2">PM 2.5</div>
+          <div className="text-2xl sm:text-3xl font-bold text-foreground mb-1">
+            {Math.round(airQuality.pm2_5)}
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-2xl sm:text-3xl font-bold text-foreground truncate">
-              {Math.round(airQuality.pm2_5)}
-            </div>
-            <div className={`text-xs sm:text-sm font-medium ${pm25Data.color}`}>
-              {pm25Data.label}
-            </div>
-          </div>
+          <div className="text-foreground/50 text-xs">ug/m3</div>
         </div>
 
-        {/* PM10 */}
-        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-3 sm:p-4 flex items-center gap-3">
-          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center flex-shrink-0">
-            <div className="text-xs sm:text-sm text-foreground/80 font-medium">PM<sub className="text-[10px]">10</sub></div>
+        {/* PM 10 */}
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+          <div className="text-foreground/60 text-xs sm:text-sm mb-2">PM 10</div>
+          <div className="text-2xl sm:text-3xl font-bold text-foreground mb-1">
+            {Math.round(airQuality.pm10)}
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-2xl sm:text-3xl font-bold text-foreground truncate">
-              {Math.round(airQuality.pm10)}
-            </div>
-            <div className={`text-xs sm:text-sm font-medium ${pm10Data.color}`}>
-              {pm10Data.label}
-            </div>
-          </div>
+          <div className="text-foreground/50 text-xs">ug/m3</div>
         </div>
 
-        {/* CO */}
-        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-3 sm:p-4 flex items-center gap-3">
-          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center flex-shrink-0">
-            <div className="text-xs sm:text-sm text-foreground/80 font-medium">CO</div>
+        {/* CO2 */}
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+          <div className="text-foreground/60 text-xs sm:text-sm mb-2">CO2</div>
+          <div className="text-2xl sm:text-3xl font-bold text-foreground mb-1">
+            {Math.round(airQuality.co || 0)}
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-2xl sm:text-3xl font-bold text-foreground truncate">
-              {Math.round(airQuality.co || 0)}
-            </div>
-            <div className={`text-xs sm:text-sm font-medium ${coData.color}`}>
-              {coData.label}
-            </div>
+          <div className="text-foreground/50 text-xs">ug/m3</div>
+        </div>
+
+        {/* NH3 (using NO2 as fallback) */}
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+          <div className="text-foreground/60 text-xs sm:text-sm mb-2">NH3</div>
+          <div className="text-2xl sm:text-3xl font-bold text-foreground mb-1">
+            {Math.round(airQuality.no2 || 0)}
           </div>
+          <div className="text-foreground/50 text-xs">ug/m3</div>
+        </div>
+
+        {/* NO (using NO2/2 as approximation) */}
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+          <div className="text-foreground/60 text-xs sm:text-sm mb-2">NO</div>
+          <div className="text-2xl sm:text-3xl font-bold text-foreground mb-1">
+            {Math.round((airQuality.no2 || 0) / 2)}
+          </div>
+          <div className="text-foreground/50 text-xs">ug/m3</div>
         </div>
 
         {/* NO2 */}
-        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-3 sm:p-4 flex items-center gap-3">
-          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center flex-shrink-0">
-            <div className="text-xs sm:text-sm text-foreground/80 font-medium">NO<sub className="text-[10px]">2</sub></div>
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+          <div className="text-foreground/60 text-xs sm:text-sm mb-2">NO2</div>
+          <div className="text-2xl sm:text-3xl font-bold text-foreground mb-1">
+            {Math.round(airQuality.no2 || 0)}
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-2xl sm:text-3xl font-bold text-foreground truncate">
-              {Math.round(airQuality.no2 || 0)}
-            </div>
-            <div className={`text-xs sm:text-sm font-medium ${no2Data.color}`}>
-              {no2Data.label}
-            </div>
-          </div>
-        </div>
-
-        {/* SO2 */}
-        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-3 sm:p-4 flex items-center gap-3">
-          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center flex-shrink-0">
-            <div className="text-xs sm:text-sm text-foreground/80 font-medium">SO<sub className="text-[10px]">2</sub></div>
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-2xl sm:text-3xl font-bold text-foreground truncate">
-              {Math.round(airQuality.so2 || 0)}
-            </div>
-            <div className={`text-xs sm:text-sm font-medium ${so2Data.color}`}>
-              {so2Data.label}
-            </div>
-          </div>
+          <div className="text-foreground/50 text-xs">ug/m3</div>
         </div>
 
         {/* O3 */}
-        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-3 sm:p-4 flex items-center gap-3">
-          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center flex-shrink-0">
-            <div className="text-xs sm:text-sm text-foreground/80 font-medium">O<sub className="text-[10px]">3</sub></div>
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+          <div className="text-foreground/60 text-xs sm:text-sm mb-2">O3</div>
+          <div className="text-2xl sm:text-3xl font-bold text-foreground mb-1">
+            {Math.round(airQuality.o3 || 0)}
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-2xl sm:text-3xl font-bold text-foreground truncate">
-              {Math.round(airQuality.o3 || 0)}
-            </div>
-            <div className={`text-xs sm:text-sm font-medium ${o3Data.color}`}>
-              {o3Data.label}
-            </div>
+          <div className="text-foreground/50 text-xs">ug/m3</div>
+        </div>
+
+        {/* SO2 */}
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+          <div className="text-foreground/60 text-xs sm:text-sm mb-2">SO2</div>
+          <div className="text-2xl sm:text-3xl font-bold text-foreground mb-1">
+            {Math.round(airQuality.so2 || 0)}
           </div>
+          <div className="text-foreground/50 text-xs">ug/m3</div>
         </div>
       </div>
     </div>
