@@ -71,20 +71,20 @@ export const SunriseSunsetCard = ({ data }: SunriseSunsetCardProps) => {
         <h3 className="text-foreground/90 font-medium text-base sm:text-lg">Sun & Moon</h3>
       </div>
 
-      {/* Sunset and Sunrise Headers */}
+      {/* Sunrise and Sunset Headers */}
       <div className="flex items-center justify-between mb-4">
-        <div className="flex flex-col items-center gap-2">
-          <div className="bg-card/60 backdrop-blur-lg border border-border/20 rounded-2xl w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center">
-            <Sunset className="w-6 h-6 sm:w-7 sm:h-7 text-orange-400 animate-pulse" />
-          </div>
-          <span className="text-xs sm:text-sm text-foreground/70">Sunset</span>
-        </div>
-
         <div className="flex flex-col items-center gap-2">
           <div className="bg-card/60 backdrop-blur-lg border border-border/20 rounded-2xl w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center">
             <Sunrise className="w-6 h-6 sm:w-7 sm:h-7 text-yellow-400 animate-pulse" />
           </div>
           <span className="text-xs sm:text-sm text-foreground/70">Sunrise</span>
+        </div>
+
+        <div className="flex flex-col items-center gap-2">
+          <div className="bg-card/60 backdrop-blur-lg border border-border/20 rounded-2xl w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center">
+            <Sunset className="w-6 h-6 sm:w-7 sm:h-7 text-orange-400 animate-pulse" />
+          </div>
+          <span className="text-xs sm:text-sm text-foreground/70">Sunset</span>
         </div>
       </div>
 
@@ -119,13 +119,13 @@ export const SunriseSunsetCard = ({ data }: SunriseSunsetCardProps) => {
       <div className="flex items-center justify-between">
         <div className="text-center">
           <div className="text-xl sm:text-2xl font-bold text-foreground">
-            {formatTime(sunsetTime)}
+            {formatTime(sunriseTime)}
           </div>
         </div>
 
         <div className="text-center">
           <div className="text-xl sm:text-2xl font-bold text-foreground">
-            {formatTime(sunriseTime)}
+            {formatTime(sunsetTime)}
           </div>
         </div>
       </div>

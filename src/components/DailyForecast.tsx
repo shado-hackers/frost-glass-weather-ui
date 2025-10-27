@@ -80,10 +80,10 @@ export const DailyForecast = ({ data }: DailyForecastProps) => {
               {/* Temperatures */}
               <div className="flex items-center gap-2 flex-shrink-0">
                 <span className="text-blue-300 font-semibold text-base sm:text-lg min-w-[35px] text-right">
-                  {Math.round(day.day.mintemp_c)}°
+                  {Math.round(day.day.mintemp_c)}°C
                 </span>
                 <span className="text-orange-400 font-semibold text-base sm:text-lg min-w-[35px] text-right">
-                  {Math.round(day.day.maxtemp_c)}°
+                  {Math.round(day.day.maxtemp_c)}°C
                 </span>
                 <svg 
                   className="w-4 h-4 sm:w-5 sm:h-5 text-foreground/40 group-hover:text-foreground/60 group-hover:translate-x-1 transition-all" 

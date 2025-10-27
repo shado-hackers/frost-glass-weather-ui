@@ -28,7 +28,7 @@ export const DetailsCard = ({ data }: DetailsCardProps) => {
     {
       icon: Thermometer,
       label: 'Dew Point',
-      value: `${Math.round(current.temp_c - ((100 - current.humidity) / 5))}°`,
+      value: `${Math.round(current.temp_c - ((100 - current.humidity) / 5))}°C`,
       description: '',
       color: 'text-cyan-300',
     },

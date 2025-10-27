@@ -28,17 +28,17 @@ export const CurrentWeather = ({ data }: CurrentWeatherProps) => {
 
       <div className="flex items-center justify-center flex-wrap gap-2 sm:gap-4 text-xs sm:text-base text-foreground/80 mb-2">
         <span className="flex items-center gap-1 whitespace-nowrap">
-          Feels like: {Math.round(current.feelslike_c)}°
+          Feels like: {Math.round(current.feelslike_c)}°C
         </span>
         <span className="flex items-center gap-1 whitespace-nowrap">
           <Droplet className="w-3 h-3 sm:w-4 sm:h-4 text-blue-300" />
-          {Math.round(data.forecast.forecastday[0].day.mintemp_c)}°
+          {Math.round(data.forecast.forecastday[0].day.mintemp_c)}°C
         </span>
         <span className="flex items-center gap-1 whitespace-nowrap">
           <div className="w-3 h-3 sm:w-4 sm:h-4 flex items-center justify-center">
             <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-orange-400" />
           </div>
-          {Math.round(data.forecast.forecastday[0].day.maxtemp_c)}°
+          {Math.round(data.forecast.forecastday[0].day.maxtemp_c)}°C
         </span>
       </div>
     </div>

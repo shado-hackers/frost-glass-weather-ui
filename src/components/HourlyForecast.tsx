@@ -37,7 +37,7 @@ export const HourlyForecast = ({ data }: HourlyForecastProps) => {
         </div>
       </div>
 
-      <div className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide smooth-scroll pb-2 snap-x snap-mandatory gpu-accelerated">
+      <div className="flex gap-2 sm:gap-3 overflow-x-auto scrollbar-hide smooth-scroll pb-2 snap-x snap-mandatory gpu-accelerated">
         {hours.map((hour, index) => {
           const time = formatToISTTime(hour.time);
           const hourNum = parseInt(time.split(':')[0]);
@@ -47,20 +47,20 @@ export const HourlyForecast = ({ data }: HourlyForecastProps) => {
           return (
             <div
               key={hour.time_epoch}
-              className="flex flex-col items-center gap-2 min-w-[70px] sm:min-w-[80px] p-3 bg-card/40 backdrop-blur-lg rounded-2xl border border-border/20 animate-scale-in snap-start gpu-accelerated hover:bg-card/60 transition-all"
+              className="flex flex-col items-center gap-1.5 sm:gap-2 min-w-[65px] sm:min-w-[80px] p-2.5 sm:p-3 bg-card/40 backdrop-blur-lg rounded-2xl border border-border/20 animate-scale-in snap-start gpu-accelerated hover:bg-card/60 transition-all"
               style={{ animationDelay: `${index * 0.05}s` }}
             >
-              <div className="text-xs sm:text-sm text-foreground/80 whitespace-nowrap font-medium">{time}</div>
+              <div className="text-[10px] sm:text-sm text-foreground/80 whitespace-nowrap font-medium">{time}</div>
               <img 
                 src={getWeatherIconImage(hour.condition.code, isDay)} 
                 alt={hour.condition.text}
-                className="w-10 h-10 sm:w-12 sm:h-12 weather-icon-animated object-contain"
+                className="w-9 h-9 sm:w-12 sm:h-12 weather-icon-animated object-contain"
               />
-              <div className="text-base sm:text-lg font-semibold text-foreground">
-                {Math.round(hour.temp_c)}°
+              <div className="text-sm sm:text-lg font-semibold text-foreground">
+                {Math.round(hour.temp_c)}°C
               </div>
-              <div className="flex items-center gap-1 text-xs sm:text-sm text-foreground/60">
-                <Droplet className="w-3 h-3 text-blue-400" />
+              <div className="flex items-center gap-0.5 sm:gap-1 text-[10px] sm:text-sm text-foreground/60">
+                <Droplet className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-blue-400" />
                 <span>{hour.humidity}%</span>
               </div>
             </div>
