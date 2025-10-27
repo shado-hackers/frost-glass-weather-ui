@@ -1,5 +1,13 @@
 import { useEffect, useState } from 'react';
 import { getWeatherGradient } from '@/utils/weatherUtils';
+import clearDayBg from '@/assets/weather-bg/clear-day.png';
+import clearNightBg from '@/assets/weather-bg/clear-night.png';
+import cloudyDayBg from '@/assets/weather-bg/cloudy-day.png';
+import cloudyNightBg from '@/assets/weather-bg/cloudy-night.png';
+import rainyDayBg from '@/assets/weather-bg/rainy-day.png';
+import rainyNightBg from '@/assets/weather-bg/rainy-night.png';
+import snowyDayBg from '@/assets/weather-bg/snowy-day.png';
+import snowyNightBg from '@/assets/weather-bg/snowy-night.png';
 
 interface WeatherBackgroundProps {
   condition: string;
@@ -10,6 +18,23 @@ export const WeatherBackground = ({ condition, isDay }: WeatherBackgroundProps) 
   const [particles, setParticles] = useState<Array<{ id: number; x: number; delay: number }>>([]);
   const gradient = getWeatherGradient(condition, isDay);
   const conditionLower = condition.toLowerCase();
+
+  // Select background image based on weather condition and time of day
+  const getBackgroundImage = () => {
+    if (conditionLower.includes('snow') || conditionLower.includes('blizzard')) {
+      return isDay ? snowyDayBg : snowyNightBg;
+    }
+    if (conditionLower.includes('rain') || conditionLower.includes('drizzle') || conditionLower.includes('storm')) {
+      return isDay ? rainyDayBg : rainyNightBg;
+    }
+    if (conditionLower.includes('cloud') || conditionLower.includes('overcast')) {
+      return isDay ? cloudyDayBg : cloudyNightBg;
+    }
+    // Clear, sunny, or default
+    return isDay ? clearDayBg : clearNightBg;
+  };
+
+  const backgroundImage = getBackgroundImage();
 
   useEffect(() => {
     // Create particles for rain/snow effects
@@ -88,13 +113,22 @@ export const WeatherBackground = ({ condition, isDay }: WeatherBackgroundProps) 
 
   return (
     <>
-      {/* Main gradient background */}
-      <div className={`fixed inset-0 bg-gradient-to-br ${gradient} transition-all duration-1000 ease-in-out`} />
+      {/* Weather background image */}
+      <div 
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat transition-all duration-1000 ease-in-out"
+        style={{ 
+          backgroundImage: `url(${backgroundImage})`,
+          transform: 'scale(1.05)' // Slight scale to prevent edges showing
+        }}
+      />
+
+      {/* Gradient overlay for depth */}
+      <div className={`fixed inset-0 bg-gradient-to-br ${gradient} opacity-30 transition-all duration-1000 ease-in-out mix-blend-overlay`} />
       
       {/* Dynamic cloud layers for cloudy conditions */}
       {(conditionLower.includes('cloud') || conditionLower.includes('overcast')) && (
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 left-0 w-full h-full opacity-20">
+          <div className="absolute top-0 left-0 w-full h-full opacity-10">
             <div className="absolute top-[10%] left-[5%] w-96 h-48 bg-white/20 rounded-full blur-3xl animate-float" />
             <div className="absolute top-[30%] right-[10%] w-80 h-40 bg-white/15 rounded-full blur-3xl animate-float" style={{ animationDelay: '3s' }} />
             <div className="absolute top-[50%] left-[20%] w-72 h-36 bg-white/25 rounded-full blur-3xl animate-float" style={{ animationDelay: '5s' }} />
@@ -103,8 +137,8 @@ export const WeatherBackground = ({ condition, isDay }: WeatherBackgroundProps) 
         </div>
       )}
       
-      {/* Animated overlay shapes */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+      {/* Animated overlay shapes for depth */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none opacity-30">
         <div className="absolute -top-1/2 -left-1/4 w-full h-full bg-white/5 rounded-full blur-3xl animate-float" />
         <div 
           className="absolute -bottom-1/2 -right-1/4 w-full h-full bg-white/5 rounded-full blur-3xl animate-float" 
@@ -113,7 +147,7 @@ export const WeatherBackground = ({ condition, isDay }: WeatherBackgroundProps) 
       </div>
 
       {/* Additional atmospheric effects */}
-      {conditionLower.includes('fog') || conditionLower.includes('mist') && (
+      {(conditionLower.includes('fog') || conditionLower.includes('mist')) && (
         <div className="fixed inset-0 bg-white/10 backdrop-blur-sm pointer-events-none" />
       )}
 
