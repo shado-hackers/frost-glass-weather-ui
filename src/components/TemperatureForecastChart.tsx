@@ -83,12 +83,12 @@ export const TemperatureForecastChart = ({ data }: TemperatureForecastChartProps
           24-Hour Forecast
         </h3>
         
-        <div className="relative w-full pb-8 sm:pb-10" style={{ height: '200px' }}>
+        <div className="relative w-full" style={{ height: '220px', paddingBottom: '40px' }}>
           <svg 
             viewBox="0 0 100 100" 
             preserveAspectRatio="none"
             className="absolute inset-0 w-full h-full gpu-accelerated"
-            style={{ willChange: 'transform', transform: 'translateZ(0)' }}
+            style={{ willChange: 'transform', transform: 'translateZ(0)', height: 'calc(100% - 40px)' }}
           >
             <defs>
               {/* Smooth gradient for area fill */}
@@ -119,10 +119,16 @@ export const TemperatureForecastChart = ({ data }: TemperatureForecastChartProps
           </svg>
         
           {/* Temperature points and bubble labels */}
-          <div className="absolute inset-0">
+          <div className="absolute inset-0" style={{ height: 'calc(100% - 40px)' }}>
             {points.map((point, index) => {
-              // Show labels for key points (every 3-4 hours)
-              const showLabel = index % 3 === 0 || index === points.length - 1;
+              // Show labels with better spacing - every 4 points or at extremes
+              const isExtreme = point.temp === Math.max(...points.map(p => p.temp)) || 
+                                point.temp === Math.min(...points.map(p => p.temp));
+              const showLabel = (index % 4 === 0 || index === points.length - 1 || isExtreme) && 
+                                (index === 0 || index > 2); // Avoid first few overlapping
+              
+              // Alternate label position to avoid overlap
+              const isAbove = index % 8 < 4;
               
               return (
                 <div
@@ -146,14 +152,12 @@ export const TemperatureForecastChart = ({ data }: TemperatureForecastChartProps
                     <div 
                       className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap animate-scale-in"
                       style={{ 
-                        top: point.y > 50 ? '100%' : 'auto',
-                        bottom: point.y > 50 ? 'auto' : '100%',
-                        marginTop: point.y > 50 ? '8px' : '0',
-                        marginBottom: point.y > 50 ? '0' : '8px',
+                        [isAbove ? 'bottom' : 'top']: '100%',
+                        [isAbove ? 'marginBottom' : 'marginTop']: '10px',
                         animationDelay: `${index * 0.03}s` 
                       }}
                     >
-                      <div className="relative bg-white/90 dark:bg-card/90 backdrop-blur-md px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-xl border border-white/20">
+                      <div className="relative bg-white/95 dark:bg-card/95 backdrop-blur-md px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full shadow-xl border border-white/30">
                         <span className="text-foreground text-xs sm:text-sm font-bold">
                           {point.temp}°
                         </span>
@@ -166,14 +170,14 @@ export const TemperatureForecastChart = ({ data }: TemperatureForecastChartProps
           </div>
         
           {/* Time labels at bottom */}
-          <div className="absolute bottom-0 inset-x-0 flex justify-between text-foreground/50 text-[10px] sm:text-xs font-medium">
+          <div className="absolute bottom-0 inset-x-0 flex justify-between text-foreground/50 text-[10px] sm:text-xs font-medium px-1">
             {points.map((point, index) => {
               const label = getTimeLabel(point.hour, index);
-              return label ? (
-                <div key={index} className="px-1">
-                  {label}
+              return (
+                <div key={index} className={label ? 'opacity-100' : 'opacity-0'}>
+                  {label || '.'}
                 </div>
-              ) : <div key={index} />;
+              );
             })}
           </div>
         </div>
