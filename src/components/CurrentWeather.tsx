@@ -86,7 +86,7 @@ export const WeatherDetails = ({ data }: CurrentWeatherProps) => {
       {details.map((detail, index) => (
         <div
           key={detail.label}
-          className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-3 sm:p-4 flex items-center gap-2 sm:gap-3"
+          className="bg-card/60 backdrop-blur-lg border border-border/20 rounded-2xl p-3 sm:p-4 flex items-center gap-2 sm:gap-3 gpu-accelerated"
           style={{ animationDelay: `${index * 0.1}s` }}
         >
           <detail.icon className={`w-5 h-5 sm:w-6 sm:h-6 ${detail.color} flex-shrink-0`} />

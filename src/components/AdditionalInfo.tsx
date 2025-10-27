@@ -48,7 +48,7 @@ export const AdditionalInfo = ({ data }: AdditionalInfoProps) => {
       {infoCards.map((card, index) => (
         <div
           key={card.label}
-          className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-3 sm:p-4 animate-scale-in"
+          className="bg-card/60 backdrop-blur-lg border border-border/20 rounded-2xl p-3 sm:p-4 animate-scale-in gpu-accelerated"
           style={{ animationDelay: `${index * 0.1}s` }}
         >
           <div className="flex items-start gap-2 sm:gap-3">

@@ -111,12 +111,12 @@ export const TemperatureForecastChart = ({ data }: TemperatureForecastChartProps
             >
               {/* Point circle */}
               <div className="relative">
-                <div className="w-2 h-2 bg-white rounded-full shadow-lg" />
+                <div className="w-2 h-2 bg-primary rounded-full shadow-lg" />
                 
                 {/* Temperature label */}
                 {index % 3 === 0 && (
                   <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-                    <div className="bg-white/10 backdrop-blur-sm px-2 py-1 rounded-lg">
+                    <div className="bg-card/60 backdrop-blur-lg px-2 py-1 rounded-lg border border-border/20">
                       <span className="text-foreground text-xs sm:text-sm font-medium">
                         {point.temp}°
                       </span>

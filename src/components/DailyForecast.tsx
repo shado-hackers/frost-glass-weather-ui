@@ -40,7 +40,7 @@ export const DailyForecast = ({ data }: DailyForecastProps) => {
           return (
             <div
               key={day.date_epoch}
-              className="flex items-center gap-2 sm:gap-3 py-3 group hover:bg-white/5 rounded-xl transition-all px-2 -mx-2 animate-slide-up cursor-pointer"
+              className="flex items-center gap-2 sm:gap-3 py-3 group hover:bg-card/40 rounded-xl transition-all px-2 -mx-2 animate-slide-up cursor-pointer gpu-accelerated"
               style={{ animationDelay: `${index * 0.05}s` }}
             >
               {/* Day and Date */}

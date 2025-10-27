@@ -37,7 +37,7 @@ export const HourlyForecast = ({ data }: HourlyForecastProps) => {
         </div>
       </div>
 
-      <div className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide smooth-scroll pb-2 snap-x snap-mandatory">
+      <div className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide smooth-scroll pb-2 snap-x snap-mandatory gpu-accelerated">
         {hours.map((hour, index) => {
           const time = formatToISTTime(hour.time);
           const hourNum = parseInt(time.split(':')[0]);
@@ -47,7 +47,7 @@ export const HourlyForecast = ({ data }: HourlyForecastProps) => {
           return (
             <div
               key={hour.time_epoch}
-              className="flex flex-col items-center gap-2 min-w-[70px] sm:min-w-[80px] animate-scale-in snap-start gpu-accelerated"
+              className="flex flex-col items-center gap-2 min-w-[70px] sm:min-w-[80px] p-3 bg-card/40 backdrop-blur-lg rounded-2xl border border-border/20 animate-scale-in snap-start gpu-accelerated hover:bg-card/60 transition-all"
               style={{ animationDelay: `${index * 0.05}s` }}
             >
               <div className="text-xs sm:text-sm text-foreground/80 whitespace-nowrap font-medium">{time}</div>
