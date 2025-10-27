@@ -6,7 +6,6 @@ import { CurrentWeather } from '@/components/CurrentWeather';
 import { HourlyForecast } from '@/components/HourlyForecast';
 import { DailyForecast } from '@/components/DailyForecast';
 import { AirQualityCard } from '@/components/AirQualityCard';
-import { TemperatureForecastChart } from '@/components/TemperatureForecastChart';
 import { WindPressureCard } from '@/components/WindPressureCard';
 import { DetailsCard } from '@/components/DetailsCard';
 import { SunriseSunsetCard } from '@/components/SunriseSunsetCard';
@@ -116,13 +115,8 @@ const Index = () => {
           <HourlyForecast data={weatherData} />
         </div>
 
-        {/* Temperature Forecast Chart */}
-        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-          <TemperatureForecastChart data={weatherData} />
-        </div>
-
         {/* Ad Container */}
-        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.22s' }}>
+        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.2s' }}>
           <div id="container-770bb196b9da57c7d2a53316b74d3c31"></div>
         </div>
 
