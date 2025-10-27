@@ -8,6 +8,16 @@ import rainyDayBg from '@/assets/weather-bg/rainy-day.png';
 import rainyNightBg from '@/assets/weather-bg/rainy-night.png';
 import snowyDayBg from '@/assets/weather-bg/snowy-day.png';
 import snowyNightBg from '@/assets/weather-bg/snowy-night.png';
+import stormDayBg from '@/assets/weather-bg/storm-day.png';
+import stormNightBg from '@/assets/weather-bg/storm-night.png';
+import fogDayBg from '@/assets/weather-bg/fog-day.png';
+import fogNightBg from '@/assets/weather-bg/fog-night.png';
+import hazyDayBg from '@/assets/weather-bg/hazy-day.png';
+import hazyNightBg from '@/assets/weather-bg/hazy-night.png';
+import partlyCloudyDayBg from '@/assets/weather-bg/partly-cloudy-day.png';
+import partlyCloudyNightBg from '@/assets/weather-bg/partly-cloudy-night.png';
+import overcastDayBg from '@/assets/weather-bg/overcast-day.png';
+import overcastNightBg from '@/assets/weather-bg/overcast-night.png';
 
 interface WeatherBackgroundProps {
   condition: string;
@@ -21,15 +31,46 @@ export const WeatherBackground = ({ condition, isDay }: WeatherBackgroundProps) 
 
   // Select background image based on weather condition and time of day
   const getBackgroundImage = () => {
-    if (conditionLower.includes('snow') || conditionLower.includes('blizzard')) {
+    // Thunderstorm/Storm - highest priority
+    if (conditionLower.includes('thunder') || conditionLower.includes('storm')) {
+      return isDay ? stormDayBg : stormNightBg;
+    }
+    
+    // Snow conditions
+    if (conditionLower.includes('snow') || conditionLower.includes('blizzard') || conditionLower.includes('sleet')) {
       return isDay ? snowyDayBg : snowyNightBg;
     }
-    if (conditionLower.includes('rain') || conditionLower.includes('drizzle') || conditionLower.includes('storm')) {
+    
+    // Rain conditions (but not thunderstorm)
+    if (conditionLower.includes('rain') || conditionLower.includes('drizzle') || conditionLower.includes('shower')) {
       return isDay ? rainyDayBg : rainyNightBg;
     }
-    if (conditionLower.includes('cloud') || conditionLower.includes('overcast')) {
+    
+    // Fog/Mist conditions
+    if (conditionLower.includes('fog') || conditionLower.includes('mist')) {
+      return isDay ? fogDayBg : fogNightBg;
+    }
+    
+    // Hazy/Dust conditions
+    if (conditionLower.includes('haz') || conditionLower.includes('dust') || conditionLower.includes('sand') || conditionLower.includes('smoke')) {
+      return isDay ? hazyDayBg : hazyNightBg;
+    }
+    
+    // Overcast (completely cloudy)
+    if (conditionLower.includes('overcast')) {
+      return isDay ? overcastDayBg : overcastNightBg;
+    }
+    
+    // Partly cloudy
+    if (conditionLower.includes('partly') && conditionLower.includes('cloud')) {
+      return isDay ? partlyCloudyDayBg : partlyCloudyNightBg;
+    }
+    
+    // General cloudy
+    if (conditionLower.includes('cloud')) {
       return isDay ? cloudyDayBg : cloudyNightBg;
     }
+    
     // Clear, sunny, or default
     return isDay ? clearDayBg : clearNightBg;
   };
