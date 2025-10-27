@@ -40,11 +40,13 @@ export const DailyForecast = ({ data }: DailyForecastProps) => {
           return (
             <div
               key={day.date_epoch}
-              className="flex items-center gap-2 sm:gap-3 py-3 group hover:bg-card/40 rounded-xl transition-all px-2 -mx-2 animate-slide-up cursor-pointer gpu-accelerated"
+              className="relative overflow-hidden flex items-center gap-2 sm:gap-3 py-3 group bg-gradient-to-br from-card/50 via-card/30 to-card/50 hover:from-card/70 hover:via-card/50 hover:to-card/70 backdrop-blur-xl rounded-xl transition-all duration-300 px-2 -mx-2 animate-slide-up cursor-pointer gpu-accelerated border border-border/20"
               style={{ animationDelay: `${index * 0.05}s` }}
             >
+              {/* Gradient lens effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/5 pointer-events-none" />
               {/* Day and Date */}
-              <div className="flex flex-col min-w-[60px] sm:min-w-[70px]">
+              <div className="flex flex-col min-w-[60px] sm:min-w-[70px] relative z-10">
                 <div className="text-foreground font-medium text-sm sm:text-base">
                   {getDayLabel(day.date, index)}
                 </div>
@@ -54,7 +56,7 @@ export const DailyForecast = ({ data }: DailyForecastProps) => {
               </div>
 
               {/* Weather Icon - Animated */}
-              <div className="flex items-center justify-center min-w-[60px] sm:min-w-[70px]">
+              <div className="flex items-center justify-center min-w-[60px] sm:min-w-[70px] relative z-10">
                 <img 
                   src={getWeatherIconImage(day.day.condition.code, isDay)} 
                   alt={day.day.condition.text}
@@ -63,7 +65,7 @@ export const DailyForecast = ({ data }: DailyForecastProps) => {
               </div>
 
               {/* Condition and Rain */}
-              <div className="flex-1 min-w-0 flex items-center gap-2">
+              <div className="flex-1 min-w-0 flex items-center gap-2 relative z-10">
                 <div className="flex-1 min-w-0">
                   <div className="text-foreground/80 text-sm sm:text-base truncate">
                     {day.day.condition.text}
@@ -78,7 +80,7 @@ export const DailyForecast = ({ data }: DailyForecastProps) => {
               </div>
 
               {/* Temperatures */}
-              <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="flex items-center gap-2 flex-shrink-0 relative z-10">
                 <span className="text-blue-300 font-semibold text-base sm:text-lg min-w-[35px] text-right">
                   {Math.round(day.day.mintemp_c)}°C
                 </span>

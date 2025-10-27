@@ -47,19 +47,21 @@ export const HourlyForecast = ({ data }: HourlyForecastProps) => {
           return (
             <div
               key={hour.time_epoch}
-              className="flex flex-col items-center gap-1.5 sm:gap-2 min-w-[65px] sm:min-w-[80px] p-2.5 sm:p-3 bg-card/40 backdrop-blur-lg rounded-2xl border border-border/20 animate-scale-in snap-start gpu-accelerated hover:bg-card/60 transition-all"
+              className="relative overflow-hidden flex flex-col items-center gap-1.5 sm:gap-2 min-w-[65px] sm:min-w-[80px] p-2.5 sm:p-3 bg-gradient-to-br from-card/50 via-card/30 to-card/50 backdrop-blur-xl rounded-2xl border border-border/30 animate-scale-in snap-start gpu-accelerated hover:from-card/70 hover:via-card/50 hover:to-card/70 transition-all duration-300 shadow-lg"
               style={{ animationDelay: `${index * 0.05}s` }}
             >
-              <div className="text-[10px] sm:text-sm text-foreground/80 whitespace-nowrap font-medium">{time}</div>
+              {/* Gradient lens effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/5 pointer-events-none" />
+              <div className="text-[10px] sm:text-sm text-foreground/80 whitespace-nowrap font-medium relative z-10">{time}</div>
               <img 
                 src={getWeatherIconImage(hour.condition.code, isDay)} 
                 alt={hour.condition.text}
-                className="w-9 h-9 sm:w-12 sm:h-12 weather-icon-animated object-contain"
+                className="w-9 h-9 sm:w-12 sm:h-12 weather-icon-animated object-contain relative z-10"
               />
-              <div className="text-sm sm:text-lg font-semibold text-foreground">
+              <div className="text-sm sm:text-lg font-semibold text-foreground relative z-10">
                 {Math.round(hour.temp_c)}°C
               </div>
-              <div className="flex items-center gap-0.5 sm:gap-1 text-[10px] sm:text-sm text-foreground/60">
+              <div className="flex items-center gap-0.5 sm:gap-1 text-[10px] sm:text-sm text-foreground/60 relative z-10">
                 <Droplet className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-blue-400" />
                 <span>{hour.humidity}%</span>
               </div>

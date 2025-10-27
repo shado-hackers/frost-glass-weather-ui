@@ -14,7 +14,8 @@ export const DetailsCard = ({ data }: DetailsCardProps) => {
     {
       icon: Umbrella,
       label: 'Precipitation',
-      value: `${current.precip_mm}mm`,
+      value: `${current.precip_mm}`,
+      unit: 'mm',
       percentage: `${Math.min(100, current.precip_mm * 10)}%`,
       color: 'text-blue-300',
     },
@@ -22,34 +23,39 @@ export const DetailsCard = ({ data }: DetailsCardProps) => {
       icon: Sun,
       label: 'UV Index',
       value: current.uv.toString(),
+      unit: '',
       description: uvData.label,
       color: uvData.color,
     },
     {
       icon: Thermometer,
       label: 'Dew Point',
-      value: `${Math.round(current.temp_c - ((100 - current.humidity) / 5))}°C`,
+      value: `${Math.round(current.temp_c - ((100 - current.humidity) / 5))}`,
+      unit: '°C',
       description: '',
       color: 'text-cyan-300',
     },
     {
       icon: Cloud,
       label: 'Cloud Cover',
-      value: `${current.cloud}%`,
+      value: `${current.cloud}`,
+      unit: '%',
       description: '',
       color: 'text-gray-300',
     },
     {
       icon: Eye,
       label: 'Visibility',
-      value: `${current.vis_km} km`,
+      value: `${current.vis_km}`,
+      unit: 'km',
       description: '',
       color: 'text-green-300',
     },
     {
       icon: Droplet,
       label: 'Humidity',
-      value: `${current.humidity}%`,
+      value: `${current.humidity}`,
+      unit: '%',
       description: '',
       color: 'text-blue-400',
     },
@@ -74,8 +80,9 @@ export const DetailsCard = ({ data }: DetailsCardProps) => {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="text-xs sm:text-sm text-foreground/60 mb-1">{detail.label}</div>
-                <div className="text-xl sm:text-2xl font-bold text-foreground mb-0.5 truncate">
-                  {detail.value}
+                <div className="text-xl sm:text-2xl font-bold text-foreground mb-0.5 truncate flex items-baseline gap-1">
+                  <span>{detail.value}</span>
+                  {detail.unit && <span className="text-sm sm:text-base text-foreground/70">{detail.unit}</span>}
                 </div>
                 {detail.description && (
                   <div className={`text-xs sm:text-sm ${detail.color}`}>

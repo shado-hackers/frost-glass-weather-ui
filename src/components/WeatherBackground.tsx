@@ -88,7 +88,20 @@ export const WeatherBackground = ({ condition, isDay }: WeatherBackgroundProps) 
 
   return (
     <>
+      {/* Main gradient background */}
       <div className={`fixed inset-0 bg-gradient-to-br ${gradient} transition-all duration-1000 ease-in-out`} />
+      
+      {/* Dynamic cloud layers for cloudy conditions */}
+      {(conditionLower.includes('cloud') || conditionLower.includes('overcast')) && (
+        <div className="fixed inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 left-0 w-full h-full opacity-20">
+            <div className="absolute top-[10%] left-[5%] w-96 h-48 bg-white/20 rounded-full blur-3xl animate-float" />
+            <div className="absolute top-[30%] right-[10%] w-80 h-40 bg-white/15 rounded-full blur-3xl animate-float" style={{ animationDelay: '3s' }} />
+            <div className="absolute top-[50%] left-[20%] w-72 h-36 bg-white/25 rounded-full blur-3xl animate-float" style={{ animationDelay: '5s' }} />
+            <div className="absolute top-[20%] right-[30%] w-64 h-32 bg-white/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '7s' }} />
+          </div>
+        </div>
+      )}
       
       {/* Animated overlay shapes */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
@@ -98,6 +111,11 @@ export const WeatherBackground = ({ condition, isDay }: WeatherBackgroundProps) 
           style={{ animationDelay: '2s' }}
         />
       </div>
+
+      {/* Additional atmospheric effects */}
+      {conditionLower.includes('fog') || conditionLower.includes('mist') && (
+        <div className="fixed inset-0 bg-white/10 backdrop-blur-sm pointer-events-none" />
+      )}
 
       {renderWeatherEffects()}
 
