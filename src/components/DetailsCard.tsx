@@ -56,7 +56,7 @@ export const DetailsCard = ({ data }: DetailsCardProps) => {
   ];
 
   return (
-    <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4 sm:p-6">
+    <div className="bg-card/80 backdrop-blur-xl border border-border/30 rounded-3xl p-4 sm:p-6 shadow-lg">
       <div className="mb-6">
         <h3 className="text-foreground/90 font-medium text-base sm:text-lg">Details</h3>
       </div>
@@ -65,11 +65,11 @@ export const DetailsCard = ({ data }: DetailsCardProps) => {
         {details.map((detail, index) => (
           <div
             key={detail.label}
-            className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4 animate-scale-in"
+            className="bg-card/60 backdrop-blur-lg border border-border/20 rounded-2xl p-4 animate-scale-in"
             style={{ animationDelay: `${index * 0.05}s` }}
           >
             <div className="flex items-start gap-3">
-              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center flex-shrink-0">
+              <div className="bg-card/60 backdrop-blur-lg border border-border/20 rounded-2xl w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center flex-shrink-0">
                 <detail.icon className={`w-6 h-6 sm:w-7 sm:h-7 ${detail.color}`} />
               </div>
               <div className="flex-1 min-w-0">

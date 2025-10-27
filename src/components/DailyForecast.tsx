@@ -27,7 +27,7 @@ export const DailyForecast = ({ data }: DailyForecastProps) => {
   };
 
   return (
-    <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4 sm:p-6">
+    <div className="bg-card/80 backdrop-blur-xl border border-border/30 rounded-3xl p-4 sm:p-6 shadow-lg">
       <div className="mb-4">
         <h3 className="text-foreground/90 font-medium text-sm sm:text-base">7-Day Forecast</h3>
       </div>

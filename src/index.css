@@ -8,45 +8,45 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 10%;
+    --background: 220 25% 95%;
+    --foreground: 220 15% 20%;
     
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
+    --card-foreground: 220 15% 20%;
     
-    --glass: 0 0% 100%;
-    --glass-border: 0 0% 100%;
+    --glass: 220 20% 98%;
+    --glass-border: 220 20% 80%;
     
-    --primary: 214 100% 60%;
+    --primary: 220 60% 55%;
     --primary-foreground: 0 0% 100%;
     
-    --secondary: 43 74% 66%;
-    --secondary-foreground: 0 0% 20%;
+    --secondary: 210 80% 60%;
+    --secondary-foreground: 0 0% 100%;
     
-    --accent: 262 83% 58%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 43 96% 56%;
+    --accent-foreground: 220 15% 20%;
     
-    --muted: 0 0% 95%;
-    --muted-foreground: 0 0% 40%;
+    --muted: 220 20% 92%;
+    --muted-foreground: 220 10% 50%;
     
-    --border: 0 0% 90%;
-    --input: 0 0% 95%;
-    --ring: 214 100% 60%;
+    --border: 220 20% 85%;
+    --input: 0 0% 98%;
+    --ring: 220 60% 55%;
     
     --radius: 1.5rem;
     
     /* Weather-specific colors */
-    --weather-clear-day-from: 214 100% 70%;
-    --weather-clear-day-to: 214 100% 50%;
+    --weather-clear-day-from: 210 80% 65%;
+    --weather-clear-day-to: 220 70% 55%;
     
-    --weather-clear-night-from: 234 50% 20%;
-    --weather-clear-night-to: 263 50% 25%;
+    --weather-clear-night-from: 230 45% 25%;
+    --weather-clear-night-to: 235 50% 30%;
     
-    --weather-cloudy-from: 215 25% 50%;
-    --weather-cloudy-to: 215 20% 40%;
+    --weather-cloudy-from: 220 25% 55%;
+    --weather-cloudy-to: 220 30% 45%;
     
-    --weather-partly-cloudy-from: 199 89% 65%;
-    --weather-partly-cloudy-to: 199 89% 48%;
+    --weather-partly-cloudy-from: 210 70% 60%;
+    --weather-partly-cloudy-to: 220 65% 50%;
     
     --weather-rain-from: 243 75% 59%;
     --weather-rain-to: 262 83% 58%;

@@ -26,7 +26,7 @@ export const HourlyForecast = ({ data }: HourlyForecastProps) => {
   }
 
   return (
-    <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4 sm:p-6 animate-fade-in">
+    <div className="bg-card/80 backdrop-blur-xl border border-border/30 rounded-3xl p-4 sm:p-6 animate-fade-in shadow-lg">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-foreground/90 font-medium text-sm sm:text-base">Hourly Forecast</h3>
         <div className="text-xs sm:text-sm text-foreground/50 flex items-center gap-1">

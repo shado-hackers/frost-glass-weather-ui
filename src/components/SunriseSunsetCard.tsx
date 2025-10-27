@@ -66,7 +66,7 @@ export const SunriseSunsetCard = ({ data }: SunriseSunsetCardProps) => {
   };
 
   return (
-    <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4 sm:p-6">
+    <div className="bg-card/80 backdrop-blur-xl border border-border/30 rounded-3xl p-4 sm:p-6 shadow-lg">
       <div className="mb-6">
         <h3 className="text-foreground/90 font-medium text-base sm:text-lg">Sun & Moon</h3>
       </div>
@@ -74,14 +74,14 @@ export const SunriseSunsetCard = ({ data }: SunriseSunsetCardProps) => {
       {/* Sunset and Sunrise Headers */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex flex-col items-center gap-2">
-          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center">
+          <div className="bg-card/60 backdrop-blur-lg border border-border/20 rounded-2xl w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center">
             <Sunset className="w-6 h-6 sm:w-7 sm:h-7 text-orange-400 animate-pulse" />
           </div>
           <span className="text-xs sm:text-sm text-foreground/70">Sunset</span>
         </div>
 
         <div className="flex flex-col items-center gap-2">
-          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center">
+          <div className="bg-card/60 backdrop-blur-lg border border-border/20 rounded-2xl w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center">
             <Sunrise className="w-6 h-6 sm:w-7 sm:h-7 text-yellow-400 animate-pulse" />
           </div>
           <span className="text-xs sm:text-sm text-foreground/70">Sunrise</span>
@@ -90,7 +90,7 @@ export const SunriseSunsetCard = ({ data }: SunriseSunsetCardProps) => {
 
       {/* Progress Bar */}
       <div className="relative mb-4">
-        <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+        <div className="h-2 bg-muted/30 rounded-full overflow-hidden">
           <div 
             className="h-full bg-gradient-to-r from-orange-400 via-yellow-300 to-blue-400 transition-all duration-1000 ease-out"
             style={{ width: `${progress}%` }}
@@ -131,7 +131,7 @@ export const SunriseSunsetCard = ({ data }: SunriseSunsetCardProps) => {
       </div>
 
       {/* Additional Info */}
-      <div className="mt-4 pt-4 border-t border-white/10">
+      <div className="mt-4 pt-4 border-t border-border/20">
         <div className="grid grid-cols-2 gap-3 text-xs sm:text-sm">
           <div className="text-foreground/70">
             <span className="block text-foreground/50 mb-1">Day Length</span>

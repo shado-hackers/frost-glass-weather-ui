@@ -29,14 +29,14 @@ export const WindPressureCard = ({ data }: WindPressureCardProps) => {
   const windMph = (current.wind_kph * 0.621371).toFixed(1);
 
   return (
-    <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4 sm:p-6">
+    <div className="bg-card/80 backdrop-blur-xl border border-border/30 rounded-3xl p-4 sm:p-6 shadow-lg">
       <div className="mb-6">
         <h3 className="text-foreground/90 font-medium text-base sm:text-lg">Wind & Pressure</h3>
       </div>
 
       {/* Wind Speed Display */}
       <div className="flex items-center gap-4 mb-6">
-        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center flex-shrink-0">
+        <div className="bg-card/60 backdrop-blur-lg border border-border/20 rounded-3xl w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center flex-shrink-0">
           <Wind className="w-12 h-12 sm:w-14 sm:h-14 text-foreground/80" />
         </div>
 
@@ -52,8 +52,8 @@ export const WindPressureCard = ({ data }: WindPressureCardProps) => {
 
       {/* Pressure and Direction */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4 flex items-center gap-3">
-          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center flex-shrink-0">
+        <div className="bg-card/60 backdrop-blur-lg border border-border/20 rounded-2xl p-4 flex items-center gap-3">
+          <div className="bg-card/60 backdrop-blur-lg border border-border/20 rounded-2xl w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center flex-shrink-0">
             <Gauge className="w-6 h-6 sm:w-7 sm:h-7 text-foreground/80" />
           </div>
           <div className="flex-1 min-w-0">
@@ -65,9 +65,9 @@ export const WindPressureCard = ({ data }: WindPressureCardProps) => {
           </div>
         </div>
 
-        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4 flex items-center gap-3">
+        <div className="bg-card/60 backdrop-blur-lg border border-border/20 rounded-2xl p-4 flex items-center gap-3">
           <div 
-            className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center flex-shrink-0"
+            className="bg-card/60 backdrop-blur-lg border border-border/20 rounded-2xl w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center flex-shrink-0"
             style={{ transform: `rotate(${current.wind_degree}deg)` }}
           >
             <Navigation className="w-6 h-6 sm:w-7 sm:h-7 text-foreground/80" />

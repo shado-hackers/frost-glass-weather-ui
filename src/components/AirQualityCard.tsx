@@ -80,7 +80,7 @@ export const AirQualityCard = ({ data }: AirQualityCardProps) => {
   const scalePosition = ((aqiIndex - 1) / 5) * 100;
 
   return (
-    <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-6 sm:p-8">
+    <div className="bg-card/80 backdrop-blur-xl border border-border/30 rounded-3xl p-6 sm:p-8 shadow-lg">
       {/* Title */}
       <h3 className="text-foreground/60 font-medium text-sm sm:text-base mb-6 tracking-wide">
         AIR QUALITY INDEX
@@ -124,7 +124,7 @@ export const AirQualityCard = ({ data }: AirQualityCardProps) => {
       {/* Pollutants Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {/* PM 2.5 */}
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+        <div className="bg-card/60 backdrop-blur-lg rounded-2xl p-4 border border-border/20">
           <div className="text-foreground/60 text-xs sm:text-sm mb-2">PM 2.5</div>
           <div className="text-2xl sm:text-3xl font-bold text-foreground mb-1">
             {Math.round(airQuality.pm2_5)}
@@ -133,7 +133,7 @@ export const AirQualityCard = ({ data }: AirQualityCardProps) => {
         </div>
 
         {/* PM 10 */}
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+        <div className="bg-card/60 backdrop-blur-lg rounded-2xl p-4 border border-border/20">
           <div className="text-foreground/60 text-xs sm:text-sm mb-2">PM 10</div>
           <div className="text-2xl sm:text-3xl font-bold text-foreground mb-1">
             {Math.round(airQuality.pm10)}
@@ -142,7 +142,7 @@ export const AirQualityCard = ({ data }: AirQualityCardProps) => {
         </div>
 
         {/* CO2 */}
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+        <div className="bg-card/60 backdrop-blur-lg rounded-2xl p-4 border border-border/20">
           <div className="text-foreground/60 text-xs sm:text-sm mb-2">CO2</div>
           <div className="text-2xl sm:text-3xl font-bold text-foreground mb-1">
             {Math.round(airQuality.co || 0)}
@@ -151,7 +151,7 @@ export const AirQualityCard = ({ data }: AirQualityCardProps) => {
         </div>
 
         {/* NH3 (using NO2 as fallback) */}
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+        <div className="bg-card/60 backdrop-blur-lg rounded-2xl p-4 border border-border/20">
           <div className="text-foreground/60 text-xs sm:text-sm mb-2">NH3</div>
           <div className="text-2xl sm:text-3xl font-bold text-foreground mb-1">
             {Math.round(airQuality.no2 || 0)}
@@ -160,7 +160,7 @@ export const AirQualityCard = ({ data }: AirQualityCardProps) => {
         </div>
 
         {/* NO (using NO2/2 as approximation) */}
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+        <div className="bg-card/60 backdrop-blur-lg rounded-2xl p-4 border border-border/20">
           <div className="text-foreground/60 text-xs sm:text-sm mb-2">NO</div>
           <div className="text-2xl sm:text-3xl font-bold text-foreground mb-1">
             {Math.round((airQuality.no2 || 0) / 2)}
@@ -169,7 +169,7 @@ export const AirQualityCard = ({ data }: AirQualityCardProps) => {
         </div>
 
         {/* NO2 */}
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+        <div className="bg-card/60 backdrop-blur-lg rounded-2xl p-4 border border-border/20">
           <div className="text-foreground/60 text-xs sm:text-sm mb-2">NO2</div>
           <div className="text-2xl sm:text-3xl font-bold text-foreground mb-1">
             {Math.round(airQuality.no2 || 0)}
@@ -178,7 +178,7 @@ export const AirQualityCard = ({ data }: AirQualityCardProps) => {
         </div>
 
         {/* O3 */}
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+        <div className="bg-card/60 backdrop-blur-lg rounded-2xl p-4 border border-border/20">
           <div className="text-foreground/60 text-xs sm:text-sm mb-2">O3</div>
           <div className="text-2xl sm:text-3xl font-bold text-foreground mb-1">
             {Math.round(airQuality.o3 || 0)}
@@ -187,7 +187,7 @@ export const AirQualityCard = ({ data }: AirQualityCardProps) => {
         </div>
 
         {/* SO2 */}
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+        <div className="bg-card/60 backdrop-blur-lg rounded-2xl p-4 border border-border/20">
           <div className="text-foreground/60 text-xs sm:text-sm mb-2">SO2</div>
           <div className="text-2xl sm:text-3xl font-bold text-foreground mb-1">
             {Math.round(airQuality.so2 || 0)}

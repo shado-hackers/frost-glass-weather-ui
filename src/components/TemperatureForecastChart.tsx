@@ -59,7 +59,7 @@ export const TemperatureForecastChart = ({ data }: TemperatureForecastChartProps
   };
 
   return (
-    <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-4 sm:p-6 animate-fade-in">
+    <div className="bg-card/80 backdrop-blur-xl border border-border/30 rounded-3xl p-4 sm:p-6 animate-fade-in shadow-lg">
       <h3 className="text-foreground/60 font-medium text-sm sm:text-base mb-4 tracking-wide">
         24-HOUR FORECAST
       </h3>

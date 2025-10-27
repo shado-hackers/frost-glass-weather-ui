@@ -65,7 +65,7 @@ export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => suggestions.length > 0 && setIsOpen(true)}
           placeholder="Search city..."
-          className="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-2.5 sm:py-3 bg-white/10 backdrop-blur-glass border border-white/20 rounded-2xl text-sm sm:text-base text-foreground placeholder:text-foreground/60 focus:outline-none focus:ring-2 focus:ring-white/40 transition-all"
+          className="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-3.5 sm:py-4 bg-card/95 backdrop-blur-xl border border-border/50 rounded-3xl text-sm sm:text-base text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/40 transition-all shadow-lg"
         />
       </div>
 
