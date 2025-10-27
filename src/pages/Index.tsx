@@ -121,6 +121,11 @@ const Index = () => {
           <TemperatureForecastChart data={weatherData} />
         </div>
 
+        {/* Ad Container */}
+        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.22s' }}>
+          <div id="container-770bb196b9da57c7d2a53316b74d3c31"></div>
+        </div>
+
         {/* Air Quality Card */}
         {weatherData.current.air_quality && (
           <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.25s' }}>
