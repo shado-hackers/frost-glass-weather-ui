@@ -59,85 +59,111 @@ export const TemperatureForecastChart = ({ data }: TemperatureForecastChartProps
   };
 
   return (
-    <div className="bg-card/80 backdrop-blur-xl border border-border/30 rounded-3xl p-4 sm:p-6 animate-fade-in shadow-lg">
-      <h3 className="text-foreground/60 font-medium text-sm sm:text-base mb-4 tracking-wide">
-        24-HOUR FORECAST
-      </h3>
+    <div className="relative overflow-hidden bg-gradient-to-br from-card/60 via-card/40 to-card/60 backdrop-blur-xl border border-border/30 rounded-3xl p-4 sm:p-6 animate-fade-in shadow-lg gpu-accelerated">
+      {/* Gradient lens effect */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/5 pointer-events-none" />
       
-      <div className="relative w-full" style={{ height: '180px' }}>
-        <svg 
-          viewBox="0 0 100 100" 
-          preserveAspectRatio="none"
-          className="absolute inset-0 w-full h-full"
-          style={{ willChange: 'transform' }}
-        >
-          {/* Gradient fill */}
-          <defs>
-            <linearGradient id="tempGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="rgba(255, 255, 255, 0.2)" />
-              <stop offset="100%" stopColor="rgba(255, 255, 255, 0.02)" />
-            </linearGradient>
-          </defs>
-          
-          {/* Area fill */}
-          <path
-            d={areaPath}
-            fill="url(#tempGradient)"
-            style={{ willChange: 'transform' }}
-          />
-          
-          {/* Line */}
-          <path
-            d={linePath}
-            fill="none"
-            stroke="white"
-            strokeWidth="0.5"
-            vectorEffect="non-scaling-stroke"
-            style={{ willChange: 'transform' }}
-          />
-        </svg>
+      <div className="relative z-10">
+        <h3 className="text-foreground/60 font-medium text-xs sm:text-sm mb-3 sm:mb-4 tracking-wider uppercase">
+          24-Hour Forecast
+        </h3>
         
-        {/* Temperature points and labels */}
-        <div className="absolute inset-0">
-          {points.map((point, index) => (
-            <div
-              key={index}
-              className="absolute"
-              style={{
-                left: `${point.x}%`,
-                top: `${point.y}%`,
-                transform: 'translate(-50%, -50%)',
-              }}
-            >
-              {/* Point circle */}
-              <div className="relative">
-                <div className="w-2 h-2 bg-primary rounded-full shadow-lg" />
-                
-                {/* Temperature label */}
-                {index % 3 === 0 && (
-                  <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-                    <div className="bg-card/60 backdrop-blur-lg px-2 py-1 rounded-lg border border-border/20">
-                      <span className="text-foreground text-xs sm:text-sm font-medium">
-                        {point.temp}°
-                      </span>
+        <div className="relative w-full" style={{ height: '160px' }}>
+          <svg 
+            viewBox="0 0 100 100" 
+            preserveAspectRatio="none"
+            className="absolute inset-0 w-full h-full gpu-accelerated"
+            style={{ willChange: 'transform', transform: 'translateZ(0)' }}
+          >
+            {/* Enhanced gradient fill with glassmorphism */}
+            <defs>
+              <linearGradient id="tempGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="hsl(var(--primary) / 0.3)" />
+                <stop offset="50%" stopColor="hsl(var(--primary) / 0.15)" />
+                <stop offset="100%" stopColor="hsl(var(--primary) / 0.05)" />
+              </linearGradient>
+              <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="hsl(var(--primary) / 0.8)" />
+                <stop offset="50%" stopColor="hsl(var(--primary) / 1)" />
+                <stop offset="100%" stopColor="hsl(var(--primary) / 0.8)" />
+              </linearGradient>
+            </defs>
+            
+            {/* Area fill with gradient */}
+            <path
+              d={areaPath}
+              fill="url(#tempGradient)"
+              className="transition-all duration-300"
+              style={{ willChange: 'transform', transform: 'translateZ(0)' }}
+            />
+            
+            {/* Line with enhanced styling */}
+            <path
+              d={linePath}
+              fill="none"
+              stroke="url(#lineGradient)"
+              strokeWidth="0.6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              vectorEffect="non-scaling-stroke"
+              className="transition-all duration-300"
+              style={{ willChange: 'transform', transform: 'translateZ(0)' }}
+            />
+          </svg>
+        
+          {/* Temperature points and labels - optimized */}
+          <div className="absolute inset-0">
+            {points.map((point, index) => (
+              <div
+                key={index}
+                className="absolute gpu-accelerated"
+                style={{
+                  left: `${point.x}%`,
+                  top: `${point.y}%`,
+                  transform: 'translate(-50%, -50%) translateZ(0)',
+                  willChange: 'transform',
+                }}
+              >
+                {/* Point circle with enhanced styling */}
+                <div className="relative">
+                  <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-primary rounded-full shadow-lg transition-all duration-200 hover:scale-125" 
+                    style={{ 
+                      boxShadow: '0 0 8px hsl(var(--primary) / 0.5)',
+                      willChange: 'transform'
+                    }}
+                  />
+                  
+                  {/* Temperature label with gradient lens */}
+                  {index % 3 === 0 && (
+                    <div className="absolute -top-7 sm:-top-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap animate-scale-in"
+                      style={{ animationDelay: `${index * 0.05}s` }}
+                    >
+                      <div className="relative bg-gradient-to-br from-card/80 via-card/60 to-card/80 backdrop-blur-lg px-2 py-0.5 sm:py-1 rounded-lg border border-border/30 shadow-lg">
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 rounded-lg pointer-events-none" />
+                        <span className="relative text-foreground text-xs sm:text-sm font-semibold">
+                          {point.temp}°
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
         
-        {/* Time labels */}
-        <div className="absolute -bottom-6 inset-x-0 flex justify-between px-1" style={{ willChange: 'transform' }}>
-          {hourlyData.map((hour, index) => {
-            const label = formatTime(hour.time);
-            return label ? (
-              <div key={index} className="text-foreground/50 text-xs">
-                {label}
-              </div>
-            ) : null;
-          })}
+          {/* Time labels - optimized */}
+          <div className="absolute -bottom-5 sm:-bottom-6 inset-x-0 flex justify-between px-0.5 sm:px-1" 
+            style={{ willChange: 'transform', transform: 'translateZ(0)' }}
+          >
+            {hourlyData.map((hour, index) => {
+              const label = formatTime(hour.time);
+              return label ? (
+                <div key={index} className="text-foreground/60 text-[10px] sm:text-xs font-medium">
+                  {label}
+                </div>
+              ) : null;
+            })}
+          </div>
         </div>
       </div>
     </div>
