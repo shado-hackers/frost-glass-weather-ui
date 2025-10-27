@@ -9,13 +9,13 @@ All colors MUST be HSL.
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 0 0% 100%;
+    --foreground: 0 0% 10%;
     
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
     
     --glass: 0 0% 100%;
-    --glass-border: 255 255 255;
+    --glass-border: 0 0% 100%;
     
     --primary: 214 100% 60%;
     --primary-foreground: 0 0% 100%;
@@ -26,12 +26,12 @@ All colors MUST be HSL.
     --accent: 262 83% 58%;
     --accent-foreground: 0 0% 100%;
     
-    --muted: 0 0% 100%;
-    --muted-foreground: 0 0% 95%;
+    --muted: 0 0% 95%;
+    --muted-foreground: 0 0% 40%;
     
-    --border: 0 0% 100%;
-    --input: 0 0% 100%;
-    --ring: 0 0% 100%;
+    --border: 0 0% 90%;
+    --input: 0 0% 95%;
+    --ring: 214 100% 60%;
     
     --radius: 1.5rem;
     
