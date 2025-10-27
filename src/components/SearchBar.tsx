@@ -70,16 +70,16 @@ export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
       </div>
 
       {isOpen && suggestions.length > 0 && (
-        <div className="absolute top-full mt-2 w-full bg-white/10 backdrop-blur-glass border border-white/20 rounded-2xl overflow-hidden z-50 animate-fade-in max-h-[60vh] overflow-y-auto">
-          {suggestions.map((city) => (
+        <div className="absolute top-full mt-2 w-full bg-background/95 backdrop-blur-xl border border-border/30 rounded-2xl overflow-hidden z-50 animate-fade-in max-h-[70vh] overflow-y-auto smooth-scroll shadow-2xl">
+          {suggestions.slice(0, 20).map((city) => (
             <button
               key={`${city.lat}-${city.lon}`}
               onClick={() => handleSelect(city)}
-              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 flex items-start gap-2 sm:gap-3 hover:bg-white/10 transition-all text-left text-foreground"
+              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 flex items-start gap-2 sm:gap-3 hover:bg-primary/20 active:bg-primary/30 transition-all text-left border-b border-border/10 last:border-b-0"
             >
               <div className="flex-1 min-w-0">
-                <div className="font-medium truncate text-sm sm:text-base">{city.name}</div>
-                <div className="text-xs sm:text-sm text-foreground/60 truncate">
+                <div className="font-medium truncate text-sm sm:text-base text-foreground">{city.name}</div>
+                <div className="text-xs sm:text-sm text-foreground/70 truncate">
                   {city.region && `${city.region}, `}{city.country}
                 </div>
               </div>
@@ -89,7 +89,7 @@ export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
       )}
 
       {loading && (
-        <div className="absolute top-full mt-2 w-full bg-white/10 backdrop-blur-glass border border-white/20 rounded-2xl p-3 sm:p-4 text-center text-foreground/60 text-sm">
+        <div className="absolute top-full mt-2 w-full bg-background/95 backdrop-blur-xl border border-border/30 rounded-2xl p-3 sm:p-4 text-center text-foreground/70 text-sm shadow-2xl">
           Searching...
         </div>
       )}
