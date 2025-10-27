@@ -32,7 +32,7 @@ export const TemperatureForecastChart = ({ data }: TemperatureForecastChartProps
   // Calculate Y position (inverted for SVG coordinates)
   const getYPosition = (temp: number) => {
     const normalizedTemp = (temp - minTemp) / tempRange;
-    return 100 - (normalizedTemp * 70 + 15); // Scale to 15-85% of chart height
+    return 100 - (normalizedTemp * 65 + 17.5); // Scale to 17.5-82.5% of chart height
   };
   
   // Create points for smooth curve
@@ -41,6 +41,35 @@ export const TemperatureForecastChart = ({ data }: TemperatureForecastChartProps
     const y = getYPosition(hour.temp_c);
     return { x, y, temp: Math.round(hour.temp_c), time: hour.time, hour: new Date(hour.time).getHours() };
   });
+  
+  // Find local min/max points for label placement
+  const findLabelPoints = () => {
+    const labelIndices: number[] = [0]; // Always show first
+    
+    for (let i = 1; i < points.length - 1; i++) {
+      const prev = points[i - 1].temp;
+      const curr = points[i].temp;
+      const next = points[i + 1].temp;
+      
+      // Local maximum or minimum
+      if ((curr > prev && curr > next) || (curr < prev && curr < next)) {
+        // Ensure minimum distance from last label (avoid too close labels)
+        const lastLabelIndex = labelIndices[labelIndices.length - 1];
+        if (i - lastLabelIndex >= 4) {
+          labelIndices.push(i);
+        }
+      }
+    }
+    
+    // Add last point if not too close to previous
+    if (points.length - 1 - labelIndices[labelIndices.length - 1] >= 4) {
+      labelIndices.push(points.length - 1);
+    }
+    
+    return labelIndices;
+  };
+  
+  const labelIndices = findLabelPoints();
   
   // Create smooth curve path using bezier curves
   const createSmoothPath = (pts: typeof points) => {
@@ -74,21 +103,21 @@ export const TemperatureForecastChart = ({ data }: TemperatureForecastChartProps
   };
 
   return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-card/70 via-card/50 to-card/70 backdrop-blur-xl border border-border/30 rounded-3xl p-5 sm:p-7 animate-fade-in shadow-xl gpu-accelerated">
+    <div className="relative overflow-hidden bg-gradient-to-br from-card/70 via-card/50 to-card/70 backdrop-blur-xl border border-border/30 rounded-3xl p-4 sm:p-6 animate-fade-in shadow-xl gpu-accelerated">
       {/* Gradient lens effect */}
       <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 pointer-events-none" />
       
       <div className="relative z-10">
-        <h3 className="text-foreground/70 font-semibold text-xs sm:text-sm mb-6 sm:mb-8 tracking-wide uppercase">
+        <h3 className="text-foreground/70 font-semibold text-xs sm:text-sm mb-4 sm:mb-6 tracking-wide uppercase">
           24-Hour Forecast
         </h3>
         
-        <div className="relative w-full" style={{ height: '220px', paddingBottom: '40px' }}>
+        <div className="relative w-full" style={{ height: '180px', paddingBottom: '32px' }}>
           <svg 
             viewBox="0 0 100 100" 
             preserveAspectRatio="none"
             className="absolute inset-0 w-full h-full gpu-accelerated"
-            style={{ willChange: 'transform', transform: 'translateZ(0)', height: 'calc(100% - 40px)' }}
+            style={{ willChange: 'transform', transform: 'translateZ(0)', height: 'calc(100% - 32px)' }}
           >
             <defs>
               {/* Smooth gradient for area fill */}
@@ -119,16 +148,10 @@ export const TemperatureForecastChart = ({ data }: TemperatureForecastChartProps
           </svg>
         
           {/* Temperature points and bubble labels */}
-          <div className="absolute inset-0" style={{ height: 'calc(100% - 40px)' }}>
+          <div className="absolute inset-0" style={{ height: 'calc(100% - 32px)' }}>
             {points.map((point, index) => {
-              // Show labels with better spacing - every 4 points or at extremes
-              const isExtreme = point.temp === Math.max(...points.map(p => p.temp)) || 
-                                point.temp === Math.min(...points.map(p => p.temp));
-              const showLabel = (index % 4 === 0 || index === points.length - 1 || isExtreme) && 
-                                (index === 0 || index > 2); // Avoid first few overlapping
-              
-              // Alternate label position to avoid overlap
-              const isAbove = index % 8 < 4;
+              const showLabel = labelIndices.includes(index);
+              const isAbove = point.y < 50; // Position label opposite to avoid overlap with curve
               
               return (
                 <div
@@ -141,24 +164,24 @@ export const TemperatureForecastChart = ({ data }: TemperatureForecastChartProps
                   }}
                 >
                   {/* Point circle */}
-                  <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-primary rounded-full shadow-lg" 
+                  <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-primary rounded-full shadow-lg" 
                     style={{ 
-                      boxShadow: '0 0 12px hsl(var(--primary) / 0.6), 0 0 4px hsl(var(--primary))',
+                      boxShadow: '0 0 10px hsl(var(--primary) / 0.5), 0 0 3px hsl(var(--primary))',
                     }}
                   />
                   
-                  {/* Temperature bubble label */}
+                  {/* Temperature bubble label - only for selected points */}
                   {showLabel && (
                     <div 
                       className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap animate-scale-in"
                       style={{ 
                         [isAbove ? 'bottom' : 'top']: '100%',
-                        [isAbove ? 'marginBottom' : 'marginTop']: '10px',
-                        animationDelay: `${index * 0.03}s` 
+                        [isAbove ? 'marginBottom' : 'marginTop']: '8px',
+                        animationDelay: `${index * 0.02}s` 
                       }}
                     >
-                      <div className="relative bg-white/95 dark:bg-card/95 backdrop-blur-md px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full shadow-xl border border-white/30">
-                        <span className="text-foreground text-xs sm:text-sm font-bold">
+                      <div className="relative bg-white/95 dark:bg-card/95 backdrop-blur-md px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-xl border border-white/30">
+                        <span className="text-foreground text-[11px] sm:text-sm font-bold">
                           {point.temp}°
                         </span>
                       </div>
@@ -170,7 +193,7 @@ export const TemperatureForecastChart = ({ data }: TemperatureForecastChartProps
           </div>
         
           {/* Time labels at bottom */}
-          <div className="absolute bottom-0 inset-x-0 flex justify-between text-foreground/50 text-[10px] sm:text-xs font-medium px-1">
+          <div className="absolute bottom-0 inset-x-0 flex justify-between text-foreground/50 text-[9px] sm:text-xs font-medium px-1">
             {points.map((point, index) => {
               const label = getTimeLabel(point.hour, index);
               return (
