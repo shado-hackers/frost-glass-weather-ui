@@ -7,6 +7,7 @@ import { HourlyForecast } from '@/components/HourlyForecast';
 import { DailyForecast } from '@/components/DailyForecast';
 import { DayForecastGraph } from '@/components/DayForecastGraph';
 import { WeatherWarningCard } from '@/components/WeatherWarningCard';
+import { WeatherRadar } from '@/components/WeatherRadar';
 import { AirQualityCard } from '@/components/AirQualityCard';
 import { WindPressureCard } from '@/components/WindPressureCard';
 import { DetailsCard } from '@/components/DetailsCard';
@@ -109,10 +110,10 @@ const Index = () => {
 
         {/* Location & Time */}
         <div className="text-center mb-6 sm:mb-8 animate-slide-up px-2" style={{ animationDelay: '0.05s' }}>
-          <h2 className="text-xl sm:text-2xl font-medium text-foreground/90 mb-1">
+          <h2 className="text-xl sm:text-2xl font-semibold text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] mb-1">
             {weatherData.location.name}
           </h2>
-          <div className="text-sm sm:text-base text-foreground/70">
+          <div className="text-sm sm:text-base text-white/95 drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)] font-medium">
             {day} {time}
           </div>
         </div>
@@ -130,6 +131,11 @@ const Index = () => {
         {/* Weather Warning Card */}
         <div className="mb-4 sm:mb-6 animate-slide-up" style={{ animationDelay: '0.2s' }}>
           <WeatherWarningCard data={weatherData} />
+        </div>
+
+        {/* Weather Radar Map */}
+        <div className="mb-4 sm:mb-6 animate-slide-up" style={{ animationDelay: '0.22s' }}>
+          <WeatherRadar data={weatherData} />
         </div>
 
         {/* Hourly Forecast */}
