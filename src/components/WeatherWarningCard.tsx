@@ -1,5 +1,5 @@
 import { WeatherData } from '@/types/weather';
-import { AlertTriangle, CloudRain, CloudSnow, Wind, Zap, Navigation, Target } from 'lucide-react';
+import { AlertTriangle, CloudRain, CloudSnow, Wind, Zap, Navigation, Target, Flame, Droplets, CloudFog, Snowflake, CloudDrizzle, Mountain, Eye } from 'lucide-react';
 import { useMemo } from 'react';
 
 interface WeatherWarningCardProps {
@@ -20,76 +20,175 @@ export const WeatherWarningCard = ({ data }: WeatherWarningCardProps) => {
     const condition = data.current.condition.text.toLowerCase();
     const windSpeed = data.current.wind_kph;
     const visibility = data.current.vis_km;
+    const temp = data.current.temp_c;
+    const feelsLike = data.current.feelslike_c;
+    const precip = data.current.precip_mm;
     
-    // Cyclone/Hurricane (very high wind speeds)
+    // Heavy Cyclonic Storm (very high wind speeds)
     if (windSpeed > 118) {
       return {
-        type: 'Cyclonic Storm',
+        type: '🌪️ Heavy Cyclonic Storm',
         icon: <Wind className="w-16 h-16 sm:w-20 sm:h-20" />,
         severity: 'high',
-        message: `Severe cyclonic conditions detected with wind speeds of ${Math.round(windSpeed)} km/h. Stay indoors and follow local emergency guidelines.`,
-        bgGradient: 'from-red-900/90 via-red-800/85 to-orange-900/90',
-        iconBg: 'bg-red-800/60'
+        message: `Severe cyclonic conditions with wind speeds of ${Math.round(windSpeed)} km/h. Stay indoors, secure all objects, and follow emergency guidelines.`,
+        bgGradient: 'from-red-950/95 via-red-900/90 to-orange-950/95',
+        iconBg: 'bg-red-900/70'
       };
     }
     
-    // Thunderstorm/Storm
-    if (condition.includes('thunder') || condition.includes('storm')) {
+    // Cyclonic Storm (high wind speeds)
+    if (windSpeed > 60 && windSpeed <= 118) {
       return {
-        type: 'Thunderstorm Alert',
+        type: '🌀 Cyclonic Storm',
+        icon: <Wind className="w-16 h-16 sm:w-20 sm:h-20" />,
+        severity: 'high',
+        message: `Strong cyclonic winds at ${Math.round(windSpeed)} km/h. Secure loose objects, stay indoors, and avoid coastal areas.`,
+        bgGradient: 'from-orange-950/95 via-red-900/90 to-pink-950/95',
+        iconBg: 'bg-orange-900/70'
+      };
+    }
+    
+    // Thunderstorm/Lightning/Squalls
+    if (condition.includes('thunder') || condition.includes('storm') || condition.includes('squall') || condition.includes('lightning')) {
+      return {
+        type: '⚡ Thunderstorm Alert',
         icon: <Zap className="w-16 h-16 sm:w-20 sm:h-20" />,
         severity: 'high',
-        message: `Severe thunderstorm in your area. Lightning detected. Seek shelter immediately and avoid outdoor activities.`,
-        bgGradient: 'from-purple-900/90 via-indigo-900/85 to-blue-900/90',
-        iconBg: 'bg-purple-800/60'
+        message: `Severe thunderstorm with lightning detected. Stay indoors, unplug electronics, and avoid open areas and water bodies.`,
+        bgGradient: 'from-purple-950/95 via-indigo-950/90 to-blue-950/95',
+        iconBg: 'bg-purple-900/70'
       };
     }
     
-    // Heavy Rain/Flood Risk
-    if (condition.includes('heavy rain') || condition.includes('torrential') || data.current.precip_mm > 50) {
+    // Heavy Rain/Flash Flood Risk
+    if (condition.includes('heavy rain') || condition.includes('torrential') || precip > 50 || condition.includes('flood')) {
       return {
-        type: 'Heavy Rain Warning',
+        type: '🌊 Heavy Rain & Flash Flood',
         icon: <CloudRain className="w-16 h-16 sm:w-20 sm:h-20" />,
-        severity: 'medium',
-        message: `Heavy rainfall detected (${data.current.precip_mm}mm). Potential flooding in low-lying areas. Exercise caution while traveling.`,
-        bgGradient: 'from-blue-900/90 via-blue-800/85 to-cyan-900/90',
-        iconBg: 'bg-blue-800/60'
+        severity: 'high',
+        message: `Heavy rainfall detected (${precip}mm). Flash flood risk in low-lying areas. Avoid travel and stay away from water bodies.`,
+        bgGradient: 'from-blue-950/95 via-blue-900/90 to-cyan-950/95',
+        iconBg: 'bg-blue-900/70'
       };
     }
     
-    // Blizzard/Heavy Snow
-    if (condition.includes('blizzard') || (condition.includes('snow') && windSpeed > 50)) {
+    // Rain Alert (light to moderate)
+    if (condition.includes('rain') || condition.includes('drizzle') || condition.includes('shower')) {
       return {
-        type: 'Blizzard Warning',
-        icon: <CloudSnow className="w-16 h-16 sm:w-20 sm:h-20" />,
-        severity: 'high',
-        message: `Severe snow conditions with reduced visibility. Avoid unnecessary travel and stay warm.`,
-        bgGradient: 'from-slate-900/90 via-gray-800/85 to-blue-900/90',
+        type: '🌧️ Rain Alert',
+        icon: <CloudDrizzle className="w-16 h-16 sm:w-20 sm:h-20" />,
+        severity: 'low',
+        message: `Rainfall expected in your area. Carry an umbrella and drive carefully on wet roads.`,
+        bgGradient: 'from-slate-900/90 via-blue-900/85 to-gray-900/90',
         iconBg: 'bg-slate-800/60'
       };
     }
     
-    // High Wind Warning
-    if (windSpeed > 60 && windSpeed <= 118) {
+    // Blizzard/Heavy Snow
+    if (condition.includes('blizzard') || (condition.includes('snow') && windSpeed > 30)) {
       return {
-        type: 'High Wind Alert',
-        icon: <Wind className="w-16 h-16 sm:w-20 sm:h-20" />,
-        severity: 'medium',
-        message: `Strong winds detected at ${Math.round(windSpeed)} km/h. Secure loose objects and be cautious of falling debris.`,
-        bgGradient: 'from-teal-900/90 via-cyan-800/85 to-blue-900/90',
-        iconBg: 'bg-teal-800/60'
+        type: '❄️ Blizzard Warning',
+        icon: <CloudSnow className="w-16 h-16 sm:w-20 sm:h-20" />,
+        severity: 'high',
+        message: `Severe snow conditions with strong winds (${Math.round(windSpeed)} km/h). Avoid travel, stay warm, and prepare for power outages.`,
+        bgGradient: 'from-slate-950/95 via-gray-900/90 to-blue-950/95',
+        iconBg: 'bg-slate-900/70'
       };
     }
     
-    // Poor Visibility
+    // Cold Wave / Snow
+    if (temp <= 5 || condition.includes('snow') || condition.includes('ice') || condition.includes('frost') || condition.includes('freeze')) {
+      return {
+        type: '🥶 Cold Wave / Snow',
+        icon: <Snowflake className="w-16 h-16 sm:w-20 sm:h-20" />,
+        severity: 'medium',
+        message: `Extremely cold conditions at ${Math.round(temp)}°C. Risk of hypothermia and frostbite. Wear warm clothing and limit outdoor exposure.`,
+        bgGradient: 'from-cyan-950/90 via-blue-950/85 to-indigo-950/90',
+        iconBg: 'bg-cyan-900/60'
+      };
+    }
+    
+    // Heat Wave
+    if (temp > 35 || feelsLike > 38) {
+      return {
+        type: '🔥 Heat Wave Warning',
+        icon: <Flame className="w-16 h-16 sm:w-20 sm:h-20" />,
+        severity: 'high',
+        message: `Extreme heat at ${Math.round(temp)}°C (feels like ${Math.round(feelsLike)}°C). Stay hydrated, avoid direct sunlight, and check on elderly neighbors.`,
+        bgGradient: 'from-orange-950/95 via-red-900/90 to-yellow-950/95',
+        iconBg: 'bg-orange-900/70'
+      };
+    }
+    
+    // Sandstorm/Dust Storm
+    if (condition.includes('sand') || condition.includes('dust')) {
+      return {
+        type: '🏜️ Sandstorm Alert',
+        icon: <Wind className="w-16 h-16 sm:w-20 sm:h-20" />,
+        severity: 'medium',
+        message: `Sandstorm conditions with poor air quality. Stay indoors, close windows, and wear protective gear if you must go outside.`,
+        bgGradient: 'from-amber-950/90 via-yellow-900/85 to-orange-950/90',
+        iconBg: 'bg-amber-900/60'
+      };
+    }
+    
+    // Fog/Dense Fog/Mist/Haze - Below 10km visibility
+    if (visibility < 10 && (condition.includes('fog') || condition.includes('mist') || condition.includes('haze') || condition.includes('smog'))) {
+      return {
+        type: '🌫️ Dense Fog / Low Visibility',
+        icon: <CloudFog className="w-16 h-16 sm:w-20 sm:h-20" />,
+        severity: 'medium',
+        message: `Very poor visibility (${visibility}km) due to fog/mist. Drive slowly with fog lights, maintain safe distance, and use hazard lights.`,
+        bgGradient: 'from-gray-900/90 via-slate-800/85 to-zinc-900/90',
+        iconBg: 'bg-gray-800/60'
+      };
+    }
+    
+    // Smog
+    if (condition.includes('smog')) {
+      return {
+        type: '😷 Smog Alert',
+        icon: <Eye className="w-16 h-16 sm:w-20 sm:h-20" />,
+        severity: 'medium',
+        message: `High pollution and smog levels. Wear a mask, avoid outdoor activities, and keep windows closed.`,
+        bgGradient: 'from-gray-950/90 via-zinc-900/85 to-slate-950/90',
+        iconBg: 'bg-gray-900/60'
+      };
+    }
+    
+    // Landslide Risk (heavy rain + mountain areas)
+    if ((precip > 30 || condition.includes('heavy')) && condition.includes('rain')) {
+      return {
+        type: '⛰️ Landslide Risk',
+        icon: <Mountain className="w-16 h-16 sm:w-20 sm:h-20" />,
+        severity: 'high',
+        message: `Heavy rainfall may trigger landslides in hilly areas. Avoid slopes, stay alert for unusual sounds, and evacuate if advised.`,
+        bgGradient: 'from-stone-950/90 via-brown-900/85 to-amber-950/90',
+        iconBg: 'bg-stone-900/60'
+      };
+    }
+    
+    // High Wind Warning (40-60 km/h)
+    if (windSpeed > 40 && windSpeed <= 60) {
+      return {
+        type: '💨 High Wind Alert',
+        icon: <Wind className="w-16 h-16 sm:w-20 sm:h-20" />,
+        severity: 'medium',
+        message: `Strong winds at ${Math.round(windSpeed)} km/h. Secure loose objects and be cautious of falling debris.`,
+        bgGradient: 'from-teal-950/90 via-cyan-900/85 to-blue-950/90',
+        iconBg: 'bg-teal-900/60'
+      };
+    }
+    
+    // Low Visibility (less than 1km)
     if (visibility < 1) {
       return {
-        type: 'Low Visibility Alert',
+        type: '⚠️ Critical Low Visibility',
         icon: <AlertTriangle className="w-16 h-16 sm:w-20 sm:h-20" />,
-        severity: 'medium',
-        message: `Very poor visibility (${visibility}km). Drive slowly and use fog lights if traveling.`,
-        bgGradient: 'from-amber-900/90 via-orange-800/85 to-yellow-900/90',
-        iconBg: 'bg-amber-800/60'
+        severity: 'high',
+        message: `Extremely poor visibility (${visibility}km). Avoid travel if possible. Use fog lights and drive at very low speeds.`,
+        bgGradient: 'from-amber-950/95 via-orange-900/90 to-yellow-950/95',
+        iconBg: 'bg-amber-900/70'
       };
     }
     

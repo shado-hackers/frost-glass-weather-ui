@@ -15,7 +15,11 @@ import { formatToIST } from '@/utils/timeUtils';
 import { useLenis } from '@/hooks/useLenis';
 import { toast } from 'sonner';
 
-const API_KEY = '96400e6204fd4ef095123146252610';
+const API_KEYS = [
+  '96400e6204fd4ef095123146252610',
+  '3964227feacd4343b1b82923252810'
+];
+let currentKeyIndex = 0;
 
 const Index = () => {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
@@ -24,14 +28,20 @@ const Index = () => {
   
   useLenis();
 
-  const fetchWeather = async (city: string) => {
+  const fetchWeather = async (city: string, retryCount = 0) => {
     setLoading(true);
     try {
+      const apiKey = API_KEYS[currentKeyIndex];
       const response = await fetch(
-        `https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${encodeURIComponent(city)}&days=7&aqi=yes&alerts=no`
+        `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${encodeURIComponent(city)}&days=7&aqi=yes&alerts=no`
       );
       
       if (!response.ok) {
+        // Try next API key if current one fails
+        if (retryCount < API_KEYS.length - 1) {
+          currentKeyIndex = (currentKeyIndex + 1) % API_KEYS.length;
+          return fetchWeather(city, retryCount + 1);
+        }
         throw new Error('Failed to fetch weather data');
       }
       
