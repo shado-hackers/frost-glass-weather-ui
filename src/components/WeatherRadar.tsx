@@ -20,17 +20,12 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
   const [showLayers, setShowLayers] = useState(false);
   const [activeLayers, setActiveLayers] = useState({
     radar: true,
-    satellite: false,
-    temperature: false,
-    wind: false,
-    cloud: false
+    satellite: false
   });
 
   const animationInterval = useRef<NodeJS.Timeout | null>(null);
   const satelliteLayer = useRef<L.TileLayer | null>(null);
-  const tempLayer = useRef<L.TileLayer | null>(null);
-  const windLayer = useRef<L.TileLayer | null>(null);
-  const cloudLayerRef = useRef<L.TileLayer | null>(null);
+  const [satelliteData, setSatelliteData] = useState<any[]>([]);
 
   // Initialize map
   useEffect(() => {
@@ -83,42 +78,6 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
       className: 'satellite-tiles'
     });
 
-    tempLayer.current = L.tileLayer(
-      'https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=96400e6204fd4ef095123146252610',
-      { 
-        opacity: 0.5,
-        tileSize: 256,
-        maxZoom: 18,
-        updateWhenIdle: true,
-        keepBuffer: 2,
-        className: 'temp-tiles'
-      }
-    );
-
-    windLayer.current = L.tileLayer(
-      'https://tile.openweathermap.org/map/wind_new/{z}/{x}/{y}.png?appid=96400e6204fd4ef095123146252610',
-      { 
-        opacity: 0.5,
-        tileSize: 256,
-        maxZoom: 18,
-        updateWhenIdle: true,
-        keepBuffer: 2,
-        className: 'wind-tiles'
-      }
-    );
-
-    cloudLayerRef.current = L.tileLayer(
-      'https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=96400e6204fd4ef095123146252610',
-      { 
-        opacity: 0.4,
-        tileSize: 256,
-        maxZoom: 18,
-        updateWhenIdle: true,
-        keepBuffer: 2,
-        className: 'cloud-tiles'
-      }
-    );
-
     // Add marker for current location
     const marker = L.marker([lat, lon]).addTo(map.current);
     marker.bindPopup(`<b>${data.location.name}</b>`).openPopup();
@@ -136,7 +95,7 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
     };
   }, [data.location]);
 
-  // Fetch radar data
+  // Fetch radar and satellite data
   useEffect(() => {
     const fetchRadarData = async () => {
       try {
@@ -146,6 +105,11 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
         // Combine past frames with nowcast for smoother animation
         const allFrames = [...apiData.radar.past, ...(apiData.radar.nowcast || [])];
         setRadarHistory(allFrames);
+        
+        // Store satellite data
+        if (apiData.satellite?.infrared) {
+          setSatelliteData(apiData.satellite.infrared);
+        }
         
         if (allFrames.length > 0) {
           const latestIndex = apiData.radar.past.length - 1;
@@ -240,36 +204,16 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
         if (satelliteLayer.current) {
           if (newState) {
             // Load latest satellite data
-            fetch('https://api.rainviewer.com/public/weather-maps.json')
-              .then(res => res.json())
-              .then(data => {
-                if (data.satellite?.infrared?.length > 0) {
-                  const latest = data.satellite.infrared[data.satellite.infrared.length - 1];
-                  satelliteLayer.current?.setUrl(
-                    `https://tilecache.rainviewer.com${latest.path}/256/{z}/{x}/{y}/0/0_0.png`
-                  );
-                  satelliteLayer.current?.addTo(map.current!);
-                }
-              })
-              .catch(err => console.error('Failed to load satellite:', err));
+            if (satelliteData.length > 0) {
+              const latest = satelliteData[satelliteData.length - 1];
+              satelliteLayer.current.setUrl(
+                `https://tilecache.rainviewer.com${latest.path}/256/{z}/{x}/{y}/0/0_0.png`
+              );
+              satelliteLayer.current.addTo(map.current);
+            }
           } else {
             satelliteLayer.current.remove();
           }
-        }
-        break;
-      case 'temperature':
-        if (tempLayer.current) {
-          newState ? tempLayer.current.addTo(map.current) : tempLayer.current.remove();
-        }
-        break;
-      case 'wind':
-        if (windLayer.current) {
-          newState ? windLayer.current.addTo(map.current) : windLayer.current.remove();
-        }
-        break;
-      case 'cloud':
-        if (cloudLayerRef.current) {
-          newState ? cloudLayerRef.current.addTo(map.current) : cloudLayerRef.current.remove();
         }
         break;
     }
@@ -298,7 +242,7 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
           .leaflet-zoom-anim .leaflet-zoom-animated { 
             will-change: auto !important;
           }
-          .map-tiles, .radar-tiles, .satellite-tiles, .temp-tiles, .wind-tiles, .cloud-tiles {
+          .map-tiles, .radar-tiles, .satellite-tiles {
             image-rendering: -webkit-optimize-contrast;
             image-rendering: crisp-edges;
           }
@@ -335,10 +279,7 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
                 className="w-5 h-5 rounded border-gray-300 accent-primary cursor-pointer"
               />
               <span className="text-sm text-foreground capitalize font-medium">
-                {key === 'radar' ? '🌧️ Radar' : 
-                 key === 'satellite' ? '🛰️ Satellite' :
-                 key === 'temperature' ? '🌡️ Temperature' :
-                 key === 'wind' ? '🌬️ Wind' : '☁️ Clouds'}
+                {key === 'radar' ? '🌧️ Precipitation Radar' : '🛰️ Satellite Infrared'}
               </span>
             </label>
           ))}
