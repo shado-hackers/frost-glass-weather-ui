@@ -106,26 +106,26 @@ export const DayForecastGraph = ({ data }: DayForecastGraphProps) => {
     <div className="bg-card/60 backdrop-blur-xl border border-border/20 rounded-3xl overflow-hidden shadow-xl animate-fade-in gpu-accelerated">
       {/* Top Section - Current Weather */}
       <div 
-        className="relative h-48 sm:h-56 overflow-hidden bg-cover bg-center transition-all duration-1000 ease-in-out"
+        className="relative h-52 sm:h-60 overflow-hidden bg-cover bg-center transition-all duration-1000 ease-in-out"
         style={{ 
           backgroundImage: `url('${backgroundImage}')`,
           backgroundAttachment: 'fixed'
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/30 backdrop-blur-[2px]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/50 backdrop-blur-[2px]" />
         
-        <div className="relative p-5 sm:p-6 text-white flex flex-col justify-end h-full">
-          <p className="text-base sm:text-lg font-light text-white/90 mb-1">
+        <div className="relative p-4 sm:p-6 text-white flex flex-col justify-end h-full">
+          <p className="text-sm sm:text-base font-light text-white/95 mb-1.5 drop-shadow-md">
             {getGreeting()}
           </p>
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-2 leading-tight text-white drop-shadow-lg">
-            It's <span className="text-white">{Math.round(data.current.temp_c)}°</span> and {currentCondition}
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight mb-2.5 leading-snug text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] break-words">
+            It's <span className="text-white font-extrabold">{Math.round(data.current.temp_c)}°</span> and {currentCondition}
           </h1>
-          <p className="text-base sm:text-lg font-light text-white/90 mb-3">
-            Feels Like <span className="font-medium">{feelsLike}°</span>
+          <p className="text-sm sm:text-base font-light text-white/95 mb-2.5 drop-shadow-md">
+            Feels Like <span className="font-semibold">{feelsLike}°</span>
           </p>
-          <p className="text-lg sm:text-xl font-medium text-white">
-            Day <span className="text-orange-300">{dayTemp}°</span> • Night <span className="text-blue-300">{nightTemp}°</span>
+          <p className="text-base sm:text-lg font-semibold text-white drop-shadow-md">
+            Day <span className="text-orange-200 font-bold">{dayTemp}°</span> • Night <span className="text-blue-200 font-bold">{nightTemp}°</span>
           </p>
         </div>
       </div>
