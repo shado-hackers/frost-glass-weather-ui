@@ -84,14 +84,16 @@ export const DayForecastGraph = ({ data }: DayForecastGraphProps) => {
     ).join(' ');
   }, [graphPoints]);
 
-  const currentHour = new Date().getHours();
+  // Use location's local time instead of browser time
+  const locationTime = new Date(data.location.localtime);
+  const currentHour = locationTime.getHours();
   const isDay = currentHour >= 6 && currentHour < 20;
   const currentCondition = data.current.condition.text;
   const feelsLike = Math.round(data.current.feelslike_c);
   const dayTemp = Math.round(data.forecast.forecastday[0].day.maxtemp_c);
   const nightTemp = Math.round(data.forecast.forecastday[0].day.mintemp_c);
 
-  // Get greeting based on time
+  // Get greeting based on location's local time
   const getGreeting = () => {
     if (currentHour >= 5 && currentHour < 12) return 'Good morning';
     if (currentHour >= 12 && currentHour < 17) return 'Good afternoon';
