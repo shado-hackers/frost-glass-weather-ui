@@ -43,16 +43,19 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
       zoomControl: true,
       attributionControl: false,
       preferCanvas: true, // Better performance
-      zoomAnimation: true
+      zoomAnimation: true,
+      wheelDebounceTime: 100, // Smooth wheel zoom
+      wheelPxPerZoomLevel: 120
     }).setView([lat, lon], 8);
 
-    // Base layer with better tiles
+    // Base layer with better tiles and performance
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap',
       maxZoom: 19,
-      updateWhenIdle: false,
+      updateWhenIdle: true, // Better performance
       updateWhenZooming: false,
-      keepBuffer: 2
+      keepBuffer: 4,
+      maxNativeZoom: 18
     }).addTo(map.current);
 
     // Initialize layers with better configuration
@@ -61,9 +64,9 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
       tileSize: 256,
       maxZoom: 19,
       attribution: 'Radar © RainViewer',
-      updateWhenIdle: false,
+      updateWhenIdle: true,
       updateWhenZooming: false,
-      keepBuffer: 2
+      keepBuffer: 4
     });
 
     satelliteLayer.current = L.tileLayer('', {
@@ -71,8 +74,8 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
       tileSize: 256,
       maxZoom: 19,
       attribution: 'Satellite © RainViewer',
-      updateWhenIdle: false,
-      keepBuffer: 2
+      updateWhenIdle: true,
+      keepBuffer: 4
     });
 
     tempLayer.current = L.tileLayer(
@@ -81,8 +84,8 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
         opacity: 0.5,
         tileSize: 256,
         maxZoom: 19,
-        updateWhenIdle: false,
-        keepBuffer: 2
+        updateWhenIdle: true,
+        keepBuffer: 4
       }
     );
 
@@ -92,8 +95,8 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
         opacity: 0.5,
         tileSize: 256,
         maxZoom: 19,
-        updateWhenIdle: false,
-        keepBuffer: 2
+        updateWhenIdle: true,
+        keepBuffer: 4
       }
     );
 
@@ -103,8 +106,8 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
         opacity: 0.4,
         tileSize: 256,
         maxZoom: 19,
-        updateWhenIdle: false,
-        keepBuffer: 2
+        updateWhenIdle: true,
+        keepBuffer: 4
       }
     );
 

@@ -12,7 +12,7 @@ import { AirQualityCard } from '@/components/AirQualityCard';
 import { WindPressureCard } from '@/components/WindPressureCard';
 import { DetailsCard } from '@/components/DetailsCard';
 import { SunriseSunsetCard } from '@/components/SunriseSunsetCard';
-import { formatToIST } from '@/utils/timeUtils';
+import { formatLocalDateTime } from '@/utils/timeUtils';
 import { useLenis } from '@/hooks/useLenis';
 import { toast } from 'sonner';
 
@@ -94,7 +94,7 @@ const Index = () => {
 
   const currentHour = new Date().getHours();
   const isDay = currentHour >= 6 && currentHour < 20;
-  const { day, time } = formatToIST(weatherData.location.localtime);
+  const localDateTime = formatLocalDateTime(weatherData.location.localtime);
 
   return (
     <div className="min-h-screen relative overflow-x-hidden">
@@ -110,11 +110,11 @@ const Index = () => {
 
         {/* Location & Time */}
         <div className="text-center mb-6 sm:mb-8 animate-slide-up px-2" style={{ animationDelay: '0.05s' }}>
-          <h2 className="text-xl sm:text-2xl font-semibold text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] mb-1">
-            {weatherData.location.name}
+          <h2 className="text-xl sm:text-2xl font-semibold text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] mb-1.5">
+            {weatherData.location.name}, {weatherData.location.country}
           </h2>
           <div className="text-sm sm:text-base text-white/95 drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)] font-medium">
-            {day} {time}
+            {localDateTime}
           </div>
         </div>
 

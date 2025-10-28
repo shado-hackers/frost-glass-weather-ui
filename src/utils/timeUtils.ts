@@ -30,3 +30,21 @@ export const formatToIST = (dateString: string): { day: string; time: string } =
   
   return { day, time };
 };
+
+// Format local time with full date and weekday
+export const formatLocalDateTime = (dateString: string): string => {
+  const date = new Date(dateString);
+  
+  const weekday = date.toLocaleDateString('en-US', { weekday: 'short' });
+  const month = date.toLocaleDateString('en-US', { month: 'short' });
+  const day = date.getDate();
+  
+  let hours = date.getHours();
+  const minutes = date.getMinutes();
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  hours = hours ? hours : 12;
+  const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+  
+  return `${weekday}, ${month} ${day} • ${hours}:${minutesStr} ${ampm}`;
+};
