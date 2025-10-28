@@ -16,7 +16,7 @@ export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
   const timeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
-    if (query.length < 1) {
+    if (query.length < 2) {
       setSuggestions([]);
       return;
     }
@@ -39,7 +39,7 @@ export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
       } finally {
         setLoading(false);
       }
-    }, 250);
+    }, 300);
 
     return () => {
       if (timeoutRef.current) {
@@ -71,7 +71,7 @@ export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
 
       {isOpen && suggestions.length > 0 && (
         <div className="absolute top-full mt-2 w-full bg-background/95 backdrop-blur-xl border border-border/30 rounded-2xl overflow-hidden z-50 animate-fade-in max-h-[70vh] overflow-y-auto smooth-scroll shadow-2xl">
-          {suggestions.map((city) => (
+          {suggestions.slice(0, 20).map((city) => (
             <button
               key={`${city.lat}-${city.lon}`}
               onClick={() => handleSelect(city)}

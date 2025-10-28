@@ -92,21 +92,18 @@ export const WeatherBackground = ({ condition, isDay }: WeatherBackgroundProps) 
   }, [condition]);
 
   const renderWeatherEffects = () => {
-    // Rain effects
-    if (conditionLower.includes('rain') || conditionLower.includes('drizzle')) {
+    if (conditionLower.includes('rain') || conditionLower.includes('storm')) {
       return (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {particles.map((particle) => (
             <div
               key={particle.id}
-              className="absolute w-0.5 bg-gradient-to-b from-blue-200/60 to-blue-300/30"
+              className="absolute w-0.5 h-12 bg-white/30"
               style={{
                 left: `${particle.x}%`,
                 top: '-48px',
-                height: `${40 + Math.random() * 20}px`,
-                animation: `fall 0.8s linear infinite`,
+                animation: `fall 1s linear infinite`,
                 animationDelay: `${particle.delay}s`,
-                filter: 'blur(0.5px)',
               }}
             />
           ))}
@@ -114,60 +111,18 @@ export const WeatherBackground = ({ condition, isDay }: WeatherBackgroundProps) 
       );
     }
 
-    // Thunderstorm effects with lightning
-    if (conditionLower.includes('thunder') || conditionLower.includes('storm')) {
-      return (
-        <>
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {particles.map((particle) => (
-              <div
-                key={particle.id}
-                className="absolute w-0.5 bg-gradient-to-b from-blue-200/70 to-blue-300/40"
-                style={{
-                  left: `${particle.x}%`,
-                  top: '-48px',
-                  height: `${45 + Math.random() * 25}px`,
-                  animation: `fall 0.6s linear infinite`,
-                  animationDelay: `${particle.delay}s`,
-                  filter: 'blur(0.5px)',
-                }}
-              />
-            ))}
-          </div>
-          {/* Lightning flashes */}
-          <div className="absolute inset-0 pointer-events-none">
-            <div 
-              className="absolute inset-0 bg-white/40"
-              style={{
-                animation: 'lightning 8s ease-in-out infinite',
-              }}
-            />
-            <div 
-              className="absolute top-[20%] left-[30%] w-1 h-[40%] bg-white/80 blur-sm"
-              style={{
-                animation: 'lightning-bolt 8s ease-in-out infinite',
-                clipPath: 'polygon(50% 0%, 40% 40%, 60% 40%, 45% 100%, 55% 60%, 50% 60%)',
-              }}
-            />
-          </div>
-        </>
-      );
-    }
-
-    // Snow effects
     if (conditionLower.includes('snow')) {
       return (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {particles.map((particle) => (
             <div
               key={particle.id}
-              className="absolute w-2 h-2 bg-white/80 rounded-full"
+              className="absolute w-2 h-2 bg-white/70 rounded-full"
               style={{
                 left: `${particle.x}%`,
                 top: '-8px',
-                animation: `fall 3s linear infinite, sway 2.5s ease-in-out infinite`,
+                animation: `fall 3s linear infinite, sway 2s ease-in-out infinite`,
                 animationDelay: `${particle.delay}s`,
-                filter: 'blur(1px)',
               }}
             />
           ))}
@@ -175,20 +130,18 @@ export const WeatherBackground = ({ condition, isDay }: WeatherBackgroundProps) 
       );
     }
 
-    // Stars for clear night
     if (!isDay && conditionLower.includes('clear')) {
       return (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {Array.from({ length: 80 }, (_, i) => (
+          {Array.from({ length: 50 }, (_, i) => (
             <div
               key={i}
-              className="absolute w-1 h-1 bg-white/90 rounded-full animate-pulse"
+              className="absolute w-1 h-1 bg-white/80 rounded-full animate-pulse"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
                 animationDelay: `${Math.random() * 3}s`,
                 animationDuration: `${2 + Math.random() * 2}s`,
-                boxShadow: '0 0 2px rgba(255,255,255,0.8)',
               }}
             />
           ))}
@@ -213,22 +166,14 @@ export const WeatherBackground = ({ condition, isDay }: WeatherBackgroundProps) 
       {/* Gradient overlay for depth */}
       <div className={`fixed inset-0 bg-gradient-to-br ${gradient} opacity-30 transition-all duration-1000 ease-in-out mix-blend-overlay`} />
       
-      {/* Dynamic flying cloud layers for cloudy conditions */}
+      {/* Dynamic cloud layers for cloudy conditions */}
       {(conditionLower.includes('cloud') || conditionLower.includes('overcast')) && (
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 left-0 w-full h-full opacity-15">
-            <div className="absolute top-[10%] w-96 h-48 bg-white/30 rounded-full blur-3xl" 
-                 style={{ animation: 'cloud-float-1 25s ease-in-out infinite' }} />
-            <div className="absolute top-[25%] w-80 h-40 bg-white/25 rounded-full blur-3xl" 
-                 style={{ animation: 'cloud-float-2 30s ease-in-out infinite', animationDelay: '3s' }} />
-            <div className="absolute top-[45%] w-72 h-36 bg-white/35 rounded-full blur-3xl" 
-                 style={{ animation: 'cloud-float-3 28s ease-in-out infinite', animationDelay: '6s' }} />
-            <div className="absolute top-[15%] w-64 h-32 bg-white/20 rounded-full blur-3xl" 
-                 style={{ animation: 'cloud-float-2 32s ease-in-out infinite', animationDelay: '9s' }} />
-            <div className="absolute top-[60%] w-80 h-44 bg-white/28 rounded-full blur-3xl" 
-                 style={{ animation: 'cloud-float-1 27s ease-in-out infinite', animationDelay: '12s' }} />
-            <div className="absolute top-[35%] w-88 h-40 bg-white/22 rounded-full blur-3xl" 
-                 style={{ animation: 'cloud-float-3 29s ease-in-out infinite', animationDelay: '15s' }} />
+          <div className="absolute top-0 left-0 w-full h-full opacity-10">
+            <div className="absolute top-[10%] left-[5%] w-96 h-48 bg-white/20 rounded-full blur-3xl animate-float" />
+            <div className="absolute top-[30%] right-[10%] w-80 h-40 bg-white/15 rounded-full blur-3xl animate-float" style={{ animationDelay: '3s' }} />
+            <div className="absolute top-[50%] left-[20%] w-72 h-36 bg-white/25 rounded-full blur-3xl animate-float" style={{ animationDelay: '5s' }} />
+            <div className="absolute top-[20%] right-[30%] w-64 h-32 bg-white/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '7s' }} />
           </div>
         </div>
       )}
@@ -261,48 +206,6 @@ export const WeatherBackground = ({ condition, isDay }: WeatherBackgroundProps) 
           }
           50% {
             transform: translateX(20px);
-          }
-        }
-        @keyframes lightning {
-          0%, 94%, 96%, 100% {
-            opacity: 0;
-          }
-          95% {
-            opacity: 1;
-          }
-        }
-        @keyframes lightning-bolt {
-          0%, 94%, 96%, 100% {
-            opacity: 0;
-            transform: scaleY(0);
-          }
-          95% {
-            opacity: 0.9;
-            transform: scaleY(1);
-          }
-        }
-        @keyframes cloud-float-1 {
-          0%, 100% {
-            transform: translateX(-100px) translateY(0px);
-          }
-          50% {
-            transform: translateX(calc(100vw + 100px)) translateY(-30px);
-          }
-        }
-        @keyframes cloud-float-2 {
-          0%, 100% {
-            transform: translateX(100vw) translateY(0px);
-          }
-          50% {
-            transform: translateX(-200px) translateY(25px);
-          }
-        }
-        @keyframes cloud-float-3 {
-          0%, 100% {
-            transform: translateX(-150px) translateY(-20px);
-          }
-          50% {
-            transform: translateX(calc(100vw + 150px)) translateY(20px);
           }
         }
       `}</style>
