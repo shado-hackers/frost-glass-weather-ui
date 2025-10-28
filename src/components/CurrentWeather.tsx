@@ -13,30 +13,34 @@ export const CurrentWeather = ({ data }: CurrentWeatherProps) => {
 
   return (
     <div className="text-center animate-fade-in px-2">
-      <div className="mb-2">
-        <h1 className="text-xl sm:text-2xl font-light text-foreground/90">{current.condition.text}</h1>
+      <div className="mb-3">
+        <h1 className="text-xl sm:text-2xl font-medium text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)]">
+          {current.condition.text}
+        </h1>
       </div>
 
-      <div className="text-6xl sm:text-8xl font-extralight text-foreground mb-2 sm:mb-4 flex items-center justify-center gap-4">
+      <div className="text-7xl sm:text-8xl font-extralight mb-3 sm:mb-4 flex items-center justify-center gap-3 sm:gap-4">
         <img 
           src={getWeatherIconImage(current.condition.code, isDay)} 
           alt={current.condition.text}
-          className="w-20 h-20 sm:w-28 sm:h-28 weather-icon-animated object-contain"
+          className="w-24 h-24 sm:w-32 sm:h-32 weather-icon-animated object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"
         />
-        <span>{Math.round(current.temp_c)}°<span className="text-4xl sm:text-5xl">c</span></span>
+        <span className="text-white font-light drop-shadow-[0_4px_12px_rgba(0,0,0,0.9)]">
+          {Math.round(current.temp_c)}°<span className="text-4xl sm:text-5xl">c</span>
+        </span>
       </div>
 
-      <div className="flex items-center justify-center flex-wrap gap-2 sm:gap-4 text-xs sm:text-base text-foreground/80 mb-2">
-        <span className="flex items-center gap-1 whitespace-nowrap">
+      <div className="flex items-center justify-center flex-wrap gap-3 sm:gap-4 text-sm sm:text-base mb-2">
+        <span className="flex items-center gap-1.5 whitespace-nowrap text-white/95 drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)] font-medium">
           Feels like: {Math.round(current.feelslike_c)}°C
         </span>
-        <span className="flex items-center gap-1 whitespace-nowrap">
-          <Droplet className="w-3 h-3 sm:w-4 sm:h-4 text-blue-300" />
+        <span className="flex items-center gap-1.5 whitespace-nowrap text-blue-200 drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)] font-medium">
+          <Droplet className="w-4 h-4 sm:w-5 sm:h-5 text-blue-300 drop-shadow-md" />
           {Math.round(data.forecast.forecastday[0].day.mintemp_c)}°C
         </span>
-        <span className="flex items-center gap-1 whitespace-nowrap">
-          <div className="w-3 h-3 sm:w-4 sm:h-4 flex items-center justify-center">
-            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-orange-400" />
+        <span className="flex items-center gap-1.5 whitespace-nowrap text-orange-200 drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)] font-medium">
+          <div className="w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center">
+            <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-orange-400 shadow-lg shadow-orange-500/50" />
           </div>
           {Math.round(data.forecast.forecastday[0].day.maxtemp_c)}°C
         </span>
