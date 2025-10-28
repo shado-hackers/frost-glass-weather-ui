@@ -42,40 +42,45 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
     map.current = L.map(mapContainer.current, {
       zoomControl: true,
       attributionControl: false,
-      preferCanvas: true, // Better performance
-      zoomAnimation: true,
-      wheelDebounceTime: 100, // Smooth wheel zoom
-      wheelPxPerZoomLevel: 120
+      preferCanvas: true,
+      zoomAnimation: false, // Disable for better performance
+      fadeAnimation: false,
+      markerZoomAnimation: false,
+      wheelDebounceTime: 40,
+      wheelPxPerZoomLevel: 60
     }).setView([lat, lon], 8);
 
-    // Base layer with better tiles and performance
+    // Base layer optimized for performance
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap',
-      maxZoom: 19,
-      updateWhenIdle: true, // Better performance
+      maxZoom: 18,
+      updateWhenIdle: true,
       updateWhenZooming: false,
-      keepBuffer: 4,
-      maxNativeZoom: 18
+      keepBuffer: 2,
+      maxNativeZoom: 18,
+      className: 'map-tiles'
     }).addTo(map.current);
 
-    // Initialize layers with better configuration
+    // Initialize layers optimized
     radarLayer.current = L.tileLayer('', {
       opacity: 0.7,
       tileSize: 256,
-      maxZoom: 19,
+      maxZoom: 18,
       attribution: 'Radar © RainViewer',
       updateWhenIdle: true,
       updateWhenZooming: false,
-      keepBuffer: 4
+      keepBuffer: 2,
+      className: 'radar-tiles'
     });
 
     satelliteLayer.current = L.tileLayer('', {
       opacity: 0.6,
       tileSize: 256,
-      maxZoom: 19,
+      maxZoom: 18,
       attribution: 'Satellite © RainViewer',
       updateWhenIdle: true,
-      keepBuffer: 4
+      keepBuffer: 2,
+      className: 'satellite-tiles'
     });
 
     tempLayer.current = L.tileLayer(
@@ -83,9 +88,10 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
       { 
         opacity: 0.5,
         tileSize: 256,
-        maxZoom: 19,
+        maxZoom: 18,
         updateWhenIdle: true,
-        keepBuffer: 4
+        keepBuffer: 2,
+        className: 'temp-tiles'
       }
     );
 
@@ -94,9 +100,10 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
       { 
         opacity: 0.5,
         tileSize: 256,
-        maxZoom: 19,
+        maxZoom: 18,
         updateWhenIdle: true,
-        keepBuffer: 4
+        keepBuffer: 2,
+        className: 'wind-tiles'
       }
     );
 
@@ -105,9 +112,10 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
       { 
         opacity: 0.4,
         tileSize: 256,
-        maxZoom: 19,
+        maxZoom: 18,
         updateWhenIdle: true,
-        keepBuffer: 4
+        keepBuffer: 2,
+        className: 'cloud-tiles'
       }
     );
 
@@ -278,7 +286,24 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
   return (
     <div className="relative w-full h-[450px] sm:h-[550px] rounded-3xl overflow-hidden border border-border/20 shadow-xl">
       {/* Map Container */}
-      <div ref={mapContainer} className="absolute inset-0 z-10 bg-gray-100 dark:bg-gray-900" />
+      <div ref={mapContainer} className="absolute inset-0 z-10 bg-gray-100 dark:bg-gray-900">
+        <style>{`
+          .leaflet-tile-container { 
+            will-change: transform;
+            transition: none !important;
+          }
+          .leaflet-fade-anim .leaflet-tile { 
+            will-change: auto !important;
+          }
+          .leaflet-zoom-anim .leaflet-zoom-animated { 
+            will-change: auto !important;
+          }
+          .map-tiles, .radar-tiles, .satellite-tiles, .temp-tiles, .wind-tiles, .cloud-tiles {
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+          }
+        `}</style>
+      </div>
 
       {/* Layer Controls - Styled like reference */}
       <button

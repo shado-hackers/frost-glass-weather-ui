@@ -235,3 +235,53 @@ All colors MUST be HSL.
     }
   }
 }
+
+/* Leaflet map optimizations - Hide loading indicators */
+.leaflet-tile-pane {
+  will-change: transform;
+}
+
+.leaflet-tile {
+  will-change: auto !important;
+}
+
+/* Hide Leaflet loading animations and progress bars */
+.leaflet-control-container .leaflet-control-scale,
+.leaflet-control-container .leaflet-bar {
+  transition: none !important;
+}
+
+.leaflet-fade-anim .leaflet-tile,
+.leaflet-fade-anim .leaflet-popup {
+  transition: none !important;
+  animation: none !important;
+}
+
+.leaflet-zoom-anim .leaflet-zoom-animated {
+  transition: none !important;
+}
+
+/* Prevent jank on mobile */
+@media (max-width: 768px) {
+  .leaflet-container {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: pan-x pan-y;
+  }
+  
+  .leaflet-tile-container {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Performance: Disable animations during loading */
+.leaflet-tile-loading {
+  opacity: 0 !important;
+  transition: none !important;
+}
+
+/* Fast tile rendering */
+.leaflet-tile {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
