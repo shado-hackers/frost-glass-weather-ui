@@ -1,7 +1,33 @@
 import { WeatherData } from '@/types/weather';
 import { getWeatherIconImage } from '@/utils/weatherIcons';
-import { Cloud, CloudRain, CloudSnow, CloudDrizzle } from 'lucide-react';
 import { useMemo } from 'react';
+
+// Weather background images mapping
+const getWeatherBackground = (condition: string, isDay: boolean): string => {
+  const conditionLower = condition.toLowerCase();
+  
+  if (conditionLower.includes('thunder') || conditionLower.includes('storm')) {
+    return 'https://images.unsplash.com/photo-1605727216801-e27ce1d0cc28?w=800&auto=format&fit=crop';
+  }
+  if (conditionLower.includes('rain') || conditionLower.includes('drizzle')) {
+    return 'https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?w=800&auto=format&fit=crop';
+  }
+  if (conditionLower.includes('snow') || conditionLower.includes('blizzard')) {
+    return 'https://images.unsplash.com/photo-1491002052546-bf38f186af56?w=800&auto=format&fit=crop';
+  }
+  if (conditionLower.includes('fog') || conditionLower.includes('mist')) {
+    return 'https://images.unsplash.com/photo-1487621167305-5d248087c724?w=800&auto=format&fit=crop';
+  }
+  if (conditionLower.includes('cloud') || conditionLower.includes('overcast')) {
+    return isDay 
+      ? 'https://images.unsplash.com/photo-1513002749550-c59d786b8e6c?w=800&auto=format&fit=crop'
+      : 'https://images.unsplash.com/photo-1532178910-7815d6919875?w=800&auto=format&fit=crop';
+  }
+  // Clear/Sunny
+  return isDay
+    ? 'https://images.unsplash.com/photo-1601297183305-6df142704ea2?w=800&auto=format&fit=crop'
+    : 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&auto=format&fit=crop';
+};
 
 interface DayForecastGraphProps {
   data: WeatherData;
@@ -59,6 +85,7 @@ export const DayForecastGraph = ({ data }: DayForecastGraphProps) => {
   }, [graphPoints]);
 
   const currentHour = new Date().getHours();
+  const isDay = currentHour >= 6 && currentHour < 20;
   const currentCondition = data.current.condition.text;
   const feelsLike = Math.round(data.current.feelslike_c);
   const dayTemp = Math.round(data.forecast.forecastday[0].day.maxtemp_c);
@@ -72,30 +99,39 @@ export const DayForecastGraph = ({ data }: DayForecastGraphProps) => {
     return 'Good night';
   };
 
+  // Get background image based on weather condition
+  const backgroundImage = getWeatherBackground(currentCondition, isDay);
+
   return (
     <div className="bg-card/60 backdrop-blur-xl border border-border/20 rounded-3xl overflow-hidden shadow-xl animate-fade-in gpu-accelerated">
       {/* Top Section - Current Weather */}
-      <div className="relative h-48 sm:h-56 overflow-hidden bg-gradient-to-br from-primary/20 via-primary/10 to-background/50">
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/20" />
+      <div 
+        className="relative h-48 sm:h-56 overflow-hidden bg-cover bg-center transition-all duration-1000 ease-in-out"
+        style={{ 
+          backgroundImage: `url('${backgroundImage}')`,
+          backgroundAttachment: 'fixed'
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/30 backdrop-blur-[2px]" />
         
-        <div className="relative p-5 sm:p-6 text-foreground flex flex-col justify-end h-full">
-          <p className="text-base sm:text-lg font-light text-foreground/80 mb-1">
+        <div className="relative p-5 sm:p-6 text-white flex flex-col justify-end h-full">
+          <p className="text-base sm:text-lg font-light text-white/90 mb-1">
             {getGreeting()}
           </p>
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-2 leading-tight">
-            It's <span className="text-primary">{Math.round(data.current.temp_c)}°</span> and {currentCondition}
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-2 leading-tight text-white drop-shadow-lg">
+            It's <span className="text-white">{Math.round(data.current.temp_c)}°</span> and {currentCondition}
           </h1>
-          <p className="text-base sm:text-lg font-light text-foreground/80 mb-3">
+          <p className="text-base sm:text-lg font-light text-white/90 mb-3">
             Feels Like <span className="font-medium">{feelsLike}°</span>
           </p>
-          <p className="text-lg sm:text-xl font-medium">
-            Day <span className="text-orange-400">{dayTemp}°</span> • Night <span className="text-blue-400">{nightTemp}°</span>
+          <p className="text-lg sm:text-xl font-medium text-white">
+            Day <span className="text-orange-300">{dayTemp}°</span> • Night <span className="text-blue-300">{nightTemp}°</span>
           </p>
         </div>
       </div>
 
       {/* Bottom Section - Forecast Graph */}
-      <div className="p-4 sm:p-6 bg-gradient-to-br from-card/90 via-card/80 to-card/70 backdrop-blur-lg">
+      <div className="p-4 sm:p-6 bg-gradient-to-br from-white/40 via-white/30 to-white/20 dark:from-card/90 dark:via-card/80 dark:to-card/70 backdrop-blur-lg">
         <p className="text-foreground/70 text-xs sm:text-sm mb-4 leading-relaxed">
           {data.current.condition.text} conditions right now in {data.location.name}
         </p>
