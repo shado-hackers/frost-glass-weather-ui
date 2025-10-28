@@ -20,12 +20,14 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
   const [showLayers, setShowLayers] = useState(false);
   const [activeLayers, setActiveLayers] = useState({
     radar: true,
+    satellite: false,
     temperature: false,
     wind: false,
     cloud: false
   });
 
   const animationInterval = useRef<NodeJS.Timeout | null>(null);
+  const satelliteLayer = useRef<L.TileLayer | null>(null);
   const tempLayer = useRef<L.TileLayer | null>(null);
   const windLayer = useRef<L.TileLayer | null>(null);
   const cloudLayerRef = useRef<L.TileLayer | null>(null);
@@ -39,33 +41,71 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
 
     map.current = L.map(mapContainer.current, {
       zoomControl: true,
-      attributionControl: true
+      attributionControl: false,
+      preferCanvas: true, // Better performance
+      zoomAnimation: true
     }).setView([lat, lon], 8);
 
-    // Base layer
+    // Base layer with better tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap'
+      attribution: '© OpenStreetMap',
+      maxZoom: 19,
+      updateWhenIdle: false,
+      updateWhenZooming: false,
+      keepBuffer: 2
     }).addTo(map.current);
 
-    // Initialize layers
+    // Initialize layers with better configuration
     radarLayer.current = L.tileLayer('', {
       opacity: 0.7,
-      attribution: 'Radar © RainViewer'
+      tileSize: 256,
+      maxZoom: 19,
+      attribution: 'Radar © RainViewer',
+      updateWhenIdle: false,
+      updateWhenZooming: false,
+      keepBuffer: 2
+    });
+
+    satelliteLayer.current = L.tileLayer('', {
+      opacity: 0.6,
+      tileSize: 256,
+      maxZoom: 19,
+      attribution: 'Satellite © RainViewer',
+      updateWhenIdle: false,
+      keepBuffer: 2
     });
 
     tempLayer.current = L.tileLayer(
-      'https://tile.open-meteo.com/map/temperature_2m/{z}/{x}/{y}.png',
-      { opacity: 0.6 }
+      'https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=96400e6204fd4ef095123146252610',
+      { 
+        opacity: 0.5,
+        tileSize: 256,
+        maxZoom: 19,
+        updateWhenIdle: false,
+        keepBuffer: 2
+      }
     );
 
     windLayer.current = L.tileLayer(
-      'https://tile.open-meteo.com/map/wind_speed_10m/{z}/{x}/{y}.png',
-      { opacity: 0.6 }
+      'https://tile.openweathermap.org/map/wind_new/{z}/{x}/{y}.png?appid=96400e6204fd4ef095123146252610',
+      { 
+        opacity: 0.5,
+        tileSize: 256,
+        maxZoom: 19,
+        updateWhenIdle: false,
+        keepBuffer: 2
+      }
     );
 
     cloudLayerRef.current = L.tileLayer(
-      'https://tile.open-meteo.com/map/cloud_cover/{z}/{x}/{y}.png',
-      { opacity: 0.5 }
+      'https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=96400e6204fd4ef095123146252610',
+      { 
+        opacity: 0.4,
+        tileSize: 256,
+        maxZoom: 19,
+        updateWhenIdle: false,
+        keepBuffer: 2
+      }
     );
 
     // Add marker for current location
@@ -91,11 +131,15 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
       try {
         const res = await fetch('https://api.rainviewer.com/public/weather-maps.json');
         const apiData = await res.json();
-        setRadarHistory(apiData.radar.past);
-        if (apiData.radar.past.length > 0) {
+        
+        // Combine past frames with nowcast for smoother animation
+        const allFrames = [...apiData.radar.past, ...(apiData.radar.nowcast || [])];
+        setRadarHistory(allFrames);
+        
+        if (allFrames.length > 0) {
           const latestIndex = apiData.radar.past.length - 1;
           setCurrentFrame(latestIndex);
-          updateRadarFrame(latestIndex, apiData.radar.past);
+          updateRadarFrame(latestIndex, allFrames);
         }
       } catch (error) {
         console.error('Failed to fetch radar data:', error);
@@ -111,14 +155,17 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
 
   // Update radar frame
   const updateRadarFrame = (index: number, history = radarHistory) => {
-    if (!history[index] || !radarLayer.current) return;
+    if (!history[index]) return;
 
     const frame = history[index];
     const dt = new Date(frame.time * 1000);
 
-    radarLayer.current.setUrl(
-      `https://tilecache.rainviewer.com/v2/radar/${frame.path}/256/{z}/{x}/{y}/2/1_1.png`
-    );
+    // Update radar layer with better tile configuration
+    if (radarLayer.current && activeLayers.radar) {
+      radarLayer.current.setUrl(
+        `https://tilecache.rainviewer.com${frame.path}/256/{z}/{x}/{y}/2/1_1.png`
+      );
+    }
 
     setTimestamp(
       dt.toLocaleTimeString('en-IN', {
@@ -130,7 +177,7 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
     setCurrentFrame(index);
   };
 
-  // Play/Pause animation
+  // Play/Pause animation with optimized frame rate
   const togglePlay = () => {
     if (isPlaying) {
       if (animationInterval.current) {
@@ -146,7 +193,7 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
           updateRadarFrame(next);
           return next;
         });
-      }, 500);
+      }, 400); // Slightly faster for smoother animation
     }
   };
 
@@ -157,7 +204,7 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
     updateRadarFrame(index);
   };
 
-  // Toggle layers
+  // Toggle layers with optimized rendering
   const toggleLayer = (layer: keyof typeof activeLayers) => {
     const newState = !activeLayers[layer];
     setActiveLayers({ ...activeLayers, [layer]: newState });
@@ -167,7 +214,36 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
     switch (layer) {
       case 'radar':
         if (radarLayer.current) {
-          newState ? radarLayer.current.addTo(map.current) : radarLayer.current.remove();
+          if (newState) {
+            radarLayer.current.addTo(map.current);
+            // Reload current frame
+            if (radarHistory[currentFrame]) {
+              updateRadarFrame(currentFrame);
+            }
+          } else {
+            radarLayer.current.remove();
+          }
+        }
+        break;
+      case 'satellite':
+        if (satelliteLayer.current) {
+          if (newState) {
+            // Load latest satellite data
+            fetch('https://api.rainviewer.com/public/weather-maps.json')
+              .then(res => res.json())
+              .then(data => {
+                if (data.satellite?.infrared?.length > 0) {
+                  const latest = data.satellite.infrared[data.satellite.infrared.length - 1];
+                  satelliteLayer.current?.setUrl(
+                    `https://tilecache.rainviewer.com${latest.path}/256/{z}/{x}/{y}/0/0_0.png`
+                  );
+                  satelliteLayer.current?.addTo(map.current!);
+                }
+              })
+              .catch(err => console.error('Failed to load satellite:', err));
+          } else {
+            satelliteLayer.current.remove();
+          }
         }
         break;
       case 'temperature':
@@ -197,36 +273,45 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
   }, []);
 
   return (
-    <div className="relative w-full h-[400px] sm:h-[500px] rounded-3xl overflow-hidden border border-border/20 shadow-xl">
+    <div className="relative w-full h-[450px] sm:h-[550px] rounded-3xl overflow-hidden border border-border/20 shadow-xl">
       {/* Map Container */}
-      <div ref={mapContainer} className="absolute inset-0 z-10" />
+      <div ref={mapContainer} className="absolute inset-0 z-10 bg-gray-100 dark:bg-gray-900" />
 
-      {/* Layer Controls */}
+      {/* Layer Controls - Styled like reference */}
       <button
         onClick={() => setShowLayers(!showLayers)}
-        className="absolute top-4 right-4 z-30 p-3 bg-white dark:bg-card rounded-xl shadow-lg border border-border/20 hover:bg-gray-50 dark:hover:bg-card/80 transition-all"
+        className="absolute top-4 right-4 z-30 p-3 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-border/20 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
+        aria-label="Toggle layers"
       >
-        <LayersIcon className="w-5 h-5 text-foreground" />
+        <LayersIcon className="w-6 h-6 text-foreground" />
       </button>
 
       {showLayers && (
-        <div className="absolute top-16 right-4 z-30 bg-white dark:bg-card rounded-xl shadow-xl border border-border/20 p-4 min-w-[200px]">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-semibold text-foreground text-sm">Layers</h3>
-            <button onClick={() => setShowLayers(false)}>
-              <X className="w-4 h-4 text-foreground/60" />
+        <div className="absolute top-20 right-4 z-30 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-border/20 p-4 min-w-[220px]">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-bold text-foreground text-base">Map Layers</h3>
+            <button 
+              onClick={() => setShowLayers(false)}
+              className="hover:bg-gray-100 dark:hover:bg-gray-700 p-1 rounded-lg transition-colors"
+            >
+              <X className="w-5 h-5 text-foreground/60" />
             </button>
           </div>
           
           {Object.entries(activeLayers).map(([key, active]) => (
-            <label key={key} className="flex items-center gap-2 py-2 cursor-pointer">
+            <label key={key} className="flex items-center gap-3 py-2.5 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 px-2 rounded-lg transition-colors">
               <input
                 type="checkbox"
                 checked={active}
                 onChange={() => toggleLayer(key as keyof typeof activeLayers)}
-                className="w-4 h-4 rounded border-gray-300"
+                className="w-5 h-5 rounded border-gray-300 accent-primary cursor-pointer"
               />
-              <span className="text-sm text-foreground capitalize">{key}</span>
+              <span className="text-sm text-foreground capitalize font-medium">
+                {key === 'radar' ? '🌧️ Radar' : 
+                 key === 'satellite' ? '🛰️ Satellite' :
+                 key === 'temperature' ? '🌡️ Temperature' :
+                 key === 'wind' ? '🌬️ Wind' : '☁️ Clouds'}
+              </span>
             </label>
           ))}
         </div>
@@ -253,32 +338,41 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
         ))}
       </div>
 
-      {/* Playback Controls */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-11/12 max-w-2xl z-20">
-        <div className="bg-white/95 dark:bg-card/95 backdrop-blur-sm rounded-xl shadow-lg border border-border/20 p-3 sm:p-4">
-          <div className="flex items-center gap-3 sm:gap-4">
+      {/* Playback Controls - Styled like reference */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-11/12 max-w-3xl z-20">
+        <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-md rounded-2xl shadow-2xl border border-border/20 p-4 sm:p-5">
+          <div className="flex items-center gap-4 sm:gap-5">
             <button
               onClick={togglePlay}
-              className="p-2 rounded-full bg-primary text-primary-foreground hover:opacity-90 transition-all flex-shrink-0"
+              className="p-3 sm:p-4 rounded-full bg-primary text-primary-foreground hover:opacity-90 transition-all flex-shrink-0 shadow-lg"
+              aria-label={isPlaying ? 'Pause' : 'Play'}
             >
               {isPlaying ? (
-                <Pause className="w-5 h-5" />
+                <Pause className="w-6 h-6" />
               ) : (
-                <Play className="w-5 h-5" />
+                <Play className="w-6 h-6 ml-0.5" />
               )}
             </button>
             
-            <div className="flex-1 flex flex-col gap-2">
+            <div className="flex-1 flex flex-col gap-2.5">
               <input
                 type="range"
                 min="0"
                 max={Math.max(0, radarHistory.length - 1)}
                 value={currentFrame}
                 onChange={handleSliderChange}
-                className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-primary"
+                className="w-full h-2.5 bg-gray-200 dark:bg-gray-700 rounded-full appearance-none cursor-pointer accent-primary"
+                style={{
+                  background: `linear-gradient(to right, hsl(var(--primary)) 0%, hsl(var(--primary)) ${(currentFrame / Math.max(1, radarHistory.length - 1)) * 100}%, rgb(229 231 235) ${(currentFrame / Math.max(1, radarHistory.length - 1)) * 100}%, rgb(229 231 235) 100%)`
+                }}
               />
-              <div className="text-center text-xs sm:text-sm font-medium text-foreground">
-                {timestamp}
+              <div className="flex justify-between items-center">
+                <div className="text-xs sm:text-sm font-bold text-foreground">
+                  {timestamp}
+                </div>
+                <div className="text-xs text-foreground/60">
+                  {currentFrame + 1} / {radarHistory.length}
+                </div>
               </div>
             </div>
           </div>
