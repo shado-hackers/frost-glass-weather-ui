@@ -78,9 +78,42 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
       className: 'satellite-tiles'
     });
 
+    // Custom visible marker icon
+    const customIcon = L.divIcon({
+      html: `
+        <div style="position: relative;">
+          <div style="
+            width: 32px;
+            height: 32px;
+            background: hsl(var(--primary));
+            border: 4px solid white;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(0,0,0,0.4), 0 0 40px hsl(var(--primary) / 0.6);
+            animation: marker-pulse 2s ease-in-out infinite;
+          "></div>
+          <div style="
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 12px solid hsl(var(--primary));
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+          "></div>
+        </div>
+      `,
+      className: 'custom-marker',
+      iconSize: [32, 44],
+      iconAnchor: [16, 44],
+      popupAnchor: [0, -44]
+    });
+
     // Add marker for current location
-    const marker = L.marker([lat, lon]).addTo(map.current);
-    marker.bindPopup(`<b>${data.location.name}</b>`).openPopup();
+    const marker = L.marker([lat, lon], { icon: customIcon }).addTo(map.current);
+    marker.bindPopup(`<b>${data.location.name}</b><br/><span style="font-size: 12px; color: #666;">Current Location</span>`).openPopup();
 
     // Add default radar layer
     if (radarLayer.current) {
@@ -245,6 +278,24 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
           .map-tiles, .radar-tiles, .satellite-tiles {
             image-rendering: -webkit-optimize-contrast;
             image-rendering: crisp-edges;
+          }
+          @keyframes marker-pulse {
+            0%, 100% {
+              transform: scale(1);
+              opacity: 1;
+            }
+            50% {
+              transform: scale(1.15);
+              opacity: 0.8;
+            }
+          }
+          .custom-marker {
+            background: transparent !important;
+            border: none !important;
+          }
+          .leaflet-popup-content-wrapper {
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
           }
         `}</style>
       </div>
