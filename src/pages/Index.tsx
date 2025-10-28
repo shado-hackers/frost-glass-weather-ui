@@ -6,6 +6,7 @@ import { CurrentWeather } from '@/components/CurrentWeather';
 import { HourlyForecast } from '@/components/HourlyForecast';
 import { DailyForecast } from '@/components/DailyForecast';
 import { DayForecastGraph } from '@/components/DayForecastGraph';
+import { WeatherWarningCard } from '@/components/WeatherWarningCard';
 import { AirQualityCard } from '@/components/AirQualityCard';
 import { WindPressureCard } from '@/components/WindPressureCard';
 import { DetailsCard } from '@/components/DetailsCard';
@@ -116,40 +117,45 @@ const Index = () => {
           <DayForecastGraph data={weatherData} />
         </div>
 
+        {/* Weather Warning Card */}
+        <div className="mb-4 sm:mb-6 animate-slide-up" style={{ animationDelay: '0.2s' }}>
+          <WeatherWarningCard data={weatherData} />
+        </div>
+
         {/* Hourly Forecast */}
-        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.2s' }}>
+        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.25s' }}>
           <HourlyForecast data={weatherData} />
         </div>
 
         {/* Ad Container */}
-        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.25s' }}>
+        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.3s' }}>
           <div id="container-770bb196b9da57c7d2a53316b74d3c31"></div>
         </div>
 
         {/* Air Quality Card */}
         {weatherData.current.air_quality && (
-          <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.3s' }}>
+          <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.35s' }}>
             <AirQualityCard data={weatherData} />
           </div>
         )}
 
         {/* Wind & Pressure Card */}
-        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.35s' }}>
+        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.4s' }}>
           <WindPressureCard data={weatherData} />
         </div>
 
         {/* Details Card */}
-        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.4s' }}>
+        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.45s' }}>
           <DetailsCard data={weatherData} />
         </div>
 
         {/* Sunrise & Sunset Card */}
-        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.45s' }}>
+        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.5s' }}>
           <SunriseSunsetCard data={weatherData} />
         </div>
 
         {/* Daily Forecast */}
-        <div className="mb-6 sm:mb-8 animate-slide-up" style={{ animationDelay: '0.5s' }}>
+        <div className="mb-6 sm:mb-8 animate-slide-up" style={{ animationDelay: '0.55s' }}>
           <DailyForecast data={weatherData} />
         </div>
       </div>
