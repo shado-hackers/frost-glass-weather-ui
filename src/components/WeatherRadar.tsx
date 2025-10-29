@@ -3,7 +3,6 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Play, Pause, Layers as LayersIcon, X } from 'lucide-react';
 import { WeatherData } from '@/types/weather';
-import { CycloneTracker } from './CycloneTracker';
 
 interface WeatherRadarProps {
   data: WeatherData;
@@ -263,12 +262,6 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
 
   return (
     <div className="relative w-full h-[450px] sm:h-[550px] rounded-3xl overflow-hidden border border-border/20 shadow-xl">
-      {/* Cyclone Tracker Overlay */}
-      <CycloneTracker 
-        map={map.current} 
-        userLocation={[data.location.lat, data.location.lon]} 
-      />
-
       {/* Map Container */}
       <div ref={mapContainer} className="absolute inset-0 z-10 bg-gray-100 dark:bg-gray-900">
         <style>{`
