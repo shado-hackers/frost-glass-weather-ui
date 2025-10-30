@@ -1,5 +1,5 @@
 import { WeatherData } from '@/types/weather';
-import { AlertTriangle, CloudRain, CloudSnow, Wind, Zap, Navigation, Target, Flame, Droplets, CloudFog, Snowflake, CloudDrizzle, Mountain, Eye } from 'lucide-react';
+import { AlertTriangle, CloudRain, CloudSnow, Wind, Zap, Navigation, Target, Flame, Droplets, CloudFog, Snowflake, CloudDrizzle, Mountain } from 'lucide-react';
 import { useMemo } from 'react';
 
 interface WeatherWarningCardProps {
@@ -132,8 +132,17 @@ export const WeatherWarningCard = ({ data }: WeatherWarningCardProps) => {
       };
     }
     
-    // Only show fog/mist/haze warning if visibility is critically low (< 1km already handled below)
-    // Removed duplicate fog/mist/haze warnings to avoid overlapping
+    // Fog/Mist/Haze warnings (1-5km visibility)
+    if ((condition.includes('fog') || condition.includes('mist') || condition.includes('haze')) && visibility >= 1 && visibility < 5) {
+      return {
+        type: '🌫️ Fog/Haze Alert',
+        icon: <CloudFog className="w-16 h-16 sm:w-20 sm:h-20" />,
+        severity: 'medium',
+        message: `Reduced visibility due to ${condition} (${visibility}km). Drive slowly, use fog lights, and maintain safe distance from other vehicles.`,
+        bgGradient: 'from-gray-900/90 via-slate-800/85 to-gray-900/90',
+        iconBg: 'bg-gray-800/60'
+      };
+    }
     
     // Landslide Risk (heavy rain + mountain areas)
     if ((precip > 30 || condition.includes('heavy')) && condition.includes('rain')) {

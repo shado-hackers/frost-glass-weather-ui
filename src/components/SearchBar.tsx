@@ -6,7 +6,9 @@ interface SearchBarProps {
   onCitySelect: (city: string) => void;
 }
 
-const API_KEY = '96400e6204fd4ef095123146252610';
+const WEATHER_API_KEY = '96400e6204fd4ef095123146252610';
+const OPENWEATHER_API_KEY = '3e8b8f84de7ce4641b561c5bf51eb269';
+const GEMINI_API_KEY = 'AIzaSyBsKdhrTjWEg9LRH9pFDRf4giYYyvqTbdo';
 
 export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
   const [query, setQuery] = useState('');
@@ -30,7 +32,7 @@ export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
       try {
         // Try primary API first
         const response = await fetch(
-          `https://api.weatherapi.com/v1/search.json?key=${API_KEY}&q=${encodeURIComponent(query)}`
+          `https://api.weatherapi.com/v1/search.json?key=${WEATHER_API_KEY}&q=${encodeURIComponent(query)}`
         );
         
         if (response.ok) {
@@ -41,28 +43,83 @@ export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
             setSuggestions(data);
             setIsOpen(true);
           } else {
-            // Try alternative geocoding API for more comprehensive results
+            // Try OpenWeatherMap geocoding API for more comprehensive results
             try {
               const geocodeResponse = await fetch(
-                `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(query)}&limit=10&appid=3e8b8f84de7ce4641b561c5bf51eb269`
+                `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(query)}&limit=15&appid=${OPENWEATHER_API_KEY}`
               );
               
               if (geocodeResponse.ok) {
                 const geocodeData = await geocodeResponse.json();
                 
-                // Convert to City format
-                const convertedData = geocodeData.map((item: any) => ({
-                  id: item.lat + item.lon,
-                  name: item.name,
-                  region: item.state || '',
-                  country: item.country,
-                  lat: item.lat,
-                  lon: item.lon,
-                  url: `${item.name}-${item.country}`
-                }));
-                
-                setSuggestions(convertedData);
-                setIsOpen(true);
+                if (geocodeData && geocodeData.length > 0) {
+                  // Convert to City format
+                  const convertedData = geocodeData.map((item: any) => ({
+                    id: item.lat + item.lon,
+                    name: item.name,
+                    region: item.state || '',
+                    country: item.country,
+                    lat: item.lat,
+                    lon: item.lon,
+                    url: `${item.name}-${item.country}`
+                  }));
+                  
+                  setSuggestions(convertedData);
+                  setIsOpen(true);
+                } else {
+                  // Last resort: Try Gemini AI for hard-to-find locations
+                  try {
+                    const geminiResponse = await fetch(
+                      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`,
+                      {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          contents: [{
+                            parts: [{
+                              text: `Find the latitude and longitude for: "${query}". Return ONLY a JSON array with this format: [{"name":"City Name","country":"Country","lat":number,"lon":number}]. If multiple matches, return up to 5. If no match, return empty array.`
+                            }]
+                          }]
+                        })
+                      }
+                    );
+                    
+                    if (geminiResponse.ok) {
+                      const geminiData = await geminiResponse.json();
+                      const aiText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                      
+                      // Extract JSON from AI response
+                      const jsonMatch = aiText.match(/\[[\s\S]*\]/);
+                      if (jsonMatch) {
+                        const locations = JSON.parse(jsonMatch[0]);
+                        
+                        if (locations && locations.length > 0) {
+                          const convertedAiData = locations.map((item: any) => ({
+                            id: item.lat + item.lon,
+                            name: item.name,
+                            region: '',
+                            country: item.country,
+                            lat: item.lat,
+                            lon: item.lon,
+                            url: `${item.name}-${item.country}`
+                          }));
+                          
+                          setSuggestions(convertedAiData);
+                          setIsOpen(true);
+                        } else {
+                          setSuggestions([]);
+                        }
+                      } else {
+                        setSuggestions([]);
+                      }
+                    } else {
+                      setSuggestions([]);
+                    }
+                  } catch (aiError) {
+                    console.error('Gemini AI search error:', aiError);
+                    setSuggestions([]);
+                  }
+                }
               } else {
                 setSuggestions([]);
               }
@@ -80,7 +137,7 @@ export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
       } finally {
         setLoading(false);
       }
-    }, 300);
+    }, 250);
 
     return () => {
       if (timeoutRef.current) {

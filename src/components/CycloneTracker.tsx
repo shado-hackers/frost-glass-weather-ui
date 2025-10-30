@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { WeatherData } from '@/types/weather';
-import { Wind, Navigation, Zap, MapPin, Clock, Target } from 'lucide-react';
+import { Wind, Navigation, Zap, MapPin, Clock, Target, AlertTriangle } from 'lucide-react';
 
 interface CycloneTrackerProps {
   data: WeatherData;
@@ -161,142 +161,119 @@ export const CycloneTracker = ({ data }: CycloneTrackerProps) => {
   }
 
   return (
-    <div className="relative overflow-hidden rounded-3xl border-2 border-red-500/50 backdrop-blur-xl shadow-2xl animate-scale-in">
-      {/* Animated background with cyclone image effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-950/95 via-blue-950/90 to-cyan-950/95 opacity-95" />
+    <div className="relative overflow-hidden rounded-3xl border-2 border-red-500/40 backdrop-blur-xl shadow-2xl animate-scale-in">
+      {/* Background Image */}
       <div 
-        className="absolute inset-0 opacity-30"
+        className="absolute inset-0 bg-cover bg-center opacity-20"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          backgroundSize: '30px 30px',
-          animation: 'cyclone-rotate 20s linear infinite'
+          backgroundImage: `url('https://i.postimg.cc/NjYq1Dm9/photo-2025-10-28-14-39-21-7566282270038818820.jpg')`,
         }}
       />
       
-      {/* Pulsing effect */}
-      <div className="absolute inset-0 bg-red-500/5 animate-pulse" style={{ animationDuration: '3s' }} />
+      {/* Dark gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95" />
       
       {/* Content */}
-      <div className="relative p-5 sm:p-6">
+      <div className="relative p-4 sm:p-6">
         {/* Header */}
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-start gap-3">
-            <div className="bg-red-900/70 backdrop-blur-md rounded-2xl p-3 sm:p-4 shadow-lg animate-pulse" style={{ animationDuration: '2s' }}>
-              <Wind className="w-12 h-12 sm:w-16 sm:h-16 text-red-200" />
-            </div>
-            
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                <span className="text-xs sm:text-sm font-medium text-red-300 uppercase tracking-wider">
-                  Live Storm Tracker
-                </span>
-              </div>
-              <h3 className="text-2xl sm:text-3xl font-bold text-white mb-1">
-                {cyclone.name}
-              </h3>
-              <p className="text-sm text-cyan-300 font-medium">{cyclone.type}</p>
-            </div>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-base sm:text-lg font-semibold text-slate-300">Live Storm Tracker</h2>
+          <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse" title="Live Data"></div>
+        </div>
+
+        {/* Main Storm Info */}
+        <div className="flex items-center gap-4 mb-6">
+          <div className="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 bg-blue-900/50 rounded-xl flex items-center justify-center border border-blue-700/50">
+            <Wind className="w-8 h-8 sm:w-10 sm:h-10 text-blue-300" />
           </div>
-          
-          <div className="text-right">
-            <p className="text-xs text-white/50">Updated</p>
-            <p className="text-xs text-white/70 font-medium">{new Date().toLocaleTimeString()}</p>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white truncate">{cyclone.name}</h1>
+            <p className="text-sm sm:text-base text-slate-400">{cyclone.type}</p>
           </div>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          {/* Direction */}
-          <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/10">
-            <div className="flex items-center gap-2 mb-1">
-              <Navigation className="w-4 h-4 text-cyan-400" />
-              <span className="text-xs text-white/70 uppercase">Direction</span>
+        {/* Data Grid */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-5">
+          {/* Movement */}
+          <div className="flex items-center gap-3">
+            <div className="flex-shrink-0 w-10 h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
+              <Navigation className="w-5 h-5 text-slate-300" />
             </div>
-            <p className="text-xl sm:text-2xl font-bold text-white">{cyclone.movement}</p>
-            <p className="text-xs text-white/60">{cyclone.movementSpeed} km/h</p>
+            <div className="min-w-0">
+              <p className="text-lg sm:text-xl font-semibold text-white">{cyclone.movement}</p>
+              <p className="text-xs text-slate-400 uppercase tracking-wider">Movement</p>
+            </div>
           </div>
 
           {/* Movement Speed */}
-          <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/10">
-            <div className="flex items-center gap-2 mb-1">
-              <Target className="w-4 h-4 text-orange-400" />
-              <span className="text-xs text-white/70 uppercase">Movement</span>
+          <div className="flex items-center gap-3">
+            <div className="flex-shrink-0 w-10 h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
+              <Target className="w-5 h-5 text-slate-300" />
             </div>
-            <p className="text-xl sm:text-2xl font-bold text-white">{cyclone.movementSpeed}</p>
-            <p className="text-xs text-white/60">km/h speed</p>
+            <div className="min-w-0">
+              <p className="text-lg sm:text-xl font-semibold text-white">{cyclone.movementSpeed} km/h</p>
+              <p className="text-xs text-slate-400 uppercase tracking-wider">Mov. Speed</p>
+            </div>
           </div>
 
-          {/* Wind Speed */}
-          <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/10">
-            <div className="flex items-center gap-2 mb-1">
-              <Wind className="w-4 h-4 text-blue-400" />
-              <span className="text-xs text-white/70 uppercase">Wind Speed</span>
+          {/* Sustained Wind */}
+          <div className="flex items-center gap-3">
+            <div className="flex-shrink-0 w-10 h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
+              <Wind className="w-5 h-5 text-slate-300" />
             </div>
-            <p className="text-xl sm:text-2xl font-bold text-white">{Math.round(cyclone.windSpeed)}</p>
-            <p className="text-xs text-white/60">km/h</p>
+            <div className="min-w-0">
+              <p className="text-lg sm:text-xl font-semibold text-white">{Math.round(cyclone.windSpeed)} km/h</p>
+              <p className="text-xs text-slate-400 uppercase tracking-wider">Sust. Wind</p>
+            </div>
           </div>
 
-          {/* Max Gust */}
-          <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/10">
-            <div className="flex items-center gap-2 mb-1">
-              <Zap className="w-4 h-4 text-red-400" />
-              <span className="text-xs text-white/70 uppercase">Max Gust</span>
+          {/* Max Wind Gust */}
+          <div className="flex items-center gap-3">
+            <div className="flex-shrink-0 w-10 h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
+              <Zap className="w-5 h-5 text-slate-300" />
             </div>
-            <p className="text-xl sm:text-2xl font-bold text-white">{Math.round(cyclone.maxGust)}</p>
-            <p className="text-xs text-white/60">km/h</p>
+            <div className="min-w-0">
+              <p className="text-lg sm:text-xl font-semibold text-white">{Math.round(cyclone.maxGust)} km/h</p>
+              <p className="text-xs text-slate-400 uppercase tracking-wider">Max Gust</p>
+            </div>
           </div>
 
           {/* Distance */}
-          <div className="bg-blue-900/30 backdrop-blur-md rounded-xl p-3 border border-blue-500/30">
-            <div className="flex items-center gap-2 mb-1">
-              <MapPin className="w-4 h-4 text-blue-300" />
-              <span className="text-xs text-white/70 uppercase">Distance</span>
+          <div className="flex items-center gap-3">
+            <div className="flex-shrink-0 w-10 h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
+              <MapPin className="w-5 h-5 text-slate-300" />
             </div>
-            <p className="text-xl sm:text-2xl font-bold text-blue-200">{cyclone.distance}</p>
-            <p className="text-xs text-blue-300">km from you</p>
+            <div className="min-w-0">
+              <p className="text-lg sm:text-xl font-semibold text-white">{cyclone.distance} km</p>
+              <p className="text-xs text-slate-400 uppercase tracking-wider">Distance</p>
+            </div>
           </div>
 
-          {/* ETA */}
-          <div className="bg-purple-900/30 backdrop-blur-md rounded-xl p-3 border border-purple-500/30">
-            <div className="flex items-center gap-2 mb-1">
-              <Clock className="w-4 h-4 text-purple-300" />
-              <span className="text-xs text-white/70 uppercase">Est. Arrival</span>
+          {/* Est. Arrival */}
+          <div className="flex items-center gap-3">
+            <div className="flex-shrink-0 w-10 h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
+              <Clock className="w-5 h-5 text-slate-300" />
             </div>
-            <p className="text-xl sm:text-2xl font-bold text-purple-200">{cyclone.eta}</p>
-            <p className="text-xs text-purple-300">at current speed</p>
+            <div className="min-w-0">
+              <p className="text-lg sm:text-xl font-semibold text-white">{cyclone.eta}</p>
+              <p className="text-xs text-slate-400 uppercase tracking-wider">Est. Arrival</p>
+            </div>
           </div>
-        </div>
 
-        {/* Current Location */}
-        <div className="bg-black/30 backdrop-blur-md rounded-xl p-3 sm:p-4 border border-white/10">
-          <div className="flex items-start gap-3">
-            <MapPin className="w-5 h-5 text-cyan-400 flex-shrink-0 mt-0.5" />
-            <div>
-              <p className="text-sm sm:text-base font-semibold text-white">
-                {cyclone.lat.toFixed(2)}° N, {cyclone.lon.toFixed(2)}° E
+          {/* Current Position (Spans 2 columns) */}
+          <div className="col-span-2 flex items-center gap-3 pt-3 border-t border-slate-700">
+            <div className="flex-shrink-0 w-10 h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
+              <MapPin className="w-5 h-5 text-slate-300" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm sm:text-base font-semibold text-white truncate">
+                {cyclone.lat.toFixed(2)}°N, {cyclone.lon.toFixed(2)}°E
               </p>
-              <p className="text-xs text-white/60 uppercase tracking-wider mt-0.5">
-                Current Storm Position
-              </p>
+              <p className="text-xs text-slate-400 uppercase tracking-wider">Current Position</p>
             </div>
           </div>
-        </div>
-
-        {/* Warning Message */}
-        <div className="mt-4 bg-red-900/30 backdrop-blur-md rounded-xl p-3 border border-red-500/30">
-          <p className="text-xs sm:text-sm text-red-200 leading-relaxed">
-            ⚠️ Active storm detected. Stay informed through official weather channels. Prepare emergency supplies and follow local authorities' instructions.
-          </p>
         </div>
       </div>
-
-      <style>{`
-        @keyframes cyclone-rotate {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
     </div>
   );
 };
