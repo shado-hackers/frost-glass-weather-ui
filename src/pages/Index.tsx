@@ -8,6 +8,7 @@ import { DailyForecast } from '@/components/DailyForecast';
 import { DayForecastGraph } from '@/components/DayForecastGraph';
 import { WeatherWarningCard } from '@/components/WeatherWarningCard';
 import { WeatherRadar } from '@/components/WeatherRadar';
+import { CycloneTracker } from '@/components/CycloneTracker';
 import { AirQualityCard } from '@/components/AirQualityCard';
 import { WindPressureCard } from '@/components/WindPressureCard';
 import { DetailsCard } from '@/components/DetailsCard';
@@ -126,6 +127,11 @@ const Index = () => {
         {/* Day Forecast Graph */}
         <div className="mb-4 sm:mb-6 animate-slide-up" style={{ animationDelay: '0.15s' }}>
           <DayForecastGraph data={weatherData} />
+        </div>
+
+        {/* Cyclone Tracker */}
+        <div className="mb-4 sm:mb-6 animate-slide-up" style={{ animationDelay: '0.18s' }}>
+          <CycloneTracker data={weatherData} />
         </div>
 
         {/* Weather Warning Card */}

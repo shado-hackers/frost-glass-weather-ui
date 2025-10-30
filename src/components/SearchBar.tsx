@@ -28,18 +28,59 @@ export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
     timeoutRef.current = setTimeout(async () => {
       setLoading(true);
       try {
+        // Try primary API first
         const response = await fetch(
           `https://api.weatherapi.com/v1/search.json?key=${API_KEY}&q=${encodeURIComponent(query)}`
         );
-        const data = await response.json();
-        setSuggestions(data);
-        setIsOpen(true);
+        
+        if (response.ok) {
+          const data = await response.json();
+          
+          // If we get results, use them
+          if (data && data.length > 0) {
+            setSuggestions(data);
+            setIsOpen(true);
+          } else {
+            // Try alternative geocoding API for more comprehensive results
+            try {
+              const geocodeResponse = await fetch(
+                `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(query)}&limit=10&appid=3e8b8f84de7ce4641b561c5bf51eb269`
+              );
+              
+              if (geocodeResponse.ok) {
+                const geocodeData = await geocodeResponse.json();
+                
+                // Convert to City format
+                const convertedData = geocodeData.map((item: any) => ({
+                  id: item.lat + item.lon,
+                  name: item.name,
+                  region: item.state || '',
+                  country: item.country,
+                  lat: item.lat,
+                  lon: item.lon,
+                  url: `${item.name}-${item.country}`
+                }));
+                
+                setSuggestions(convertedData);
+                setIsOpen(true);
+              } else {
+                setSuggestions([]);
+              }
+            } catch (fallbackError) {
+              console.error('Fallback geocoding error:', fallbackError);
+              setSuggestions([]);
+            }
+          }
+        } else {
+          setSuggestions([]);
+        }
       } catch (error) {
         console.error('Error fetching city suggestions:', error);
+        setSuggestions([]);
       } finally {
         setLoading(false);
       }
-    }, 250);
+    }, 300);
 
     return () => {
       if (timeoutRef.current) {
@@ -70,10 +111,10 @@ export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
       </div>
 
       {isOpen && suggestions.length > 0 && (
-        <div className="absolute top-full mt-2 w-full bg-background/95 backdrop-blur-xl border border-border/30 rounded-2xl overflow-hidden z-50 animate-fade-in max-h-[70vh] overflow-y-auto smooth-scroll shadow-2xl">
-          {suggestions.map((city) => (
+        <div className="absolute top-full mt-2 w-full bg-background/95 backdrop-blur-xl border border-border/30 rounded-2xl overflow-hidden z-50 animate-fade-in max-h-[60vh] overflow-y-auto smooth-scroll shadow-2xl">
+          {suggestions.slice(0, 15).map((city, index) => (
             <button
-              key={`${city.lat}-${city.lon}`}
+              key={`${city.lat}-${city.lon}-${index}`}
               onClick={() => handleSelect(city)}
               className="w-full px-3 sm:px-4 py-2.5 sm:py-3 flex items-start gap-2 sm:gap-3 hover:bg-primary/20 active:bg-primary/30 transition-all text-left border-b border-border/10 last:border-b-0"
             >

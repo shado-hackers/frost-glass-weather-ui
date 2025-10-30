@@ -132,29 +132,8 @@ export const WeatherWarningCard = ({ data }: WeatherWarningCardProps) => {
       };
     }
     
-    // Fog/Dense Fog/Mist/Haze - Below 10km visibility
-    if (visibility < 10 && (condition.includes('fog') || condition.includes('mist') || condition.includes('haze') || condition.includes('smog'))) {
-      return {
-        type: '🌫️ Dense Fog / Low Visibility',
-        icon: <CloudFog className="w-16 h-16 sm:w-20 sm:h-20" />,
-        severity: 'medium',
-        message: `Very poor visibility (${visibility}km) due to fog/mist. Drive slowly with fog lights, maintain safe distance, and use hazard lights.`,
-        bgGradient: 'from-gray-900/90 via-slate-800/85 to-zinc-900/90',
-        iconBg: 'bg-gray-800/60'
-      };
-    }
-    
-    // Smog
-    if (condition.includes('smog')) {
-      return {
-        type: '😷 Smog Alert',
-        icon: <Eye className="w-16 h-16 sm:w-20 sm:h-20" />,
-        severity: 'medium',
-        message: `High pollution and smog levels. Wear a mask, avoid outdoor activities, and keep windows closed.`,
-        bgGradient: 'from-gray-950/90 via-zinc-900/85 to-slate-950/90',
-        iconBg: 'bg-gray-900/60'
-      };
-    }
+    // Only show fog/mist/haze warning if visibility is critically low (< 1km already handled below)
+    // Removed duplicate fog/mist/haze warnings to avoid overlapping
     
     // Landslide Risk (heavy rain + mountain areas)
     if ((precip > 30 || condition.includes('heavy')) && condition.includes('rain')) {
