@@ -7,7 +7,6 @@ interface SearchBarProps {
 }
 
 const WEATHER_API_KEY = '96400e6204fd4ef095123146252610';
-const OPENWEATHER_API_KEY = '3e8b8f84de7ce4641b561c5bf51eb269';
 const GEMINI_API_KEY = 'AIzaSyBsKdhrTjWEg9LRH9pFDRf4giYYyvqTbdo';
 
 export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
@@ -43,24 +42,24 @@ export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
             setSuggestions(data);
             setIsOpen(true);
           } else {
-            // Try OpenWeatherMap geocoding API for more comprehensive results
+            // Try Open-Meteo geocoding API for more comprehensive results
             try {
-              const geocodeResponse = await fetch(
-                `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(query)}&limit=15&appid=${OPENWEATHER_API_KEY}`
+              const openMeteoResponse = await fetch(
+                `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=15&language=en&format=json`
               );
               
-              if (geocodeResponse.ok) {
-                const geocodeData = await geocodeResponse.json();
+              if (openMeteoResponse.ok) {
+                const openMeteoData = await openMeteoResponse.json();
                 
-                if (geocodeData && geocodeData.length > 0) {
+                if (openMeteoData?.results && openMeteoData.results.length > 0) {
                   // Convert to City format
-                  const convertedData = geocodeData.map((item: any) => ({
-                    id: item.lat + item.lon,
+                  const convertedData = openMeteoData.results.map((item: any) => ({
+                    id: item.id,
                     name: item.name,
-                    region: item.state || '',
+                    region: item.admin1 || '',
                     country: item.country,
-                    lat: item.lat,
-                    lon: item.lon,
+                    lat: item.latitude,
+                    lon: item.longitude,
                     url: `${item.name}-${item.country}`
                   }));
                   
@@ -124,7 +123,7 @@ export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
                 setSuggestions([]);
               }
             } catch (fallbackError) {
-              console.error('Fallback geocoding error:', fallbackError);
+              console.error('Open-Meteo geocoding error:', fallbackError);
               setSuggestions([]);
             }
           }

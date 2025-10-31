@@ -162,13 +162,16 @@ export const CycloneTracker = ({ data }: CycloneTrackerProps) => {
 
   return (
     <div className="relative overflow-hidden rounded-3xl border-2 border-red-500/40 backdrop-blur-xl shadow-2xl animate-scale-in">
-      {/* Background Image */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center opacity-20"
-        style={{
-          backgroundImage: `url('https://i.postimg.cc/NjYq1Dm9/photo-2025-10-28-14-39-21-7566282270038818820.jpg')`,
-        }}
-      />
+      {/* Animated Cyclone Background */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-30 animate-spin-slow"
+          style={{
+            backgroundImage: `url('https://i.postimg.cc/NjYq1Dm9/photo-2025-10-28-14-39-21-7566282270038818820.jpg')`,
+            animationDuration: '30s'
+          }}
+        />
+      </div>
       
       {/* Dark gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95" />

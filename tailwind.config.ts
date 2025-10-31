@@ -73,6 +73,7 @@ export default {
         },
       },
       animation: {
+        'spin-slow': 'spin 30s linear infinite',
         "fade-in": "fade-in 0.5s ease-out",
         "slide-up": "slide-up 0.5s ease-out",
         "scale-in": "scale-in 0.3s ease-out",
