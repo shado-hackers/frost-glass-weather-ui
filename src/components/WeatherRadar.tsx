@@ -337,16 +337,15 @@ export const WeatherRadar = ({ data }: WeatherRadarProps) => {
         </div>
       )}
 
-      {/* Legend */}
-      <div className="absolute bottom-20 left-4 z-20 bg-white/95 dark:bg-card/95 backdrop-blur-sm rounded-xl shadow-lg border border-border/20 p-3 hidden sm:block">
+      {/* Legend - Always visible */}
+      <div className="absolute bottom-20 left-4 z-20 bg-white/95 dark:bg-card/95 backdrop-blur-sm rounded-xl shadow-lg border border-border/20 p-3">
         <div className="text-xs font-semibold text-foreground mb-2">Rain Intensity</div>
         {[
           { color: '#f00', label: 'Extreme (70+ dBZ)' },
           { color: '#d00', label: 'Heavy+ (60 dBZ)' },
           { color: '#e07000', label: 'Heavy (50 dBZ)' },
           { color: '#f8b000', label: 'Moderate (40 dBZ)' },
-          { color: '#00d000', label: 'Light (30 dBZ)' },
-          { color: '#009000', label: 'Very Light (20 dBZ)' }
+          { color: '#00d000', label: 'Light (30 dBZ)' }
         ].map((item) => (
           <div key={item.label} className="flex items-center gap-2 mb-1">
             <div

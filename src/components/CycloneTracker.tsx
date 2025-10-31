@@ -59,20 +59,10 @@ export const CycloneTracker = ({ data }: CycloneTrackerProps) => {
       setError(null);
       
       try {
-        // Fetch from NOAA NHC GeoJSON API (National Hurricane Center)
-        const response = await fetch('https://www.nhc.noaa.gov/gis/forecast/al_latest.kmz');
+        // Try GDACS API (Global Disaster Alert and Coordination System) - works globally including India
+        const gdacsResponse = await fetch('https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH');
         
-        // If NOAA fails, try alternative sources
-        if (!response.ok) {
-          // Try GDACS (Global Disaster Alert and Coordination System)
-          const gdacsResponse = await fetch('https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH');
-          
-          if (!gdacsResponse.ok) {
-            setCyclone(null);
-            setLoading(false);
-            return;
-          }
-          
+        if (gdacsResponse.ok) {
           const gdacsData = await gdacsResponse.json();
           const activeCyclones = gdacsData?.features?.filter((f: any) => 
             f.properties.eventtype === 'TC' && f.properties.iscurrent === 'true'
@@ -120,10 +110,12 @@ export const CycloneTracker = ({ data }: CycloneTrackerProps) => {
           } else {
             setCyclone(null);
           }
+        } else {
+          setCyclone(null);
         }
       } catch (err) {
         console.error('Error fetching cyclone data:', err);
-        setError('Unable to fetch cyclone data');
+        // Don't show error, just hide the card if no cyclones
         setCyclone(null);
       } finally {
         setLoading(false);
