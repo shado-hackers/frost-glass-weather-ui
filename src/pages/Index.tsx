@@ -13,6 +13,8 @@ import { AirQualityCard } from '@/components/AirQualityCard';
 import { WindPressureCard } from '@/components/WindPressureCard';
 import { DetailsCard } from '@/components/DetailsCard';
 import { SunriseSunsetCard } from '@/components/SunriseSunsetCard';
+import { MarineWeatherCard } from '@/components/MarineWeatherCard';
+import { AIWeatherInsights } from '@/components/AIWeatherInsights';
 import { formatLocalDateTime } from '@/utils/timeUtils';
 import { useLenis } from '@/hooks/useLenis';
 import { toast } from 'sonner';
@@ -142,6 +144,16 @@ const Index = () => {
         {/* Weather Radar Map */}
         <div className="mb-4 sm:mb-6 animate-slide-up" style={{ animationDelay: '0.22s' }}>
           <WeatherRadar data={weatherData} />
+        </div>
+
+        {/* Marine Weather Card */}
+        <div className="mb-4 sm:mb-6 animate-slide-up" style={{ animationDelay: '0.23s' }}>
+          <MarineWeatherCard data={weatherData} />
+        </div>
+
+        {/* AI Weather Insights */}
+        <div className="mb-4 sm:mb-6 animate-slide-up" style={{ animationDelay: '0.24s' }}>
+          <AIWeatherInsights data={weatherData} />
         </div>
 
         {/* Hourly Forecast */}
