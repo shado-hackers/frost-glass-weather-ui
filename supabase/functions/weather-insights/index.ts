@@ -11,10 +11,14 @@ serve(async (req) => {
   }
 
   try {
+    console.log('Weather insights function invoked');
     const { weatherData } = await req.json();
+    console.log('Weather data received for:', weatherData?.location?.name);
+    
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
+      console.error('LOVABLE_API_KEY not configured');
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
@@ -52,6 +56,7 @@ Provide a natural, conversational weather summary that:
 
 Keep it under 150 words, engaging, and personable.`;
 
+    console.log('Calling AI Gateway...');
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -73,6 +78,8 @@ Keep it under 150 words, engaging, and personable.`;
       }),
     });
 
+    console.log('AI Gateway response status:', response.status);
+    
     if (!response.ok) {
       if (response.status === 429) {
         return new Response(
@@ -92,12 +99,15 @@ Keep it under 150 words, engaging, and personable.`;
     }
 
     const data = await response.json();
+    console.log('AI response received');
     const summary = data.choices?.[0]?.message?.content;
 
     if (!summary) {
+      console.error('No summary in AI response');
       throw new Error("No summary generated");
     }
 
+    console.log('Summary generated successfully');
     return new Response(
       JSON.stringify({ summary }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }

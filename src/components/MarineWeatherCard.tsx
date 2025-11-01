@@ -37,20 +37,26 @@ export const MarineWeatherCard = ({ data }: MarineWeatherCardProps) => {
     setLoading(true);
     try {
       const { lat, lon } = data.location;
+      console.log('Fetching marine data for:', lat, lon);
+      
       const params = "wave_height,wave_direction,wave_period,wind_wave_height,wind_wave_direction,wind_wave_period,sea_surface_temperature";
       const url = `https://marine-api.open-meteo.com/v1/marine?latitude=${lat.toFixed(2)}&longitude=${lon.toFixed(2)}&hourly=${params}&timezone=auto`;
       
       const response = await fetch(url);
-      if (!response.ok) throw new Error('Failed to fetch marine data');
+      if (!response.ok) {
+        console.error('Marine API error:', response.status);
+        throw new Error('Failed to fetch marine data');
+      }
       
       const result = await response.json();
+      console.log('Marine data received:', result);
       
       if (result.hourly) {
         const now = new Date();
         let currentIndex = result.hourly.time.findIndex((timeStr: string) => new Date(timeStr) > now) - 1;
         if (currentIndex < 0) currentIndex = 0;
         
-        setMarineData({
+        const newData = {
           wave_height: result.hourly.wave_height?.[currentIndex] ?? null,
           wave_direction: result.hourly.wave_direction?.[currentIndex] ?? null,
           wave_period: result.hourly.wave_period?.[currentIndex] ?? null,
@@ -58,11 +64,24 @@ export const MarineWeatherCard = ({ data }: MarineWeatherCardProps) => {
           wind_wave_direction: result.hourly.wind_wave_direction?.[currentIndex] ?? null,
           wind_wave_period: result.hourly.wind_wave_period?.[currentIndex] ?? null,
           sea_surface_temperature: result.hourly.sea_surface_temperature?.[currentIndex] ?? null,
-        });
+        };
+        
+        console.log('Parsed marine data:', newData);
+        
+        // Check if we have at least sea temperature (available even for inland)
+        const hasData = Object.values(newData).some(val => val !== null);
+        if (hasData) {
+          setMarineData(newData);
+        } else {
+          console.log('No marine data available for this location');
+          setMarineData(null);
+        }
+      } else {
+        console.log('No hourly data in marine response');
+        setMarineData(null);
       }
     } catch (error) {
       console.error('Marine data error:', error);
-      toast.error('Marine data unavailable for this location');
       setMarineData(null);
     } finally {
       setLoading(false);
@@ -87,8 +106,9 @@ export const MarineWeatherCard = ({ data }: MarineWeatherCardProps) => {
     );
   }
 
+  // Don't render if no data available
   if (!marineData) return null;
-
+  
   const hasData = Object.values(marineData).some(val => val !== null);
   if (!hasData) return null;
 

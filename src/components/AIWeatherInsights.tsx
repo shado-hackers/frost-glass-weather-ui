@@ -41,20 +41,23 @@ export const AIWeatherInsights = ({ data }: AIWeatherInsightsProps) => {
   const fetchAISummary = async () => {
     setLoadingAI(true);
     try {
+      console.log('Fetching AI weather summary...');
       const { data: summaryData, error } = await supabase.functions.invoke('weather-insights', {
         body: { weatherData: data }
       });
 
       if (error) {
         console.error('AI summary error:', error);
-        if (error.message?.includes('Rate limit')) {
-          toast.error('AI rate limit reached. Showing basic insights.');
-        }
+        toast.error('AI insights temporarily unavailable');
       } else if (summaryData?.summary) {
+        console.log('AI summary received:', summaryData.summary);
         setAiSummary(summaryData.summary);
+      } else {
+        console.log('No AI summary in response');
       }
     } catch (err) {
       console.error('Failed to fetch AI summary:', err);
+      toast.error('Could not load AI insights');
     } finally {
       setLoadingAI(false);
     }
