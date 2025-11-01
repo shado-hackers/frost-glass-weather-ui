@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Sparkles, ChevronDown, ChevronUp, TrendingUp, TrendingDown, Droplets, Wind, Sun, Cloud, Zap } from 'lucide-react';
+import { Sparkles, ChevronDown, ChevronUp, TrendingUp, TrendingDown, Droplets, Wind, Sun, Cloud, Zap, Loader2 } from 'lucide-react';
 import { WeatherData } from '@/types/weather';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 interface AIWeatherInsightsProps {
   data: WeatherData;
@@ -28,10 +30,35 @@ const getSeverityColor = (severity: string) => {
 export const AIWeatherInsights = ({ data }: AIWeatherInsightsProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [insights, setInsights] = useState<Insight[]>([]);
+  const [aiSummary, setAiSummary] = useState<string>("");
+  const [loadingAI, setLoadingAI] = useState(false);
 
   useEffect(() => {
     generateInsights();
+    fetchAISummary();
   }, [data]);
+
+  const fetchAISummary = async () => {
+    setLoadingAI(true);
+    try {
+      const { data: summaryData, error } = await supabase.functions.invoke('weather-insights', {
+        body: { weatherData: data }
+      });
+
+      if (error) {
+        console.error('AI summary error:', error);
+        if (error.message?.includes('Rate limit')) {
+          toast.error('AI rate limit reached. Showing basic insights.');
+        }
+      } else if (summaryData?.summary) {
+        setAiSummary(summaryData.summary);
+      }
+    } catch (err) {
+      console.error('Failed to fetch AI summary:', err);
+    } finally {
+      setLoadingAI(false);
+    }
+  };
 
   const generateInsights = () => {
     const newInsights: Insight[] = [];
@@ -173,20 +200,31 @@ export const AIWeatherInsights = ({ data }: AIWeatherInsightsProps) => {
         {/* Preview when collapsed */}
         {!isExpanded && (
           <div className="animate-fade-in">
-            <div className="text-sm text-white/70 mb-2">
-              {insights.length} insight{insights.length > 1 ? 's' : ''} available
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {insights.slice(0, 3).map((insight, idx) => (
-                <div 
-                  key={idx}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border backdrop-blur-sm text-xs font-medium ${getSeverityColor(insight.severity)}`}
-                >
-                  {insight.icon}
-                  <span>{insight.title}</span>
+            {loadingAI ? (
+              <div className="flex items-center justify-center py-4">
+                <Loader2 className="h-5 w-5 animate-spin text-purple-400" />
+                <span className="ml-2 text-sm text-white/70">Generating AI insights...</span>
+              </div>
+            ) : aiSummary ? (
+              <p className="text-sm text-white/90 leading-relaxed">{aiSummary}</p>
+            ) : (
+              <>
+                <div className="text-sm text-white/70 mb-2">
+                  {insights.length} insight{insights.length > 1 ? 's' : ''} available
                 </div>
-              ))}
-            </div>
+                <div className="flex flex-wrap gap-2">
+                  {insights.slice(0, 3).map((insight, idx) => (
+                    <div 
+                      key={idx}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border backdrop-blur-sm text-xs font-medium ${getSeverityColor(insight.severity)}`}
+                    >
+                      {insight.icon}
+                      <span>{insight.title}</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         )}
 
@@ -198,6 +236,18 @@ export const AIWeatherInsights = ({ data }: AIWeatherInsightsProps) => {
           style={{ display: isExpanded ? 'block' : 'none' }}
         >
           <div className="space-y-3 animate-fade-in">
+            {/* AI Summary Section */}
+            {aiSummary && (
+              <div className="bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-purple-400/40 backdrop-blur-sm p-4 rounded-lg mb-3">
+                <div className="flex items-center gap-2 mb-2">
+                  <Sparkles className="h-4 w-4 text-purple-400" />
+                  <span className="text-sm font-semibold text-white">AI Weather Summary</span>
+                </div>
+                <p className="text-sm text-white/90 leading-relaxed">{aiSummary}</p>
+              </div>
+            )}
+            
+            {/* Detailed Insights */}
             {insights.map((insight, idx) => (
               <div 
                 key={idx}

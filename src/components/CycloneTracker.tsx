@@ -123,8 +123,8 @@ export const CycloneTracker = ({ data }: CycloneTrackerProps) => {
     };
 
     fetchCycloneData();
-    // Refresh every 10 minutes
-    const interval = setInterval(fetchCycloneData, 10 * 60 * 1000);
+    // Refresh every 5 minutes for more current data
+    const interval = setInterval(fetchCycloneData, 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, [data.location.lat, data.location.lon]);
 
@@ -177,94 +177,96 @@ export const CycloneTracker = ({ data }: CycloneTrackerProps) => {
         </div>
 
         {/* Main Storm Info */}
-        <div className="flex items-center gap-4 mb-6">
-          <div className="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 bg-blue-900/50 rounded-xl flex items-center justify-center border border-blue-700/50">
-            <Wind className="w-8 h-8 sm:w-10 sm:h-10 text-blue-300" />
+        <div className="flex items-center gap-3 sm:gap-4 mb-6">
+          <div className="flex-shrink-0 w-12 h-12 sm:w-16 sm:h-16 bg-blue-900/50 rounded-xl flex items-center justify-center border border-blue-700/50">
+            <Wind className="w-6 h-6 sm:w-10 sm:h-10 text-blue-300" />
           </div>
-          <div className="flex-1 min-w-0">
-            <h1 className="text-2xl sm:text-3xl font-bold text-white truncate">{cyclone.name}</h1>
-            <p className="text-sm sm:text-base text-slate-400">{cyclone.type}</p>
+          <div className="flex-1 min-w-0 overflow-hidden">
+            <h1 className="text-xl sm:text-3xl font-bold text-white truncate" title={cyclone.name}>
+              {cyclone.name}
+            </h1>
+            <p className="text-xs sm:text-base text-slate-400 truncate">{cyclone.type}</p>
           </div>
         </div>
 
         {/* Data Grid */}
-        <div className="grid grid-cols-2 gap-3 sm:gap-5">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
           {/* Movement */}
-          <div className="flex items-center gap-3">
-            <div className="flex-shrink-0 w-10 h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
-              <Navigation className="w-5 h-5 text-slate-300" />
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <div className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
+              <Navigation className="w-4 h-4 sm:w-5 sm:h-5 text-slate-300" />
             </div>
-            <div className="min-w-0">
-              <p className="text-lg sm:text-xl font-semibold text-white">{cyclone.movement}</p>
-              <p className="text-xs text-slate-400 uppercase tracking-wider">Movement</p>
+            <div className="min-w-0 overflow-hidden">
+              <p className="text-base sm:text-xl font-semibold text-white truncate">{cyclone.movement}</p>
+              <p className="text-[10px] sm:text-xs text-slate-400 uppercase tracking-wider">Movement</p>
             </div>
           </div>
 
           {/* Movement Speed */}
-          <div className="flex items-center gap-3">
-            <div className="flex-shrink-0 w-10 h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
-              <Target className="w-5 h-5 text-slate-300" />
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <div className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
+              <Target className="w-4 h-4 sm:w-5 sm:h-5 text-slate-300" />
             </div>
-            <div className="min-w-0">
-              <p className="text-lg sm:text-xl font-semibold text-white">{cyclone.movementSpeed} km/h</p>
-              <p className="text-xs text-slate-400 uppercase tracking-wider">Mov. Speed</p>
+            <div className="min-w-0 overflow-hidden">
+              <p className="text-base sm:text-xl font-semibold text-white truncate">{cyclone.movementSpeed} km/h</p>
+              <p className="text-[10px] sm:text-xs text-slate-400 uppercase tracking-wider">Mov. Speed</p>
             </div>
           </div>
 
           {/* Sustained Wind */}
-          <div className="flex items-center gap-3">
-            <div className="flex-shrink-0 w-10 h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
-              <Wind className="w-5 h-5 text-slate-300" />
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <div className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
+              <Wind className="w-4 h-4 sm:w-5 sm:h-5 text-slate-300" />
             </div>
-            <div className="min-w-0">
-              <p className="text-lg sm:text-xl font-semibold text-white">{Math.round(cyclone.windSpeed)} km/h</p>
-              <p className="text-xs text-slate-400 uppercase tracking-wider">Sust. Wind</p>
+            <div className="min-w-0 overflow-hidden">
+              <p className="text-base sm:text-xl font-semibold text-white truncate">{Math.round(cyclone.windSpeed)} km/h</p>
+              <p className="text-[10px] sm:text-xs text-slate-400 uppercase tracking-wider">Sust. Wind</p>
             </div>
           </div>
 
           {/* Max Wind Gust */}
-          <div className="flex items-center gap-3">
-            <div className="flex-shrink-0 w-10 h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
-              <Zap className="w-5 h-5 text-slate-300" />
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <div className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
+              <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-slate-300" />
             </div>
-            <div className="min-w-0">
-              <p className="text-lg sm:text-xl font-semibold text-white">{Math.round(cyclone.maxGust)} km/h</p>
-              <p className="text-xs text-slate-400 uppercase tracking-wider">Max Gust</p>
+            <div className="min-w-0 overflow-hidden">
+              <p className="text-base sm:text-xl font-semibold text-white truncate">{Math.round(cyclone.maxGust)} km/h</p>
+              <p className="text-[10px] sm:text-xs text-slate-400 uppercase tracking-wider">Max Gust</p>
             </div>
           </div>
 
           {/* Distance */}
-          <div className="flex items-center gap-3">
-            <div className="flex-shrink-0 w-10 h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
-              <MapPin className="w-5 h-5 text-slate-300" />
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <div className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
+              <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-slate-300" />
             </div>
-            <div className="min-w-0">
-              <p className="text-lg sm:text-xl font-semibold text-white">{cyclone.distance} km</p>
-              <p className="text-xs text-slate-400 uppercase tracking-wider">Distance</p>
+            <div className="min-w-0 overflow-hidden">
+              <p className="text-base sm:text-xl font-semibold text-white truncate">{cyclone.distance} km</p>
+              <p className="text-[10px] sm:text-xs text-slate-400 uppercase tracking-wider">Distance</p>
             </div>
           </div>
 
           {/* Est. Arrival */}
-          <div className="flex items-center gap-3">
-            <div className="flex-shrink-0 w-10 h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
-              <Clock className="w-5 h-5 text-slate-300" />
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <div className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
+              <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-slate-300" />
             </div>
-            <div className="min-w-0">
-              <p className="text-lg sm:text-xl font-semibold text-white">{cyclone.eta}</p>
-              <p className="text-xs text-slate-400 uppercase tracking-wider">Est. Arrival</p>
+            <div className="min-w-0 overflow-hidden">
+              <p className="text-base sm:text-xl font-semibold text-white truncate">{cyclone.eta}</p>
+              <p className="text-[10px] sm:text-xs text-slate-400 uppercase tracking-wider">Est. Arrival</p>
             </div>
           </div>
 
           {/* Current Position (Spans 2 columns) */}
-          <div className="col-span-2 flex items-center gap-3 pt-3 border-t border-slate-700">
-            <div className="flex-shrink-0 w-10 h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
-              <MapPin className="w-5 h-5 text-slate-300" />
+          <div className="col-span-2 flex items-center gap-2 sm:gap-3 pt-3 border-t border-slate-700 min-w-0">
+            <div className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
+              <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-slate-300" />
             </div>
-            <div className="min-w-0">
+            <div className="min-w-0 overflow-hidden flex-1">
               <p className="text-sm sm:text-base font-semibold text-white truncate">
                 {cyclone.lat.toFixed(2)}°N, {cyclone.lon.toFixed(2)}°E
               </p>
-              <p className="text-xs text-slate-400 uppercase tracking-wider">Current Position</p>
+              <p className="text-[10px] sm:text-xs text-slate-400 uppercase tracking-wider">Current Position</p>
             </div>
           </div>
         </div>
