@@ -48,6 +48,8 @@ export interface WeatherData {
         maxwind_kph: number;
         totalprecip_mm: number;
         avghumidity: number;
+        daily_chance_of_rain?: number;
+        daily_will_it_rain?: number;
         condition: {
           text: string;
           icon: string;
