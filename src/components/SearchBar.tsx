@@ -1,13 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { Search } from 'lucide-react';
 import { City } from '@/types/weather';
+import { supabase } from '@/integrations/supabase/client';
 
 interface SearchBarProps {
   onCitySelect: (city: string) => void;
 }
-
-const WEATHER_API_KEY = '96400e6204fd4ef095123146252610';
-const GEMINI_API_KEY = 'AIzaSyBsKdhrTjWEg9LRH9pFDRf4giYYyvqTbdo';
 
 export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
   const [query, setQuery] = useState('');
@@ -29,93 +27,16 @@ export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
     timeoutRef.current = setTimeout(async () => {
       setLoading(true);
       try {
-        // Try Open-Meteo first for more accurate results
-        const openMeteoResponse = await fetch(
-          `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=15&language=en&format=json`
-        );
-        
-        if (openMeteoResponse.ok) {
-          const openMeteoData = await openMeteoResponse.json();
-          
-          if (openMeteoData?.results && openMeteoData.results.length > 0) {
-            // Convert to City format with better display
-            const convertedData = openMeteoData.results.map((item: any) => ({
-              id: item.id,
-              name: item.name,
-              region: item.admin1 || item.admin2 || '',
-              country: item.country,
-              lat: item.latitude,
-              lon: item.longitude,
-              url: `${item.name}-${item.country}`
-            }));
-            
-            setSuggestions(convertedData);
-            setIsOpen(true);
-            setLoading(false);
-            return;
-          }
-        }
-        
-        // Try WeatherAPI as fallback
-        const response = await fetch(
-          `https://api.weatherapi.com/v1/search.json?key=${WEATHER_API_KEY}&q=${encodeURIComponent(query)}`
-        );
-        
-        if (response.ok) {
-          const data = await response.json();
-          
-          if (data && data.length > 0) {
-            setSuggestions(data);
-            setIsOpen(true);
-            setLoading(false);
-            return;
-          }
-        }
-        
-        // Last resort: Try Gemini AI for hard-to-find locations
-        const geminiResponse = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{
-                parts: [{
-                  text: `Find the latitude and longitude for: "${query}". Return ONLY a JSON array with this format: [{"name":"City Name","country":"Country","lat":number,"lon":number}]. If multiple matches, return up to 5. If no match, return empty array.`
-                }]
-              }]
-            })
-          }
-        );
-        
-        if (geminiResponse.ok) {
-          const geminiData = await geminiResponse.json();
-          const aiText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || '';
-          
-          // Extract JSON from AI response
-          const jsonMatch = aiText.match(/\[[\s\S]*\]/);
-          if (jsonMatch) {
-            const locations = JSON.parse(jsonMatch[0]);
-            
-            if (locations && locations.length > 0) {
-              const convertedAiData = locations.map((item: any) => ({
-                id: item.lat + item.lon,
-                name: item.name,
-                region: '',
-                country: item.country,
-                lat: item.lat,
-                lon: item.lon,
-                url: `${item.name}-${item.country}`
-              }));
-              
-              setSuggestions(convertedAiData);
-              setIsOpen(true);
-            } else {
-              setSuggestions([]);
-            }
-          } else {
-            setSuggestions([]);
-          }
+        // Call edge function to protect API keys
+        const { data, error } = await supabase.functions.invoke('city-search', {
+          body: { query }
+        });
+
+        if (error) throw error;
+
+        if (data?.results && data.results.length > 0) {
+          setSuggestions(data.results);
+          setIsOpen(true);
         } else {
           setSuggestions([]);
         }

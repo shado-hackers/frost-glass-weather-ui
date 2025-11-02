@@ -18,6 +18,7 @@ interface CycloneData {
   distance: number;
   eta: string;
   isActive: boolean;
+  locationName?: string;
 }
 
 export const CycloneTracker = ({ data }: CycloneTrackerProps) => {
@@ -94,6 +95,20 @@ export const CycloneTracker = ({ data }: CycloneTrackerProps) => {
             
             const speed = nearest.properties.maxvelocity || 20;
             
+            // Fetch location name for cyclone position
+            let locationName = '';
+            try {
+              const geoResponse = await fetch(
+                `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${nearest.geometry.coordinates[1]}&longitude=${nearest.geometry.coordinates[0]}&localityLanguage=en`
+              );
+              if (geoResponse.ok) {
+                const geoData = await geoResponse.json();
+                locationName = geoData.locality || geoData.city || geoData.principalSubdivision || '';
+              }
+            } catch (geoError) {
+              console.error('Error fetching location name:', geoError);
+            }
+            
             setCyclone({
               name: nearest.properties.name || 'Unnamed Storm',
               type: getCycloneType(speed),
@@ -105,7 +120,8 @@ export const CycloneTracker = ({ data }: CycloneTrackerProps) => {
               movementSpeed: 15,
               distance: Math.round(distance),
               eta: calculateETA(distance, 15),
-              isActive: true
+              isActive: true,
+              locationName: locationName
             });
           } else {
             setCyclone(null);
@@ -123,8 +139,8 @@ export const CycloneTracker = ({ data }: CycloneTrackerProps) => {
     };
 
     fetchCycloneData();
-    // Refresh every 10 minutes
-    const interval = setInterval(fetchCycloneData, 10 * 60 * 1000);
+    // Refresh every 5 minutes for more up-to-date data
+    const interval = setInterval(fetchCycloneData, 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, [data.location.lat, data.location.lon]);
 
@@ -177,13 +193,13 @@ export const CycloneTracker = ({ data }: CycloneTrackerProps) => {
         </div>
 
         {/* Main Storm Info */}
-        <div className="flex items-center gap-4 mb-6">
-          <div className="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 bg-blue-900/50 rounded-xl flex items-center justify-center border border-blue-700/50">
-            <Wind className="w-8 h-8 sm:w-10 sm:h-10 text-blue-300" />
+        <div className="flex items-center gap-3 sm:gap-4 mb-6">
+          <div className="flex-shrink-0 w-12 h-12 sm:w-16 sm:h-16 bg-blue-900/50 rounded-xl flex items-center justify-center border border-blue-700/50">
+            <Wind className="w-6 h-6 sm:w-10 sm:h-10 text-blue-300" />
           </div>
-          <div className="flex-1 min-w-0">
-            <h1 className="text-2xl sm:text-3xl font-bold text-white truncate">{cyclone.name}</h1>
-            <p className="text-sm sm:text-base text-slate-400">{cyclone.type}</p>
+          <div className="flex-1 min-w-0 overflow-hidden">
+            <h1 className="text-lg sm:text-3xl font-bold text-white break-words line-clamp-2">{cyclone.name}</h1>
+            <p className="text-xs sm:text-base text-slate-400 truncate">{cyclone.type}</p>
           </div>
         </div>
 
@@ -260,8 +276,9 @@ export const CycloneTracker = ({ data }: CycloneTrackerProps) => {
             <div className="flex-shrink-0 w-10 h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
               <MapPin className="w-5 h-5 text-slate-300" />
             </div>
-            <div className="min-w-0">
-              <p className="text-sm sm:text-base font-semibold text-white truncate">
+            <div className="min-w-0 flex-1">
+              <p className="text-sm sm:text-base font-semibold text-white break-words">
+                {cyclone.locationName && <span className="block">{cyclone.locationName}</span>}
                 {cyclone.lat.toFixed(2)}°N, {cyclone.lon.toFixed(2)}°E
               </p>
               <p className="text-xs text-slate-400 uppercase tracking-wider">Current Position</p>
