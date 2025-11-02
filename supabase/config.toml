@@ -2,3 +2,9 @@ project_id = "zpudmtgmuhgwlffebves"
 
 [functions.city-search]
 verify_jwt = false
+
+[functions.fetch-weather]
+verify_jwt = false
+
+[functions.marine-weather]
+verify_jwt = false

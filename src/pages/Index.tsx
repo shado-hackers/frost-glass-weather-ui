@@ -13,14 +13,14 @@ import { AirQualityCard } from '@/components/AirQualityCard';
 import { WindPressureCard } from '@/components/WindPressureCard';
 import { DetailsCard } from '@/components/DetailsCard';
 import { SunriseSunsetCard } from '@/components/SunriseSunsetCard';
+import { MarineWeatherCard } from '@/components/MarineWeatherCard';
 import { formatLocalDateTime } from '@/utils/timeUtils';
 import { useLenis } from '@/hooks/useLenis';
 import { toast } from 'sonner';
 
-const API_KEYS = [
-  '96400e6204fd4ef095123146252610',
-  '3964227feacd4343b1b82923252810'
-];
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
 let currentKeyIndex = 0;
 
 const Index = () => {
@@ -33,21 +33,27 @@ const Index = () => {
   const fetchWeather = async (city: string, retryCount = 0) => {
     setLoading(true);
     try {
-      const apiKey = API_KEYS[currentKeyIndex];
-      const response = await fetch(
-        `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${encodeURIComponent(city)}&days=7&aqi=yes&alerts=no`
-      );
+      // Call edge function to protect API keys
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/fetch-weather`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+        },
+        body: JSON.stringify({ city, keyIndex: currentKeyIndex })
+      });
+
+      const data = await response.json();
       
-      if (!response.ok) {
-        // Try next API key if current one fails
-        if (retryCount < API_KEYS.length - 1) {
-          currentKeyIndex = (currentKeyIndex + 1) % API_KEYS.length;
-          return fetchWeather(city, retryCount + 1);
-        }
-        throw new Error('Failed to fetch weather data');
+      if (response.status === 429 && data.error === 'retry' && retryCount < 1) {
+        currentKeyIndex = data.nextKeyIndex;
+        return fetchWeather(city, retryCount + 1);
       }
       
-      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch weather data');
+      }
+      
       setWeatherData(data);
       setCurrentCity(data.location.name);
       toast.success(`Weather updated for ${data.location.name}`);
@@ -160,6 +166,11 @@ const Index = () => {
             <AirQualityCard data={weatherData} />
           </div>
         )}
+
+        {/* Marine Weather Card */}
+        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.38s' }}>
+          <MarineWeatherCard data={weatherData} />
+        </div>
 
         {/* Wind & Pressure Card */}
         <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.4s' }}>

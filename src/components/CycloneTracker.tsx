@@ -197,9 +197,11 @@ export const CycloneTracker = ({ data }: CycloneTrackerProps) => {
           <div className="flex-shrink-0 w-12 h-12 sm:w-16 sm:h-16 bg-blue-900/50 rounded-xl flex items-center justify-center border border-blue-700/50">
             <Wind className="w-6 h-6 sm:w-10 sm:h-10 text-blue-300" />
           </div>
-          <div className="flex-1 min-w-0 overflow-hidden">
-            <h1 className="text-lg sm:text-3xl font-bold text-white break-words line-clamp-2">{cyclone.name}</h1>
-            <p className="text-xs sm:text-base text-slate-400 truncate">{cyclone.type}</p>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-base sm:text-3xl font-bold text-white break-words hyphens-auto leading-tight">
+              {cyclone.name}
+            </h1>
+            <p className="text-xs sm:text-base text-slate-400 mt-1">{cyclone.type}</p>
           </div>
         </div>
 
