@@ -13,6 +13,12 @@ interface MarineData {
   swellHeight: number | null;
   swellDirection: number | null;
   swellPeriod: number | null;
+  windWaveHeight: number | null;
+  windWaveDirection: number | null;
+  windWavePeriod: number | null;
+  oceanCurrentVelocity: number | null;
+  oceanCurrentDirection: number | null;
+  maxWaveHeight?: number | null;
 }
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -52,6 +58,12 @@ export const MarineWeatherCard = ({ data }: MarineWeatherCardProps) => {
             swellHeight: marineResponse.current.swell_wave_height || null,
             swellDirection: marineResponse.current.swell_wave_direction || null,
             swellPeriod: marineResponse.current.swell_wave_period || null,
+            windWaveHeight: marineResponse.current.wind_wave_height || null,
+            windWaveDirection: marineResponse.current.wind_wave_direction || null,
+            windWavePeriod: marineResponse.current.wind_wave_period || null,
+            oceanCurrentVelocity: marineResponse.current.ocean_current_velocity || null,
+            oceanCurrentDirection: marineResponse.current.ocean_current_direction || null,
+            maxWaveHeight: marineResponse.daily?.wave_height_max?.[0] || null,
           };
           
           // Only set data if at least one value is not null
@@ -111,6 +123,11 @@ export const MarineWeatherCard = ({ data }: MarineWeatherCardProps) => {
             <p className="text-xl sm:text-2xl font-bold text-foreground">
               {marineData.waveHeight.toFixed(1)}m
             </p>
+            {marineData.maxWaveHeight && (
+              <p className="text-xs text-muted-foreground mt-1">
+                Max today: {marineData.maxWaveHeight.toFixed(1)}m
+              </p>
+            )}
           </div>
         )}
 
@@ -150,6 +167,85 @@ export const MarineWeatherCard = ({ data }: MarineWeatherCardProps) => {
             </div>
             <p className="text-xl sm:text-2xl font-bold text-foreground">
               {marineData.swellHeight.toFixed(1)}m
+            </p>
+          </div>
+        )}
+
+        {/* Swell Direction */}
+        {marineData.swellDirection !== null && (
+          <div className="bg-background/50 rounded-2xl p-3 sm:p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Navigation className="w-4 h-4 text-teal-400" />
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Swell Dir</p>
+            </div>
+            <p className="text-xl sm:text-2xl font-bold text-foreground">
+              {getDirectionLabel(marineData.swellDirection)}
+            </p>
+            <p className="text-xs text-muted-foreground">{marineData.swellDirection}°</p>
+          </div>
+        )}
+
+        {/* Swell Period */}
+        {marineData.swellPeriod !== null && (
+          <div className="bg-background/50 rounded-2xl p-3 sm:p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Wind className="w-4 h-4 text-teal-400" />
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Swell Period</p>
+            </div>
+            <p className="text-xl sm:text-2xl font-bold text-foreground">
+              {marineData.swellPeriod.toFixed(1)}s
+            </p>
+          </div>
+        )}
+
+        {/* Wind Wave Height */}
+        {marineData.windWaveHeight !== null && (
+          <div className="bg-background/50 rounded-2xl p-3 sm:p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Wind className="w-4 h-4 text-sky-400" />
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Wind Wave</p>
+            </div>
+            <p className="text-xl sm:text-2xl font-bold text-foreground">
+              {marineData.windWaveHeight.toFixed(1)}m
+            </p>
+          </div>
+        )}
+
+        {/* Wind Wave Direction */}
+        {marineData.windWaveDirection !== null && (
+          <div className="bg-background/50 rounded-2xl p-3 sm:p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Navigation className="w-4 h-4 text-sky-400" />
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Wind Wave Dir</p>
+            </div>
+            <p className="text-xl sm:text-2xl font-bold text-foreground">
+              {getDirectionLabel(marineData.windWaveDirection)}
+            </p>
+          </div>
+        )}
+
+        {/* Ocean Current Velocity */}
+        {marineData.oceanCurrentVelocity !== null && (
+          <div className="bg-background/50 rounded-2xl p-3 sm:p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Waves className="w-4 h-4 text-indigo-400" />
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Current Speed</p>
+            </div>
+            <p className="text-xl sm:text-2xl font-bold text-foreground">
+              {marineData.oceanCurrentVelocity.toFixed(2)} m/s
+            </p>
+          </div>
+        )}
+
+        {/* Ocean Current Direction */}
+        {marineData.oceanCurrentDirection !== null && (
+          <div className="bg-background/50 rounded-2xl p-3 sm:p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Navigation className="w-4 h-4 text-indigo-400" />
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Current Dir</p>
+            </div>
+            <p className="text-xl sm:text-2xl font-bold text-foreground">
+              {getDirectionLabel(marineData.oceanCurrentDirection)}
             </p>
           </div>
         )}
