@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { Search } from 'lucide-react';
 import { City } from '@/types/weather';
-import { supabase } from '@/integrations/supabase/client';
 
 interface SearchBarProps {
   onCitySelect: (city: string) => void;
 }
+
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
 export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
   const [query, setQuery] = useState('');
@@ -28,11 +30,18 @@ export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
       setLoading(true);
       try {
         // Call edge function to protect API keys
-        const { data, error } = await supabase.functions.invoke('city-search', {
-          body: { query }
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/city-search`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+          },
+          body: JSON.stringify({ query })
         });
 
-        if (error) throw error;
+        if (!response.ok) throw new Error('Search failed');
+
+        const data = await response.json();
 
         if (data?.results && data.results.length > 0) {
           setSuggestions(data.results);
