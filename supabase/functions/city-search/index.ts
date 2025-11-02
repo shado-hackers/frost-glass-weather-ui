@@ -8,35 +8,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Helper to fetch from Open-Meteo Geocoding API
-async function fetchOpenMeteoResults(query: string) {
-  try {
-    const response = await fetch(
-      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=10&language=en&format=json`
-    );
-    
-    if (!response.ok) return [];
-    
-    const data = await response.json();
-    
-    if (!data.results || data.results.length === 0) return [];
-    
-    // Transform Open-Meteo results to match our format
-    return data.results.map((result: any, index: number) => ({
-      id: 1000000 + index,
-      name: result.name,
-      region: result.admin1 || result.admin2 || '',
-      country: result.country || '',
-      lat: result.latitude,
-      lon: result.longitude,
-      url: `${result.name.toLowerCase().replace(/\s+/g, '-')}-${result.country.toLowerCase()}`
-    }));
-  } catch (error) {
-    console.error('Open-Meteo geocoding error:', error);
-    return [];
-  }
-}
-
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -52,45 +23,19 @@ serve(async (req) => {
       );
     }
 
-    console.log(`Searching for: ${query}`);
-    
-    // Fetch from both WeatherAPI and Open-Meteo in parallel
-    const [weatherApiResults, openMeteoResults] = await Promise.all([
-      // WeatherAPI
-      fetch(`https://api.weatherapi.com/v1/search.json?key=${WEATHER_API_KEY}&q=${encodeURIComponent(query)}`)
-        .then(res => res.ok ? res.json() : [])
-        .catch(err => {
-          console.error('WeatherAPI error:', err);
-          return [];
-        }),
-      // Open-Meteo Geocoding
-      fetchOpenMeteoResults(query)
-    ]);
-    
-    console.log(`WeatherAPI: ${weatherApiResults.length || 0} results, Open-Meteo: ${openMeteoResults.length} results`);
-    
-    // Merge and deduplicate results based on location proximity
-    const allResults = [...(weatherApiResults || []), ...openMeteoResults];
-    const uniqueResults = [];
-    const seen = new Set();
-    
-    for (const result of allResults) {
-      // Create a unique key based on coordinates rounded to 2 decimal places
-      const key = `${result.lat.toFixed(2)},${result.lon.toFixed(2)}`;
-      if (!seen.has(key)) {
-        seen.add(key);
-        uniqueResults.push(result);
+    // Try WeatherAPI first
+    const weatherResponse = await fetch(
+      `https://api.weatherapi.com/v1/search.json?key=${WEATHER_API_KEY}&q=${encodeURIComponent(query)}`
+    );
+
+    if (weatherResponse.ok) {
+      const data = await weatherResponse.json();
+      if (data && data.length > 0) {
+        return new Response(
+          JSON.stringify({ results: data }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
-    }
-    
-    console.log(`Returning ${uniqueResults.length} unique results`);
-    
-    // Return merged results if we have any
-    if (uniqueResults.length > 0) {
-      return new Response(
-        JSON.stringify({ results: uniqueResults.slice(0, 15) }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
     }
 
     // Fallback to Gemini AI for hard-to-find locations

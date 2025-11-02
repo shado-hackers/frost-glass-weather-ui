@@ -22,9 +22,9 @@ serve(async (req) => {
 
     console.log(`Fetching marine weather for: ${lat}, ${lon}`);
 
-    // Fetch marine weather data from Open-Meteo API with extended parameters
+    // Fetch marine weather data from Open-Meteo API
     const response = await fetch(
-      `https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&current=wave_height,wave_direction,wave_period,wind_wave_height,wind_wave_direction,wind_wave_period,swell_wave_height,swell_wave_direction,swell_wave_period,ocean_current_velocity,ocean_current_direction&hourly=wave_height,wave_direction,wave_period,wind_wave_height,swell_wave_height&daily=wave_height_max,wave_period_max,wind_wave_height_max,swell_wave_height_max&timezone=auto`
+      `https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&current=wave_height,wave_direction,wave_period,wind_wave_height,wind_wave_direction,wind_wave_period,swell_wave_height,swell_wave_direction,swell_wave_period&timezone=auto`
     );
 
     if (!response.ok) {
