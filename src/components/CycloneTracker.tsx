@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { WeatherData } from '@/types/weather';
-import { Wind, Navigation, Zap, MapPin, Clock, Target, AlertTriangle } from 'lucide-react';
+import { Wind, Navigation, Zap, MapPin, Clock, Target } from 'lucide-react';
+import cycloneBg from '@/assets/cyclone-bg.jpg';
 
 interface CycloneTrackerProps {
   data: WeatherData;
@@ -169,39 +170,40 @@ export const CycloneTracker = ({ data }: CycloneTrackerProps) => {
   }
 
   return (
-    <div className="relative overflow-hidden rounded-3xl border-2 border-red-500/40 backdrop-blur-xl shadow-2xl animate-scale-in">
+    <div className="relative overflow-hidden rounded-3xl border-2 border-destructive/40 backdrop-blur-xl shadow-2xl animate-scale-in">
       {/* Animated Cyclone Background */}
       <div className="absolute inset-0 overflow-hidden">
         <div 
-          className="absolute inset-0 bg-cover bg-center opacity-30 animate-spin-slow"
+          className="absolute inset-0 bg-cover bg-center opacity-20"
           style={{
-            backgroundImage: `url('https://i.postimg.cc/NjYq1Dm9/photo-2025-10-28-14-39-21-7566282270038818820.jpg')`,
-            animationDuration: '30s'
+            backgroundImage: `url(${cycloneBg})`,
+            animation: 'spin 40s linear infinite',
+            filter: 'blur(2px)'
           }}
         />
       </div>
       
       {/* Dark gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95" />
+      <div className="absolute inset-0 bg-gradient-to-br from-background/98 via-card/95 to-background/98" />
       
       {/* Content */}
       <div className="relative p-4 sm:p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-base sm:text-lg font-semibold text-slate-300">Live Storm Tracker</h2>
-          <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse" title="Live Data"></div>
+          <h2 className="text-base sm:text-lg font-semibold text-muted-foreground">Live Storm Tracker</h2>
+          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/50" title="Live Data"></div>
         </div>
 
         {/* Main Storm Info */}
         <div className="flex items-center gap-3 sm:gap-4 mb-6">
-          <div className="flex-shrink-0 w-12 h-12 sm:w-16 sm:h-16 bg-blue-900/50 rounded-xl flex items-center justify-center border border-blue-700/50">
-            <Wind className="w-6 h-6 sm:w-10 sm:h-10 text-blue-300" />
+          <div className="flex-shrink-0 w-12 h-12 sm:w-16 sm:h-16 bg-primary/20 rounded-xl flex items-center justify-center border border-primary/30">
+            <Wind className="w-6 h-6 sm:w-10 sm:h-10 text-primary" />
           </div>
           <div className="flex-1 min-w-0">
-            <h1 className="text-base sm:text-3xl font-bold text-white break-words hyphens-auto leading-tight">
+            <h1 className="text-base sm:text-3xl font-bold text-foreground break-words hyphens-auto leading-tight">
               {cyclone.name}
             </h1>
-            <p className="text-xs sm:text-base text-slate-400 mt-1">{cyclone.type}</p>
+            <p className="text-xs sm:text-base text-muted-foreground mt-1">{cyclone.type}</p>
           </div>
         </div>
 
@@ -209,81 +211,81 @@ export const CycloneTracker = ({ data }: CycloneTrackerProps) => {
         <div className="grid grid-cols-2 gap-3 sm:gap-5">
           {/* Movement */}
           <div className="flex items-center gap-3">
-            <div className="flex-shrink-0 w-10 h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
-              <Navigation className="w-5 h-5 text-slate-300" />
+            <div className="flex-shrink-0 w-10 h-10 bg-muted/50 rounded-lg flex items-center justify-center">
+              <Navigation className="w-5 h-5 text-foreground" />
             </div>
             <div className="min-w-0">
-              <p className="text-lg sm:text-xl font-semibold text-white">{cyclone.movement}</p>
-              <p className="text-xs text-slate-400 uppercase tracking-wider">Movement</p>
+              <p className="text-lg sm:text-xl font-semibold text-foreground">{cyclone.movement}</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Movement</p>
             </div>
           </div>
 
           {/* Movement Speed */}
           <div className="flex items-center gap-3">
-            <div className="flex-shrink-0 w-10 h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
-              <Target className="w-5 h-5 text-slate-300" />
+            <div className="flex-shrink-0 w-10 h-10 bg-muted/50 rounded-lg flex items-center justify-center">
+              <Target className="w-5 h-5 text-foreground" />
             </div>
             <div className="min-w-0">
-              <p className="text-lg sm:text-xl font-semibold text-white">{cyclone.movementSpeed} km/h</p>
-              <p className="text-xs text-slate-400 uppercase tracking-wider">Mov. Speed</p>
+              <p className="text-lg sm:text-xl font-semibold text-foreground">{cyclone.movementSpeed} km/h</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Mov. Speed</p>
             </div>
           </div>
 
           {/* Sustained Wind */}
           <div className="flex items-center gap-3">
-            <div className="flex-shrink-0 w-10 h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
-              <Wind className="w-5 h-5 text-slate-300" />
+            <div className="flex-shrink-0 w-10 h-10 bg-muted/50 rounded-lg flex items-center justify-center">
+              <Wind className="w-5 h-5 text-foreground" />
             </div>
             <div className="min-w-0">
-              <p className="text-lg sm:text-xl font-semibold text-white">{Math.round(cyclone.windSpeed)} km/h</p>
-              <p className="text-xs text-slate-400 uppercase tracking-wider">Sust. Wind</p>
+              <p className="text-lg sm:text-xl font-semibold text-foreground">{Math.round(cyclone.windSpeed)} km/h</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Sust. Wind</p>
             </div>
           </div>
 
           {/* Max Wind Gust */}
           <div className="flex items-center gap-3">
-            <div className="flex-shrink-0 w-10 h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
-              <Zap className="w-5 h-5 text-slate-300" />
+            <div className="flex-shrink-0 w-10 h-10 bg-muted/50 rounded-lg flex items-center justify-center">
+              <Zap className="w-5 h-5 text-foreground" />
             </div>
             <div className="min-w-0">
-              <p className="text-lg sm:text-xl font-semibold text-white">{Math.round(cyclone.maxGust)} km/h</p>
-              <p className="text-xs text-slate-400 uppercase tracking-wider">Max Gust</p>
+              <p className="text-lg sm:text-xl font-semibold text-foreground">{Math.round(cyclone.maxGust)} km/h</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Max Gust</p>
             </div>
           </div>
 
           {/* Distance */}
           <div className="flex items-center gap-3">
-            <div className="flex-shrink-0 w-10 h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
-              <MapPin className="w-5 h-5 text-slate-300" />
+            <div className="flex-shrink-0 w-10 h-10 bg-muted/50 rounded-lg flex items-center justify-center">
+              <MapPin className="w-5 h-5 text-foreground" />
             </div>
             <div className="min-w-0">
-              <p className="text-lg sm:text-xl font-semibold text-white">{cyclone.distance} km</p>
-              <p className="text-xs text-slate-400 uppercase tracking-wider">Distance</p>
+              <p className="text-lg sm:text-xl font-semibold text-foreground">{cyclone.distance} km</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Distance</p>
             </div>
           </div>
 
           {/* Est. Arrival */}
           <div className="flex items-center gap-3">
-            <div className="flex-shrink-0 w-10 h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
-              <Clock className="w-5 h-5 text-slate-300" />
+            <div className="flex-shrink-0 w-10 h-10 bg-muted/50 rounded-lg flex items-center justify-center">
+              <Clock className="w-5 h-5 text-foreground" />
             </div>
             <div className="min-w-0">
-              <p className="text-lg sm:text-xl font-semibold text-white">{cyclone.eta}</p>
-              <p className="text-xs text-slate-400 uppercase tracking-wider">Est. Arrival</p>
+              <p className="text-lg sm:text-xl font-semibold text-foreground">{cyclone.eta}</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Est. Arrival</p>
             </div>
           </div>
 
           {/* Current Position (Spans 2 columns) */}
-          <div className="col-span-2 flex items-center gap-3 pt-3 border-t border-slate-700">
-            <div className="flex-shrink-0 w-10 h-10 bg-slate-700/50 rounded-lg flex items-center justify-center">
-              <MapPin className="w-5 h-5 text-slate-300" />
+          <div className="col-span-2 flex items-center gap-3 pt-3 border-t border-border">
+            <div className="flex-shrink-0 w-10 h-10 bg-muted/50 rounded-lg flex items-center justify-center">
+              <MapPin className="w-5 h-5 text-foreground" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm sm:text-base font-semibold text-white break-words">
+              <p className="text-sm sm:text-base font-semibold text-foreground break-words">
                 {cyclone.locationName && <span className="block">{cyclone.locationName}</span>}
                 {cyclone.lat.toFixed(2)}°N, {cyclone.lon.toFixed(2)}°E
               </p>
-              <p className="text-xs text-slate-400 uppercase tracking-wider">Current Position</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Current Position</p>
             </div>
           </div>
         </div>

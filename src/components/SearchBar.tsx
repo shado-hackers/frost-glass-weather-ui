@@ -17,8 +17,9 @@ export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
   const timeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
-    if (query.length < 1) {
+    if (query.length < 2) {
       setSuggestions([]);
+      setIsOpen(false);
       return;
     }
 
@@ -29,7 +30,6 @@ export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
     timeoutRef.current = setTimeout(async () => {
       setLoading(true);
       try {
-        // Call edge function to protect API keys
         const response = await fetch(`${SUPABASE_URL}/functions/v1/city-search`, {
           method: 'POST',
           headers: {
@@ -39,23 +39,23 @@ export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
           body: JSON.stringify({ query })
         });
 
-        if (!response.ok) throw new Error('Search failed');
-
         const data = await response.json();
 
-        if (data?.results && data.results.length > 0) {
+        if (response.ok && data?.results && data.results.length > 0) {
           setSuggestions(data.results);
           setIsOpen(true);
         } else {
           setSuggestions([]);
+          setIsOpen(false);
         }
       } catch (error) {
         console.error('Error fetching city suggestions:', error);
         setSuggestions([]);
+        setIsOpen(false);
       } finally {
         setLoading(false);
       }
-    }, 250);
+    }, 500);
 
     return () => {
       if (timeoutRef.current) {
@@ -80,7 +80,7 @@ export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => suggestions.length > 0 && setIsOpen(true)}
-          placeholder="Search city..."
+          placeholder="Search city (min 2 chars)..."
           className="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-3.5 sm:py-4 bg-card/95 backdrop-blur-xl border border-border/50 rounded-3xl text-sm sm:text-base text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/40 transition-all shadow-lg"
         />
       </div>

@@ -8,17 +8,22 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Helper to fetch from Gemini AI
-async function fetchGeminiResults(query: string) {
+// Helper to fetch from Gemini AI with retry logic
+async function fetchGeminiResults(query: string, retryCount = 0): Promise<any[]> {
   if (!GEMINI_API_KEY) {
     console.log('Gemini API key not configured, skipping Gemini search');
     return [];
   }
 
+  // Use gemini-2.5-flash instead of gemini-2.0-flash-exp for better rate limits
+  const model = 'gemini-2.0-flash-exp';
+  const maxRetries = 2;
+  const baseDelay = 1000;
+
   try {
-    console.log('Fetching Gemini results for:', query);
+    console.log(`Fetching Gemini results for: ${query} (attempt ${retryCount + 1})`);
     const geminiResponse = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -32,6 +37,14 @@ async function fetchGeminiResults(query: string) {
       }
     );
 
+    // Handle rate limiting with exponential backoff
+    if (geminiResponse.status === 429 && retryCount < maxRetries) {
+      const delay = baseDelay * Math.pow(2, retryCount);
+      console.log(`Rate limited by Gemini, retrying in ${delay}ms...`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return fetchGeminiResults(query, retryCount + 1);
+    }
+
     if (!geminiResponse.ok) {
       const errorText = await geminiResponse.text();
       console.error('Gemini API error:', geminiResponse.status, errorText);
@@ -40,8 +53,7 @@ async function fetchGeminiResults(query: string) {
     
     const geminiData = await geminiResponse.json();
     const aiText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    console.log('Gemini response text:', aiText);
-
+    
     const jsonMatch = aiText.match(/\[[\s\S]*\]/);
     if (jsonMatch) {
       const locations = JSON.parse(jsonMatch[0]);
@@ -57,7 +69,6 @@ async function fetchGeminiResults(query: string) {
       console.log(`Gemini found ${formattedResults.length} locations`);
       return formattedResults;
     }
-    console.log('Gemini: No JSON found in response');
     return [];
   } catch (error) {
     console.error('Gemini AI error:', error);
@@ -93,10 +104,10 @@ serve(async (req) => {
   try {
     const { query } = await req.json();
 
-    if (!query || query.length < 1) {
+    if (!query || query.length < 2) {
       return new Response(
-        JSON.stringify({ error: 'Query too short' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+        JSON.stringify({ error: 'Query must be at least 2 characters', results: [] }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
       );
     }
 

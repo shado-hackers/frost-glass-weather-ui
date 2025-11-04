@@ -81,6 +81,8 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    text-rendering: optimizeLegibility;
   }
 }
 
@@ -105,6 +107,32 @@ All colors MUST be HSL.
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
                 opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: transform, opacity;
+  }
+}
+
+/* Mobile Performance Optimizations */
+@media (max-width: 768px) {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .backdrop-blur-xl {
+    backdrop-filter: blur(8px) !important;
+  }
+  
+  .backdrop-blur-lg {
+    backdrop-filter: blur(6px) !important;
+  }
+  
+  .animate-slide-up,
+  .animate-scale-in,
+  .animate-fade-in {
+    animation-duration: 0.2s !important;
+  }
+  
+  /* Reduce animation delays on mobile */
+  [style*="animation-delay"] {
+    animation-delay: 0.05s !important;
   }
 }
 
