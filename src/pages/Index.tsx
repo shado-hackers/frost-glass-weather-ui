@@ -14,6 +14,7 @@ import { WindPressureCard } from '@/components/WindPressureCard';
 import { DetailsCard } from '@/components/DetailsCard';
 import { SunriseSunsetCard } from '@/components/SunriseSunsetCard';
 import { MarineWeatherCard } from '@/components/MarineWeatherCard';
+import { WeatherTipsCard } from '@/components/WeatherTipsCard';
 import { formatLocalDateTime } from '@/utils/timeUtils';
 import { useLenis } from '@/hooks/useLenis';
 import { toast } from 'sonner';
@@ -172,23 +173,28 @@ const Index = () => {
           <MarineWeatherCard data={weatherData} />
         </div>
 
-        {/* Wind & Pressure Card */}
+        {/* AI Weather Tips Card */}
         <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.4s' }}>
+          <WeatherTipsCard data={weatherData} />
+        </div>
+
+        {/* Wind & Pressure Card */}
+        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.42s' }}>
           <WindPressureCard data={weatherData} />
         </div>
 
         {/* Details Card */}
-        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.45s' }}>
+        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.47s' }}>
           <DetailsCard data={weatherData} />
         </div>
 
         {/* Sunrise & Sunset Card */}
-        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.5s' }}>
+        <div className="mb-3 sm:mb-4 animate-slide-up" style={{ animationDelay: '0.52s' }}>
           <SunriseSunsetCard data={weatherData} />
         </div>
 
         {/* Daily Forecast */}
-        <div className="mb-6 sm:mb-8 animate-slide-up" style={{ animationDelay: '0.55s' }}>
+        <div className="mb-6 sm:mb-8 animate-slide-up" style={{ animationDelay: '0.57s' }}>
           <DailyForecast data={weatherData} />
         </div>
       </div>

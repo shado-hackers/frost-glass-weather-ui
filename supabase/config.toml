@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.marine-weather]
 verify_jwt = false
+
+[functions.weather-tips]
+verify_jwt = false
