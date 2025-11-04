@@ -1,43 +1,22 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const WEATHER_API_KEY = Deno.env.get('WEATHER_API_KEY') || '96400e6204fd4ef095123146252610';
-const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY') || 'AIzaSyBsKdhrTjWEg9LRH9pFDRf4giYYyvqTbdo';
+const WEATHER_API_KEY = Deno.env.get('WEATHER_API_KEY');
+const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Helper to fetch from Open-Meteo Geocoding API
-async function fetchOpenMeteoResults(query: string) {
-  try {
-    const response = await fetch(
-      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=10&language=en&format=json`
-    );
-    
-    if (!response.ok) return [];
-    
-    const data = await response.json();
-    if (!data.results) return [];
-    
-    return data.results.map((item: any) => ({
-      id: item.id,
-      name: item.name,
-      region: item.admin1 || '',
-      country: item.country || '',
-      lat: item.latitude,
-      lon: item.longitude,
-      url: `${item.name}-${item.country}`
-    }));
-  } catch (error) {
-    console.error('Open-Meteo error:', error);
-    return [];
-  }
-}
-
 // Helper to fetch from Gemini AI
 async function fetchGeminiResults(query: string) {
+  if (!GEMINI_API_KEY) {
+    console.log('Gemini API key not configured, skipping Gemini search');
+    return [];
+  }
+
   try {
+    console.log('Fetching Gemini results for:', query);
     const geminiResponse = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`,
       {
@@ -53,15 +32,20 @@ async function fetchGeminiResults(query: string) {
       }
     );
 
-    if (!geminiResponse.ok) return [];
+    if (!geminiResponse.ok) {
+      const errorText = await geminiResponse.text();
+      console.error('Gemini API error:', geminiResponse.status, errorText);
+      return [];
+    }
     
     const geminiData = await geminiResponse.json();
     const aiText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    console.log('Gemini response text:', aiText);
 
     const jsonMatch = aiText.match(/\[[\s\S]*\]/);
     if (jsonMatch) {
       const locations = JSON.parse(jsonMatch[0]);
-      return locations.map((item: any) => ({
+      const formattedResults = locations.map((item: any) => ({
         id: item.lat + item.lon,
         name: item.name,
         region: item.region || '',
@@ -70,7 +54,10 @@ async function fetchGeminiResults(query: string) {
         lon: item.lon,
         url: `${item.name}-${item.country}`
       }));
+      console.log(`Gemini found ${formattedResults.length} locations`);
+      return formattedResults;
     }
+    console.log('Gemini: No JSON found in response');
     return [];
   } catch (error) {
     console.error('Gemini AI error:', error);
@@ -113,24 +100,39 @@ serve(async (req) => {
       );
     }
 
-    console.log(`Searching for: ${query} across all APIs`);
+    console.log(`Searching for: ${query} using WeatherAPI and Gemini AI`);
 
-    // Fetch from all three APIs concurrently for better results
-    const [weatherApiResults, openMeteoResults, geminiResults] = await Promise.all([
+    if (!WEATHER_API_KEY) {
+      console.error('WEATHER_API_KEY not configured');
+      return new Response(
+        JSON.stringify({ error: 'Weather API key not configured' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      );
+    }
+
+    // Fetch from both APIs concurrently
+    const [weatherApiResults, geminiResults] = await Promise.all([
       fetch(`https://api.weatherapi.com/v1/search.json?key=${WEATHER_API_KEY}&q=${encodeURIComponent(query)}`)
-        .then(res => res.ok ? res.json() : [])
+        .then(async res => {
+          if (!res.ok) {
+            const errorText = await res.text();
+            console.error('WeatherAPI error:', res.status, errorText);
+            return [];
+          }
+          const data = await res.json();
+          console.log(`WeatherAPI found ${data.length} results`);
+          return data;
+        })
         .catch(err => {
-          console.error('WeatherAPI error:', err);
+          console.error('WeatherAPI fetch error:', err);
           return [];
         }),
-      fetchOpenMeteoResults(query),
       fetchGeminiResults(query)
     ]);
 
-    // Combine and deduplicate all results
+    // Combine all results
     const allResults = [
       ...(Array.isArray(weatherApiResults) ? weatherApiResults : []),
-      ...openMeteoResults,
       ...geminiResults
     ];
 
