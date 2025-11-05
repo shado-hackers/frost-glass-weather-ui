@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { WeatherData } from '@/types/weather';
 import { Wind, Navigation, Zap, MapPin, Clock, Target } from 'lucide-react';
-import cycloneBg from '@/assets/cyclone-bg.jpg';
 
 interface CycloneTrackerProps {
   data: WeatherData;
@@ -155,11 +154,11 @@ export const CycloneTracker = ({ data }: CycloneTrackerProps) => {
 
   if (loading) {
     return (
-      <div className="relative overflow-hidden rounded-3xl border-2 border-cyan-500/30 backdrop-blur-xl shadow-2xl animate-scale-in">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/95 via-blue-950/90 to-cyan-950/95" />
+      <div className="relative overflow-hidden rounded-3xl border border-border/50 shadow-2xl animate-scale-in">
+        <div className="absolute inset-0 bg-card/80 backdrop-blur-md" />
         <div className="relative p-6 text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mb-3"></div>
-          <p className="text-white/80 text-sm">Checking for active storms...</p>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-3"></div>
+          <p className="text-muted-foreground text-sm">Checking for active storms...</p>
         </div>
       </div>
     );
@@ -170,21 +169,9 @@ export const CycloneTracker = ({ data }: CycloneTrackerProps) => {
   }
 
   return (
-    <div className="relative overflow-hidden rounded-3xl border-2 border-destructive/40 backdrop-blur-xl shadow-2xl animate-scale-in">
-      {/* Animated Cyclone Background */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center opacity-20"
-          style={{
-            backgroundImage: `url(${cycloneBg})`,
-            animation: 'spin 40s linear infinite',
-            filter: 'blur(2px)'
-          }}
-        />
-      </div>
-      
-      {/* Dark gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-background/98 via-card/95 to-background/98" />
+    <div className="relative overflow-hidden rounded-3xl border border-destructive/50 shadow-2xl animate-scale-in">
+      {/* Semi-transparent dark background */}
+      <div className="absolute inset-0 bg-card/80 backdrop-blur-md" />
       
       {/* Content */}
       <div className="relative p-4 sm:p-6">
