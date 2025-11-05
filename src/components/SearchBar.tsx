@@ -87,7 +87,7 @@ export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
 
       {isOpen && suggestions.length > 0 && (
         <div className="absolute top-full mt-2 w-full bg-background/98 backdrop-blur-xl border border-border/30 rounded-2xl overflow-hidden z-[100] animate-fade-in max-h-[60vh] overflow-y-auto smooth-scroll shadow-2xl">
-          {suggestions.slice(0, 15).map((city, index) => (
+          {suggestions.slice(0, 8).map((city, index) => (
             <button
               key={`${city.lat}-${city.lon}-${index}`}
               onClick={() => handleSelect(city)}

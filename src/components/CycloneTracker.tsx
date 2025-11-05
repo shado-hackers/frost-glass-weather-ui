@@ -154,7 +154,7 @@ export const CycloneTracker = ({ data }: CycloneTrackerProps) => {
 
   if (loading) {
     return (
-      <div className="relative overflow-hidden rounded-3xl border border-border/50 shadow-2xl animate-scale-in">
+      <div className="relative overflow-hidden rounded-3xl border border-border/50 shadow-2xl animate-fade-in">
         <div className="absolute inset-0 bg-card/80 backdrop-blur-md" />
         <div className="relative p-6 text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-3"></div>
@@ -169,7 +169,7 @@ export const CycloneTracker = ({ data }: CycloneTrackerProps) => {
   }
 
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-destructive/50 shadow-2xl animate-scale-in">
+    <div className="relative overflow-hidden rounded-3xl border border-destructive/50 shadow-2xl animate-fade-in hover:shadow-[0_0_30px_rgba(239,68,68,0.3)] transition-all duration-500">
       {/* Semi-transparent dark background */}
       <div className="absolute inset-0 bg-card/80 backdrop-blur-md" />
       
@@ -177,7 +177,10 @@ export const CycloneTracker = ({ data }: CycloneTrackerProps) => {
       <div className="relative p-4 sm:p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-base sm:text-lg font-semibold text-muted-foreground">Live Storm Tracker</h2>
+          <h2 className="text-base sm:text-lg font-semibold text-muted-foreground flex items-center gap-2">
+            <Wind className="w-5 h-5 text-destructive animate-pulse" />
+            Live Storm Tracker
+          </h2>
           <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/50" title="Live Data"></div>
         </div>
 
