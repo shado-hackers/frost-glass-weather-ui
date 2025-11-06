@@ -86,7 +86,7 @@ export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
       </div>
 
       {isOpen && suggestions.length > 0 && (
-        <div className="absolute top-full mt-2 w-full bg-background/98 backdrop-blur-xl border border-border/30 rounded-2xl overflow-hidden z-[100] animate-fade-in max-h-[60vh] overflow-y-auto smooth-scroll shadow-2xl">
+        <div className="absolute top-full mt-2 w-full bg-background border border-border/50 rounded-2xl overflow-hidden z-[100] animate-fade-in max-h-[60vh] overflow-y-auto smooth-scroll shadow-2xl">
           {suggestions.slice(0, 8).map((city, index) => (
             <button
               key={`${city.lat}-${city.lon}-${index}`}
@@ -105,7 +105,7 @@ export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
       )}
 
       {loading && (
-        <div className="absolute top-full mt-2 w-full bg-background/98 backdrop-blur-xl border border-border/30 rounded-2xl p-3 sm:p-4 text-center text-foreground/70 text-sm shadow-2xl z-[100]">
+        <div className="absolute top-full mt-2 w-full bg-background border border-border/50 rounded-2xl p-3 sm:p-4 text-center text-foreground/70 text-sm shadow-2xl z-[100]">
           Searching...
         </div>
       )}
