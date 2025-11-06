@@ -16,6 +16,11 @@ export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
   const [loading, setLoading] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout>();
 
+  // Debug state changes
+  useEffect(() => {
+    console.log('SearchBar state:', { query, suggestionsCount: suggestions.length, isOpen, loading });
+  }, [query, suggestions, isOpen, loading]);
+
   useEffect(() => {
     if (query.length < 2) {
       setSuggestions([]);
@@ -40,11 +45,14 @@ export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
         });
 
         const data = await response.json();
+        console.log('Search response:', data);
 
         if (response.ok && data?.results && data.results.length > 0) {
+          console.log('Setting suggestions:', data.results.length);
           setSuggestions(data.results);
           setIsOpen(true);
         } else {
+          console.log('No results found');
           setSuggestions([]);
           setIsOpen(false);
         }
@@ -86,22 +94,28 @@ export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
       </div>
 
       {isOpen && suggestions.length > 0 && (
-        <div className="absolute top-full mt-2 w-full bg-background border border-border/50 rounded-2xl overflow-hidden z-[100] animate-fade-in max-h-[60vh] overflow-y-auto smooth-scroll shadow-2xl">
-          {suggestions.slice(0, 8).map((city, index) => (
-            <button
-              key={`${city.lat}-${city.lon}-${index}`}
-              onClick={() => handleSelect(city)}
-              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 flex items-start gap-2 sm:gap-3 hover:bg-primary/20 active:bg-primary/30 transition-all text-left border-b border-border/10 last:border-b-0"
-            >
-              <div className="flex-1 min-w-0">
-                <div className="font-medium truncate text-sm sm:text-base text-foreground">{city.name}</div>
-                <div className="text-xs sm:text-sm text-foreground/70 truncate">
-                  {city.region && `${city.region}, `}{city.country}
-                </div>
-              </div>
-            </button>
-          ))}
-        </div>
+        <>
+          {console.log('Rendering dropdown with', suggestions.length, 'suggestions')}
+          <div className="absolute top-full mt-2 w-full bg-background border border-border/50 rounded-2xl overflow-hidden z-[100] animate-fade-in max-h-[60vh] overflow-y-auto smooth-scroll shadow-2xl">
+            {suggestions.slice(0, 8).map((city, index) => {
+              console.log('Rendering city:', city);
+              return (
+                <button
+                  key={`${city.name}-${city.country}-${index}`}
+                  onClick={() => handleSelect(city)}
+                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 flex items-start gap-2 sm:gap-3 hover:bg-primary/20 active:bg-primary/30 transition-all text-left border-b border-border/10 last:border-b-0"
+                >
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium truncate text-sm sm:text-base text-foreground">{city.name}</div>
+                    <div className="text-xs sm:text-sm text-foreground/70 truncate">
+                      {city.region && `${city.region}, `}{city.country}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </>
       )}
 
       {loading && (

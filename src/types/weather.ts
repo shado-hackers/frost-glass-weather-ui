@@ -82,11 +82,11 @@ export interface WeatherData {
 }
 
 export interface City {
-  id: number;
+  id?: number;
   name: string;
-  region: string;
+  region?: string;
   country: string;
   lat: number;
   lon: number;
-  url: string;
+  url?: string;
 }
