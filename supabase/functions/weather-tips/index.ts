@@ -1,7 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const OPENROUTER_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
+const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -16,10 +16,10 @@ serve(async (req) => {
   try {
     const { location, temperature, condition, humidity, cloudiness, precipitation } = await req.json();
 
-    if (!OPENROUTER_API_KEY) {
-      console.error('OPENROUTER_API_KEY not configured');
+    if (!LOVABLE_API_KEY) {
+      console.error('LOVABLE_API_KEY not configured');
       return new Response(
-        JSON.stringify({ error: 'OpenRouter API key not configured' }),
+        JSON.stringify({ error: 'Lovable AI key not configured' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
       );
     }
@@ -42,11 +42,11 @@ Provide a JSON response with:
 Return ONLY valid JSON, no markdown formatting.`;
 
     const response = await fetch(
-      'https://openrouter.ai/api/v1/chat/completions',
+      'https://ai.gateway.lovable.dev/v1/chat/completions',
       {
         method: 'POST',
         headers: { 
-          'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+          'Authorization': `Bearer ${LOVABLE_API_KEY}`,
           'Content-Type': 'application/json' 
         },
         body: JSON.stringify({
@@ -61,7 +61,7 @@ Return ONLY valid JSON, no markdown formatting.`;
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('OpenRouter API error:', response.status, errorText);
+      console.error('Lovable AI error:', response.status, errorText);
       return new Response(
         JSON.stringify({ error: 'Failed to generate weather tips' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
@@ -70,7 +70,7 @@ Return ONLY valid JSON, no markdown formatting.`;
 
     const data = await response.json();
     const aiText = data.choices?.[0]?.message?.content || '';
-    console.log('OpenRouter response:', aiText);
+    console.log('Lovable AI response:', aiText);
 
     // Extract JSON from response
     const jsonMatch = aiText.match(/\{[\s\S]*\}/);
