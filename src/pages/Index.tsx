@@ -84,8 +84,15 @@ const Index = () => {
     }
   }, []);
 
-  const handleCitySelect = (city: string) => {
-    fetchWeather(city);
+  const handleCitySelect = (city: any) => {
+    // Use coordinates if available for accurate results
+    if (city.lat && city.lon) {
+      fetchWeather(`${city.lat},${city.lon}`);
+    } else if (typeof city === 'string') {
+      fetchWeather(city);
+    } else {
+      fetchWeather(`${city.name}, ${city.country}`);
+    }
   };
 
   if (loading || !weatherData) {

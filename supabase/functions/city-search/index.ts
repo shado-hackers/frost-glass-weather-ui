@@ -1,7 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const WEATHER_API_KEY = Deno.env.get('WEATHER_API_KEY');
-const OPENROUTER_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -23,70 +22,47 @@ serve(async (req) => {
       );
     }
 
-    console.log(`Searching for: ${query} using OpenRouter + WeatherAPI`);
+    console.log(`Searching for: ${query} using WeatherAPI`);
 
-    if (!WEATHER_API_KEY || !OPENROUTER_API_KEY) {
-      console.error('API keys not configured');
+    if (!WEATHER_API_KEY) {
+      console.error('Weather API key not configured');
       return new Response(
-        JSON.stringify({ error: 'API keys not configured' }),
+        JSON.stringify({ error: 'API key not configured' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
       );
     }
 
-    // Use OpenRouter with fast model for intelligent location search
-    const openRouterResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'openai/gpt-4o-mini',
-        messages: [{
-          role: 'user',
-          content: `Return only a JSON array of 5-8 most relevant city/location matches for: "${query}". Format: [{"name":"CityName","region":"Region","country":"Country"}]. Include major cities and common variations. Be concise.`
-        }],
-        temperature: 0.3,
-      })
-    });
-
-    let aiResults = [];
-    if (openRouterResponse.ok) {
-      const aiData = await openRouterResponse.json();
-      const content = aiData.choices?.[0]?.message?.content;
-      if (content) {
-        try {
-          const parsed = JSON.parse(content.match(/\[.*\]/s)?.[0] || '[]');
-          aiResults = Array.isArray(parsed) ? parsed : [];
-          console.log(`OpenRouter found ${aiResults.length} results`);
-        } catch (e) {
-          console.error('Failed to parse AI response:', e);
-        }
-      }
-    }
-
-    // Fetch from WeatherAPI as backup
+    // Use WeatherAPI for accurate location search with coordinates
     const weatherResponse = await fetch(
       `https://api.weatherapi.com/v1/search.json?key=${WEATHER_API_KEY}&q=${encodeURIComponent(query)}`
     );
     
-    let weatherResults = [];
-    if (weatherResponse.ok) {
-      weatherResults = await weatherResponse.json();
-      console.log(`WeatherAPI found ${weatherResults.length} results`);
+    if (!weatherResponse.ok) {
+      console.error('WeatherAPI search failed:', weatherResponse.status);
+      return new Response(
+        JSON.stringify({ error: 'Location search failed', results: [] }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+      );
     }
 
-    // Merge and deduplicate results, prioritize AI results
-    const combinedResults = [...aiResults, ...weatherResults]
-      .filter((item, index, self) => 
-        index === self.findIndex(t => t.name === item.name && t.country === item.country)
-      )
-      .slice(0, 8);
+    const weatherResults = await weatherResponse.json();
+    console.log(`WeatherAPI found ${weatherResults.length} results`);
 
-    const finalResults = combinedResults.length > 0 ? combinedResults : [];
+    // Format results with accurate coordinates
+    const results = weatherResults
+      .slice(0, 8)
+      .map((item: any, index: number) => ({
+        id: item.id || index,
+        name: item.name,
+        region: item.region || '',
+        country: item.country,
+        lat: item.lat,
+        lon: item.lon,
+        url: item.url || ''
+      }));
 
     return new Response(
-      JSON.stringify({ results: finalResults }),
+      JSON.stringify({ results }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 

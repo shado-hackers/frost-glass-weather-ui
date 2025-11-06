@@ -3,7 +3,7 @@ import { Search } from 'lucide-react';
 import { City } from '@/types/weather';
 
 interface SearchBarProps {
-  onCitySelect: (city: string) => void;
+  onCitySelect: (city: City) => void;
 }
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -65,7 +65,7 @@ export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
   }, [query]);
 
   const handleSelect = (city: City) => {
-    onCitySelect(`${city.name}, ${city.country}`);
+    onCitySelect(city);
     setQuery('');
     setSuggestions([]);
     setIsOpen(false);
