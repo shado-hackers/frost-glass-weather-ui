@@ -116,48 +116,10 @@ serve(async (req) => {
       console.error('InfoQueries error:', error);
     }
 
-    // Combine WeatherAPI direct results with InfoQueries suggestions
+    // Combine results - prioritize WeatherAPI direct results (fast + accurate)
     let allResults = [...weatherDirectResults];
     
-    // Get coordinates for InfoQueries suggestions if any
-    if (results.length > 0) {
-      const infoQueriesWithCoords = await Promise.all(
-        results.slice(0, 15).map(async (city) => {
-          try {
-            const searchQuery = `${city.name}, ${city.country}`;
-            const weatherResponse = await fetch(
-              `https://api.weatherapi.com/v1/search.json?key=${WEATHER_API_KEY}&q=${encodeURIComponent(searchQuery)}`
-            );
-            
-            if (weatherResponse.ok) {
-              const weatherData = await weatherResponse.json();
-              if (Array.isArray(weatherData) && weatherData.length > 0) {
-                return weatherData[0];
-              }
-            }
-          } catch (e) {
-            console.error(`Failed to get coords for ${city.name}:`, e);
-          }
-          return null;
-        })
-      );
-      
-      // Add non-duplicate InfoQueries results
-      const weatherNames = new Set(weatherDirectResults.map(r => `${r.name}-${r.country}`));
-      infoQueriesWithCoords.forEach((result, index) => {
-        if (result && !weatherNames.has(`${result.name}-${result.country}`)) {
-          allResults.push({
-            id: weatherDirectResults.length + index,
-            name: result.name,
-            region: result.region || '',
-            country: result.country,
-            lat: result.lat || 0,
-            lon: result.lon || 0,
-            url: result.url || ''
-          });
-        }
-      });
-    }
+    console.log(`Using ${weatherDirectResults.length} WeatherAPI results (fast and accurate)`);
 
     console.log(`Total results: ${allResults.length} (${weatherDirectResults.length} from WeatherAPI, ${allResults.length - weatherDirectResults.length} from InfoQueries)`);
 
