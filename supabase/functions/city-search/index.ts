@@ -33,8 +33,35 @@ serve(async (req) => {
     }
 
     let results: any[] = [];
+    let weatherDirectResults: any[] = [];
 
-    // Try InfoQueries AI search for worldwide city discovery
+    // ALWAYS try WeatherAPI direct search first for accurate results
+    try {
+      console.log('Searching WeatherAPI directly');
+      const weatherResponse = await fetch(
+        `https://api.weatherapi.com/v1/search.json?key=${WEATHER_API_KEY}&q=${encodeURIComponent(query)}`
+      );
+      
+      if (weatherResponse.ok) {
+        const weatherData = await weatherResponse.json();
+        if (Array.isArray(weatherData) && weatherData.length > 0) {
+          weatherDirectResults = weatherData.map((item: any, index: number) => ({
+            id: item.id || index,
+            name: item.name,
+            region: item.region || '',
+            country: item.country,
+            lat: item.lat || 0,
+            lon: item.lon || 0,
+            url: item.url || ''
+          }));
+          console.log(`WeatherAPI found ${weatherDirectResults.length} direct results`);
+        }
+      }
+    } catch (error) {
+      console.error('WeatherAPI direct search error:', error);
+    }
+
+    // Also try InfoQueries for additional suggestions
     try {
       const infoQueriesResponse = await fetch('https://infoqueries.com/api/aisearch', {
         method: 'POST',
@@ -47,7 +74,7 @@ serve(async (req) => {
           'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
         },
         body: JSON.stringify({
-          q: query,
+          q: `cities named ${query}`,
           type: '0'
         })
       });
@@ -57,20 +84,31 @@ serve(async (req) => {
         const aiContent = aiData?.result || aiData?.answer || '';
         
         if (aiContent) {
-          console.log('InfoQueries AI response received');
-          // Extract city names from AI response
-          const cityMatches = aiContent.match(/([A-Z][a-zA-Z\s'-]+),\s*([A-Z][a-zA-Z\s'-]*),?\s*([A-Z][a-zA-Z\s]+)/g);
+          console.log('InfoQueries response:', aiContent.substring(0, 200));
+          // Multiple pattern matching for city extraction
+          const patterns = [
+            /([A-Z][a-zA-Z\s'-]+),\s*([A-Z][a-zA-Z\s'-]*),?\s*([A-Z][a-zA-Z\s]+)/g,
+            /([A-Z][a-zA-Z\s'-]+)\s+in\s+([A-Z][a-zA-Z\s]+)/gi,
+            /([A-Z][a-zA-Z\s'-]+)\s*\(([^)]+)\)/g
+          ];
           
-          if (cityMatches && cityMatches.length > 0) {
-            results = cityMatches.slice(0, 20).map((match: string) => {
-              const parts = match.split(',').map(p => p.trim());
-              return {
-                name: parts[0] || query,
-                region: parts[1] || '',
-                country: parts[2] || parts[1] || ''
-              };
-            });
-            console.log(`InfoQueries found ${results.length} city suggestions`);
+          for (const pattern of patterns) {
+            const matches = aiContent.matchAll(pattern);
+            for (const match of matches) {
+              const cityName = match[1]?.trim();
+              const location = match[2]?.trim() || match[3]?.trim();
+              if (cityName && cityName.length > 1) {
+                results.push({
+                  name: cityName,
+                  region: '',
+                  country: location || ''
+                });
+              }
+            }
+          }
+          
+          if (results.length > 0) {
+            console.log(`InfoQueries extracted ${results.length} city suggestions`);
           }
         }
       }
@@ -78,78 +116,53 @@ serve(async (req) => {
       console.error('InfoQueries error:', error);
     }
 
-    // Get coordinates from WeatherAPI for each suggestion (no limits)
-    const resultsWithCoords = await Promise.all(
-      results.map(async (city, index) => {
-        try {
-          const searchQuery = `${city.name}, ${city.country}`;
-          const weatherResponse = await fetch(
-            `https://api.weatherapi.com/v1/search.json?key=${WEATHER_API_KEY}&q=${encodeURIComponent(searchQuery)}`
-          );
-          
-          if (weatherResponse.ok) {
-            const weatherData = await weatherResponse.json();
-            if (Array.isArray(weatherData) && weatherData.length > 0) {
-              const match = weatherData[0];
-              return {
-                id: index,
-                name: match.name || city.name,
-                region: match.region || city.region || '',
-                country: match.country || city.country,
-                lat: match.lat || 0,
-                lon: match.lon || 0,
-                url: match.url || ''
-              };
+    // Combine WeatherAPI direct results with InfoQueries suggestions
+    let allResults = [...weatherDirectResults];
+    
+    // Get coordinates for InfoQueries suggestions if any
+    if (results.length > 0) {
+      const infoQueriesWithCoords = await Promise.all(
+        results.slice(0, 15).map(async (city) => {
+          try {
+            const searchQuery = `${city.name}, ${city.country}`;
+            const weatherResponse = await fetch(
+              `https://api.weatherapi.com/v1/search.json?key=${WEATHER_API_KEY}&q=${encodeURIComponent(searchQuery)}`
+            );
+            
+            if (weatherResponse.ok) {
+              const weatherData = await weatherResponse.json();
+              if (Array.isArray(weatherData) && weatherData.length > 0) {
+                return weatherData[0];
+              }
             }
+          } catch (e) {
+            console.error(`Failed to get coords for ${city.name}:`, e);
           }
-        } catch (e) {
-          console.error(`Failed to get coords for ${city.name}:`, e);
-        }
-        
-        // Return without coords if weather API fails
-        return {
-          id: index,
-          name: city.name,
-          region: city.region || '',
-          country: city.country,
-          lat: 0,
-          lon: 0,
-          url: ''
-        };
-      })
-    );
-
-    // Fallback: Try WeatherAPI direct search (no limits)
-    if (results.length === 0) {
-      console.log('Trying WeatherAPI direct search');
-      const weatherResponse = await fetch(
-        `https://api.weatherapi.com/v1/search.json?key=${WEATHER_API_KEY}&q=${encodeURIComponent(query)}`
+          return null;
+        })
       );
       
-      if (weatherResponse.ok) {
-        const weatherData = await weatherResponse.json();
-        if (Array.isArray(weatherData) && weatherData.length > 0) {
-          results = weatherData.map((item: any, index: number) => ({
-            id: item.id || index,
-            name: item.name,
-            region: item.region || '',
-            country: item.country,
-            lat: item.lat || 0,
-            lon: item.lon || 0,
-            url: item.url || ''
-          }));
-          console.log(`WeatherAPI direct found ${results.length} results`);
+      // Add non-duplicate InfoQueries results
+      const weatherNames = new Set(weatherDirectResults.map(r => `${r.name}-${r.country}`));
+      infoQueriesWithCoords.forEach((result, index) => {
+        if (result && !weatherNames.has(`${result.name}-${result.country}`)) {
+          allResults.push({
+            id: weatherDirectResults.length + index,
+            name: result.name,
+            region: result.region || '',
+            country: result.country,
+            lat: result.lat || 0,
+            lon: result.lon || 0,
+            url: result.url || ''
+          });
         }
-      }
+      });
     }
 
-    console.log(`Returning ${resultsWithCoords.length} results`);
-
-    const finalResults = resultsWithCoords.length > 0 ? resultsWithCoords : results;
-    console.log(`Final return: ${finalResults.length} results`);
+    console.log(`Total results: ${allResults.length} (${weatherDirectResults.length} from WeatherAPI, ${allResults.length - weatherDirectResults.length} from InfoQueries)`);
 
     return new Response(
-      JSON.stringify({ results: finalResults }),
+      JSON.stringify({ results: allResults }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 

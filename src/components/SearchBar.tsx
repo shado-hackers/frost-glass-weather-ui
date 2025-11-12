@@ -94,10 +94,8 @@ export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
       </div>
 
       {isOpen && suggestions.length > 0 && (
-        <>
-          {console.log('Rendering dropdown with', suggestions.length, 'suggestions')}
-          <div className="absolute top-full mt-2 w-full bg-background border border-border/50 rounded-2xl overflow-hidden z-[100] animate-fade-in max-h-[60vh] overflow-y-auto smooth-scroll shadow-2xl">
-            {suggestions.map((city, index) => {
+        <div className="absolute top-full mt-2 w-full bg-background border border-border/50 rounded-2xl overflow-hidden z-[100] animate-fade-in max-h-[60vh] overflow-y-auto smooth-scroll shadow-2xl">
+          {suggestions.map((city, index) => {
               console.log('Rendering city:', city);
               return (
                 <button
@@ -114,8 +112,7 @@ export const SearchBar = ({ onCitySelect }: SearchBarProps) => {
                 </button>
               );
             })}
-          </div>
-        </>
+        </div>
       )}
 
       {loading && (
