@@ -1,7 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const WEATHER_API_KEY = Deno.env.get('WEATHER_API_KEY');
-const OPENROUTER_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -35,44 +34,51 @@ serve(async (req) => {
 
     let results: any[] = [];
 
-    // Try OpenRouter for intelligent search if available
-    if (OPENROUTER_API_KEY) {
-      try {
-        const aiResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            model: 'openai/gpt-4o-mini',
-            messages: [{
-              role: 'user',
-              content: `Find 5-8 real cities/locations matching "${query}". Return ONLY a JSON array like: [{"name":"CityName","region":"Region","country":"Country"}]. No explanations.`
-            }],
-            temperature: 0.2,
-          })
-        });
+    // Try InfoQueries AI search for worldwide city discovery
+    try {
+      const infoQueriesResponse = await fetch('https://infoqueries.com/api/aisearch', {
+        method: 'POST',
+        headers: {
+          'accept': '*/*',
+          'accept-language': 'en-US,en;q=0.9',
+          'content-type': 'application/json',
+          'origin': 'https://infoqueries.com',
+          'referer': `https://infoqueries.com/searchai?q=${encodeURIComponent(query)}&type=0`,
+          'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        },
+        body: JSON.stringify({
+          q: query,
+          type: '0'
+        })
+      });
 
-        if (aiResponse.ok) {
-          const aiData = await aiResponse.json();
-          const content = aiData.choices?.[0]?.message?.content;
-          if (content) {
-            try {
-              const parsed = JSON.parse(content.match(/\[.*\]/s)?.[0] || '[]');
-              results = Array.isArray(parsed) ? parsed.slice(0, 8) : [];
-              console.log(`OpenRouter found ${results.length} suggestions`);
-            } catch (e) {
-              console.error('Failed to parse AI response:', e);
-            }
+      if (infoQueriesResponse.ok) {
+        const aiData = await infoQueriesResponse.json();
+        const aiContent = aiData?.result || aiData?.answer || '';
+        
+        if (aiContent) {
+          console.log('InfoQueries AI response received');
+          // Extract city names from AI response
+          const cityMatches = aiContent.match(/([A-Z][a-zA-Z\s'-]+),\s*([A-Z][a-zA-Z\s'-]*),?\s*([A-Z][a-zA-Z\s]+)/g);
+          
+          if (cityMatches && cityMatches.length > 0) {
+            results = cityMatches.slice(0, 20).map((match: string) => {
+              const parts = match.split(',').map(p => p.trim());
+              return {
+                name: parts[0] || query,
+                region: parts[1] || '',
+                country: parts[2] || parts[1] || ''
+              };
+            });
+            console.log(`InfoQueries found ${results.length} city suggestions`);
           }
         }
-      } catch (error) {
-        console.error('OpenRouter error:', error);
       }
+    } catch (error) {
+      console.error('InfoQueries error:', error);
     }
 
-    // Get coordinates from WeatherAPI for each suggestion
+    // Get coordinates from WeatherAPI for each suggestion (no limits)
     const resultsWithCoords = await Promise.all(
       results.map(async (city, index) => {
         try {
@@ -113,7 +119,7 @@ serve(async (req) => {
       })
     );
 
-    // Fallback: Try WeatherAPI direct search
+    // Fallback: Try WeatherAPI direct search (no limits)
     if (results.length === 0) {
       console.log('Trying WeatherAPI direct search');
       const weatherResponse = await fetch(
@@ -123,7 +129,7 @@ serve(async (req) => {
       if (weatherResponse.ok) {
         const weatherData = await weatherResponse.json();
         if (Array.isArray(weatherData) && weatherData.length > 0) {
-          results = weatherData.slice(0, 8).map((item: any, index: number) => ({
+          results = weatherData.map((item: any, index: number) => ({
             id: item.id || index,
             name: item.name,
             region: item.region || '',
